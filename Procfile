@@ -1,1 +1,1 @@
-web: python bot:app shinma.py
+bot: python shinma.py

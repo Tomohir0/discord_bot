@@ -21,7 +21,7 @@ async def on_message(message): # 関数名はon_messageのみ
   global date_register,shinma1,shinma2 # Global宣言
   # おはよう関数
   if message.content.startswith("おはよう"):
-    if client.user != message.author:　
+    if client.user != message.author:
       m = "Good morning, " + message.author.name # メッセージを書きます
       await client.send_message(message.channel, m) # メッセージが送られてきたチャンネルへメッセージを送ります
   # 神魔登録説明関数
