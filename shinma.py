@@ -24,12 +24,28 @@ async def on_message(message): # 関数名はon_messageのみ
     if client.user != message.author:
       m = "Good morning, " + message.author.name # メッセージを書きます
       await client.send_message(message.channel, m) # メッセージが送られてきたチャンネルへメッセージを送ります
+  # こんにちは・こんばんは関数
+  elif message.content.startswith("こんにちは") or message.content.startswith("こんばんは"):
+    if client.user != message.author:
+      m = "Hi, " + message.author.name # メッセージを書きます
+      await client.send_message(message.channel, m) # メッセージが送られてきたチャンネルへメッセージを送ります
+  # 愛してる関数
+  elif message.content.startswith("好き") or message.content.startswith("愛してる"):
+    if client.user != message.author:
+      m = "愛してるよ" + message.author.name # メッセージを書きます
+      await client.send_message(message.channel, m) # メッセージが送られてきたチャンネルへメッセージを送ります
+  # 友達だよね関数
+  elif message.content.startswith("マイ！！フレンド！！"):
+    if client.user != message.author:
+      m = "マイ！！フレンド！！" + message.author.name + "！！"# メッセージを書きます
+      await client.send_message(message.channel, m) # メッセージが送られてきたチャンネルへメッセージを送ります
   # 神魔登録説明関数
   elif message.content.startswith("神魔登録説明"):
     if client.user != message.author:
       explanation = ("本日の神魔登録を行いたい際には「神魔登録」から始まり「神魔登録1杖剣槍2本槌弓3」のように1,2,3を区切りとして発言してください。" 
       "\nbotから日付と共に「登録完了」と返事が出れば完了です。"
-      "\n「神魔」とだけ言った場合、その日に登録された神魔が通知されます。")# 説明
+      "\n「神魔」とだけ言った場合、その日に登録された神魔が通知されます。"
+      "\n「神魔登録説明」")# 説明
       await client.send_message(message.channel, explanation)
   # 神魔登録関数
   elif message.content.startswith("神魔登録"):# 「神魔登録」で始まるか調べる
