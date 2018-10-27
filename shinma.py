@@ -7,7 +7,6 @@ from discord.ext import commands
 description = ('''神魔管理のために作られたbotです。挨拶をしたり愛をささやいたりもします。
 \n「神魔登録説明」で神魔登録などについての説明を表示します。\nその他のcommandについては「?help」を確認してください。「?」を文頭に置いて適宜使用できます。''')
 bot = commands.Bot(command_prefix='?', description=description)
-date_today = datetime.date.today()
 date_register = "2000-01-01"
 shinma1 = ""
 shinma2 = ""
@@ -83,7 +82,7 @@ async def on_message(message):  # 関数名はon_messageのみ
 
 @bot.command()
 async def roll(dice: str):
-    """サイコロを振ることができます。ここではTRPGで使われるNdN記法が採用されています。/n2個の6面サイコロの結果がほしい場合は「?roll 2d6」と入力してください。"""
+    """サイコロを振ることができます。TRPGで使われるNdN記法。\n2個の6面サイコロの結果がほしい場合は「?roll 2d6」と入力してください。"""
     try:
         rolls, limit = map(int, dice.split('d'))
     except Exception:
