@@ -55,7 +55,7 @@ async def on_message(message):  # 関数名はon_messageのみ
             explanation = ("本日の神魔登録を行いたい際には「神魔登録」から始まり「神魔登録1杖剣槍2本槌弓3」のように1,2,3を区切りとして発言してください。"
                            "\nbotから日付と共に「登録完了」と返事が出れば完了です。"
                            "\n「神魔」とだけ言った場合、その日に登録された神魔が通知されます。"
-                           "\n「神魔登録説明」")  # 説明
+                           "\n「神魔登録説明」でこの説明を繰り返します。")  # 説明
             await client.send_message(message.channel, explanation)
     # 神魔登録関数
     elif message.content.startswith("神魔登録"):  # 「神魔登録」で始まるか調べる
