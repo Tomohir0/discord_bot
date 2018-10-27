@@ -1,1 +1,1 @@
-bot: python shinma.py 0.0.0.0:$PORT
+web: python bot:app shinma.py
