@@ -117,9 +117,8 @@ async def call():
 async def vc():
     "VCチャンネルの参加メンバーの名前一覧を表示します。"
     channel = bot.get_channel("385094571824119818")
-#    member_list = pprint.pformat(
-#        [member.name for member in channel.voice_members])
-    member_list = pprint.pformat([member.name for member in bot.get_all_members()])
+    member_list = pprint.pformat(
+        [member.name for member in channel.voice_members])
     await bot.say(member_list.replace(",","\n"))
 
 bot.run('NTA1NjYxMTE3NjIwNTUxNjgx.DrW1Uw.KC36a1LyMlHdYoHtnSS-X2802EM')
