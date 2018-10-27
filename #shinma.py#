@@ -1,0 +1,63 @@
+ import discord$
+     2 import time$
+         3 $
+             4 now_time = time.time()$
+                 5 client = discord.Client()$
+                     6 $
+                         7 @client.event$
+                             8 async def on_ready():$
+                                 9  print('Logged in as')$
+                                    10  print(client.user.name)$
+                                       11  print(client.user.id)$
+                                          12  print('------')$
+                                             13 $
+                                                14 @client.event$
+                                                   15 async def on_message(message):$
+                                                      16 # 「こん」で始まるか調べる$
+                                                         17  if message.content.startswith("こん"):$
+                                                            18 # 送り主がBotだった場合反応したくないので$
+                                                               19   if client.user != message.author:$
+                                                                  20 # メッセージを書きますw$
+                                                                     21 #   m = "Hello, ほも" + message.author.name + ""$
+                                                                        22    m = "Hi, " + message.author.name + "投票し忘れてるでゲソ"$
+                                                                           23 # メッセージが送られてきたチャンネルへメッセージを送ります$
+                                                                              24    await client.send_message(message.channel, m)$
+                                                                                 25  elif message.content.startswith("おはよう"):$
+                                                                                    26   if client.user != message.author:$
+                                                                                       27 # メッセージを書きます$
+                                                                                          28    m = "Good morning, " + message.author.name + "投票し忘れてるでゲソ"$
+                                                                                             29 # メッセージが送られてきたチャンネルへメッセージを送ります$
+                                                                                                30    await client.send_message(message.channel, m)$
+                                                                                                   31    $
+                                                                                                      32 client.run("NTA1MDE0MDQyNzM4Mjk0Nzg1.DrNeBA.dvNe0cvuyZAi9BZPumN8hXCVzzE")$ import discord$
+                                                                                                          2 import time$
+                                                                                                              3 $
+                                                                                                                  4 now_time = time.time()$
+                                                                                                                      5 client = discord.Client()$
+                                                                                                                          6 $
+                                                                                                                              7 @client.event$
+                                                                                                                                  8 async def on_ready():$
+                                                                                                                                      9  print('Logged in as')$
+                                                                                                                                         10  print(client.user.name)$
+                                                                                                                                            11  print(client.user.id)$
+                                                                                                                                               12  print('------')$
+                                                                                                                                                  13 $
+                                                                                                                                                     14 @client.event$
+                                                                                                                                                        15 async def on_message(message):$
+                                                                                                                                                           16 # 「こん」で始まるか調べる$
+                                                                                                                                                              17  if message.content.startswith("こん"):$
+                                                                                                                                                                 18 # 送り主がBotだった場合反応したくないので$
+                                                                                                                                                                    19   if client.user != message.author:$
+                                                                                                                                                                       20 # メッセージを書きますw$
+                                                                                                                                                                          21 #   m = "Hello, ほも" + message.author.name + ""$
+                                                                                                                                                                             22    m = "Hi, " + message.author.name + "投票し忘れてるでゲソ"$
+                                                                                                                                                                                23 # メッセージが送られてきたチャンネルへメッセージを送ります$
+                                                                                                                                                                                   24    await client.send_message(message.channel, m)$
+                                                                                                                                                                                      25  elif message.content.startswith("おはよう"):$
+                                                                                                                                                                                         26   if client.user != message.author:$
+                                                                                                                                                                                            27 # メッセージを書きます$
+                                                                                                                                                                                               28    m = "Good morning, " + message.author.name + "投票し忘れてるでゲソ"$
+                                                                                                                                                                                                  29 # メッセージが送られてきたチャンネルへメッセージを送ります$
+                                                                                                                                                                                                     30    await client.send_message(message.channel, m)$
+                                                                                                                                                                                                        31    $
+                                                                                                                                                                                                           32 client.run("NTA1MDE0MDQyNzM4Mjk0Nzg1.DrNeBA.dvNe0cvuyZAi9BZPumN8hXCVzzE")$
