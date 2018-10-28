@@ -8,11 +8,11 @@ import pickle
 description = ('''神魔管理のために作られたbotです。挨拶をしたり愛をささやいたりもします。
 \n「神魔登録説明」で神魔登録などについての説明を表示します。\nその他のcommandについては「?help」を確認してください。「?」を文頭に置いて適宜使用できます。''')
 bot = commands.Bot(command_prefix='?', description=description)
-'''
+
 date_register = "2000-01-01"
 shinma1 = ""
 shinma2 = ""
-'''
+
 # async外で保存するためにGlobal変数を用いる
 
 
@@ -73,7 +73,8 @@ async def on_message(message):  # 関数名はon_messageのみ
             elif mc.startswith("神魔登録"):  # 「神魔登録」で始まるか調べる
                 if mc.count("1") * mc.count("2") * mc.count("3") != 0:
                     # 神魔
-                    shinma　= [mc[mc.index("1") + 1: mc.index("2")], mc[mc.index("2") + 1: mc.index("3")], datetime.date.today()] # 神魔、日付
+                    shinma　= [mc[mc.index("1") + 1:mc.index("2")], mc[mc.index("2") + 1:mc.index("3")]]  # 神魔、日付
+                    date_register = datetime.date.today()
                     with open('shinma.pickle', 'wb') as f:
                         pickle.dump(shinma, f)
                     # 登録完了のメッセージ
@@ -82,11 +83,10 @@ async def on_message(message):  # 関数名はon_messageのみ
             elif mc.startswith("神魔") and len(mc) == 2:
                 with open('shinma.pickle', 'rb') as f:
                     shinma = pickle.load(f)
-                date_register = shinma[2]
+                #date_register = shinma[2]
                 if date_today != date_register:  # 直近の神魔登録日が今日ではない場合
                     await bot.send_message(message.channel, str(date_today) + "の神魔は登録されていません")
                 else:  # 今日神魔が登録されていた場合
-
                     await bot.send_message(message.channel, "第一神魔は{}\n第二神魔は{},{}".format(shinma[0], shinma[1]))
         await bot.process_commands(message)  # bot.commandも使えるために必要
 
