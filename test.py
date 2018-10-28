@@ -29,8 +29,8 @@ async def on_message(message):  # 関数名はon_messageのみ
 #    global date_register, shinma1, shinma2  # Global宣言
     mc = message.content
     # ぼっち関数
-    if "ソウ" == message.author.name:
-        await bot.send_message("ぼっちのソウさん ")
+    if mc.startswith("?") and "Tom-O-HERO" == message.author.name:
+        await bot.send_message(message.channel, "ともひろ！")
     # おはよう関数
     if mc.startswith("おはよう"):
         m = "Good morning, " + message.author.name

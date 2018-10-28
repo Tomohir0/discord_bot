@@ -29,8 +29,9 @@ async def on_message(message):  # 関数名はon_messageのみ
     mc = message.content
     if bot.user != message.author:  # botによるbotの反応を避ける
         # ぼっち関数
-        if mc.startswith("?") and "ソウ" == message.author.name:
-            await bot.send_message("ぼっちのソウさん ")
+        if mc.startswith("?"): # 呼びかけ追加
+            if "413309417082322955" == message.author.id:
+                await bot.send_message(message.channel, "ぼっちの{}さん ".format(message.author.name))
         # おはよう関数
         if mc.startswith("おはよう"):
             m = "Good morning, " + message.author.name
@@ -57,8 +58,8 @@ async def on_message(message):  # 関数名はon_messageのみ
         # 神魔関連
         if mc.startswith("神魔"):
             # ぼっち関数
-            if "ソウ" == message.author.name:
-                await bot.send_message("ぼっちのソウさん ")
+            if "413309417082322955" == message.author.id:
+                await bot.send_message(message.channel, ぼっちの{}さん ".format(message.author.name))
             # 神魔登録説明関数
             if mc.startswith("神魔登録説明"):
                 explanation = ("本日の神魔登録を行いたい際には「神魔登録」から始まり「神魔登録1杖剣槍2本槌弓3」のように1,2,3を区切りとして発言してください。"
@@ -85,7 +86,7 @@ async def on_message(message):  # 関数名はon_messageのみ
 # 神魔登録をリセットする関数も欲しい？？
 
 
-@bot.command(description="過去の更新情報はhttps://github.com/Tomohir0/discord_botのshinma.pyのHistoryやREADMEを確認してください。")
+@bot.command(description='過去の更新情報はhttps://github.com/Tomohir0/discord_botのshinma.pyのHistoryやREADMEを確認してください。')
 async def new():
     """最近の更新情報をお知らせします。"""
     m = "ch_listやvc_randを追加。各commandのdescriptionを充実。セリフを感情豊かに"
@@ -113,7 +114,7 @@ async def vc():
     "「コロシアムVC」の参加メンバーの名前一覧を表示します。"
     channel = bot.get_channel("413951021891452932")
     if len([member.name for member in channel.voice_members]) == 0:
-        await bot.say("今のところは" + channel.name + "には一人もいない……一人も……")
+        await bot.say("今、" + channel.name + "には一人もいない……一人も……")
     else:
         member_list = pprint.pformat([member.name for member in channel.voice_members])
         await bot.say(channel.name + "にいるのは\n" + member_list.replace(",", "\n") + "\nだよ！")
