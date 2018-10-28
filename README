@@ -2,7 +2,14 @@
 このdirectoryはTom-O-HEROがdiscord_botを作成・実験する場です。
 
 # 各ソースについて
-:shinma.py| 神魔速報や挨拶などを行う。
-:hello.py| 挨拶を行う。最初に作ったbot。機能的には神魔速報に包含されている。
+:shinma.py| 神魔速報や挨拶などを行う。主役。
 :test.py| 実験用。
+:hello.py| 挨拶を行う。最初に作ったbot。今では放置。
 :Procile, requirements.txt, runtime.txt| heroku用のテキスト
+
+# update
+## Oct 28,2018
+- bot.commandも実装。rollなどを行えるように。VCチャンネルのメンバーリストも取得可能に。(現状ではsource内にチャンネルidを記載する形で指定)
+## Oct 27,2018
+- 作成。神魔登録機能や簡単な挨拶機能を備える。
+- 呼応反応を充実。

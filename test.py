@@ -25,8 +25,8 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):  # 関数名はon_messageのみ
-    date_today = datetime.date.today()
-    global date_register, shinma1, shinma2  # Global宣言
+#    date_today = datetime.date.today()
+#    global date_register, shinma1, shinma2  # Global宣言
     mc = message.content
     # ぼっち関数
     if "ソウ" == message.author.name:
@@ -95,7 +95,8 @@ async def roll(dice: str):
     result = ', '.join(str(random.randint(1, limit)) for r in range(rolls))
     await bot.say(result)
 
-@bot.command(description='For when you wanna settle the score some other way')
+'''
+@bot.command(description='「?choice A B C」などのように入力してください')
 async def choose(*choices: str):
     """ランダムに一つ選びます。「?choose」の後に選択肢をスペースで区切って入力してください。"""
     await bot.say(random.choice(choices))
@@ -119,6 +120,28 @@ async def vc():
     channel = bot.get_channel("385094571824119818")
     member_list = pprint.pformat(
         [member.name for member in channel.voice_members])
-    await bot.say(member_list.replace(",","\n"))
+    await bot.say(member_list.replace(",", "\n"))
+    
+@bot.command()
+async def ch_list():
+    "各チャンネルの名前とidの組を表示します。"
+    channel_id = [channel.id for channel in bot.get_all_channels()]
+    channel_name = [channel.name for channel in bot.get_all_channels()]
+    for (id, name) in zip(channel_name, channel_id):
+        await bot.say(id+" : "+name)
+'''
+
+
+@bot.command(description='「?vc_rand 2」で「コロシアムVC」の参加メンバーから二人を選びます。')
+async def vc_rand(num: int):
+    "「コロシアムVC」の参加メンバーのからランダムに指定された人数を選びます。"
+    channel = bot.get_channel("385094571824119818")
+    member_list = [member.display_name for member in channel.voice_members]
+    if len(member_list) < num or num < 1:
+        await bot.say("変だよ！\n今のVCには{}人しかいないのに、人数指定が{}人は変だよ！".format(len(member_list), num))
+    else:
+        await bot.say(random.sample(member_list, num))
+
+
 
 bot.run('NTA1NjYxMTE3NjIwNTUxNjgx.DrW1Uw.KC36a1LyMlHdYoHtnSS-X2802EM')

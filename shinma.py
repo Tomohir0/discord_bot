@@ -27,7 +27,10 @@ async def on_message(message):  # 関数名はon_messageのみ
     date_today = datetime.date.today()
     global date_register, shinma1, shinma2  # Global宣言
     mc = message.content
-    if bot.user != message.author:  # botによるbotの反応を避ける   
+    if bot.user != message.author:  # botによるbotの反応を避ける
+        # ぼっち関数
+        if mc.startswith("?") and "ソウ" == message.author.name:
+            await bot.send_message("ぼっちのソウさん ")
         # おはよう関数
         if mc.startswith("おはよう"):
             m = "Good morning, " + message.author.name
@@ -47,7 +50,7 @@ async def on_message(message):  # 関数名はon_messageのみ
                 m = "マイ！！フレンド！！" + message.author.display_name + "！！" 
                 await bot.send_message(message.channel, m)
         # kissして関数
-        elif mc.startswith("キス") or mc.startswith("ちゅ") or mc.startswith("チュ"):
+        elif mc.startswith("キス") or mc.startswith("ちゅ") or mc.startswith("チュ") or mc.startswith("kiss"):
             m = message.author.name + "(´³`) ㄘゅ:two_hearts:"  # メッセージを書きます
             # メッセージが送られてきたチャンネルへメッセージを送ります
             await bot.send_message(message.channel, m)
@@ -82,7 +85,13 @@ async def on_message(message):  # 関数名はon_messageのみ
 # 神魔登録をリセットする関数も欲しい？？
 
 
-@bot.command()
+@bot.command(description="過去の更新情報はhttps://github.com/Tomohir0/discord_botのshinma.pyのHistoryやREADMEを確認してください。")
+async def new():
+    """最近の更新情報をお知らせします。"""
+    m = "ch_listやvc_randを追加。各commandのdescriptionを充実。セリフを感情豊かに"
+    await bot.say(m)
+
+@bot.command(description='「?roll 2d6」で「3, 5」などが得られます。')
 async def roll(dice: str):
     """サイコロを振ることができます。TRPGで使われるNdN記法。2個の6面サイコロの結果がほしい場合は「?roll 2d6」と入力してください。"""
     try:
@@ -92,20 +101,41 @@ async def roll(dice: str):
         return
 
     result = ', '.join(str(random.randint(1, limit)) for r in range(rolls))
-    await bot.say(result)
+    await bot.say("ダイスロール！\n" + result)
 
-@bot.command(description="For when you wanna settle the score some other way")
+@bot.command(description='「?choice A B C」などのように入力してください。')
 async def choose(*choices: str):
     """選択肢からランダムに一つ選びます。「?choose」の後に選択肢をスペースで区切って入力してください。"""
-    await bot.say(random.choice(choices))
+    await bot.say(random.choice(choices) + "にするしかないじゃない！")
 
-@bot.command()
+@bot.command(description='「?vc」で「コロシアムVC」の参加メンバーの(ニックネームではない)名前一覧が得られます。')
 async def vc():
     "「コロシアムVC」の参加メンバーの名前一覧を表示します。"
     channel = bot.get_channel("413951021891452932")
-    member_list = pprint.pformat(
-        [member.name for member in channel.voice_members])
-    await bot.say(member_list.replace(",", "\n"))
+    if len([member.name for member in channel.voice_members]) == 0:
+        await bot.say("今のところは" + channel.name + "には一人もいない……一人も……")
+    else:
+        member_list = pprint([member.name for member in channel.voice_members])
+        await bot.say(channel.name + "にいるのは\n" + member_list.replace(",", "\n") + "\nだよ！")
 
+@bot.command(description='チャンネルidは別commandで使用することができるかもしれません。')
+async def ch_list():
+    "各チャンネルの名前とidの組を表示します。"
+    channel_id = [channel.id for channel in bot.get_all_channels()]
+    channel_name = [channel.name for channel in bot.get_all_channels()]
+    await bot.say("チャンネル一覧を表示するよ！メモの用意はできたかな？")
+    for (name, id) in zip(channel_name, channel_id):
+        await bot.say(name+", "+ id)
+
+
+@bot.command(description='「?vc_rand 2」で「コロシアムVC」の参加メンバーから二人を選びます。')
+async def vc_rand(num: int):
+    "「コロシアムVC」の参加メンバーの中からランダムに指定された人数を選びます。"
+    channel = bot.get_channel("413951021891452932")
+    member_list = [member.display_name for member in channel.voice_members]
+    if len(member_list) < num or num < 1:
+        await bot.say("変だよ！\n今のVCには{}人しかいないのに、人数指定が{}人は変だよ！".format(len(member_list), num))
+    else:
+        await bot.say(random.sample(member_list, num) + "！\n君に決めた！")
 
 bot.run('NTA1NDA0OTE4NTI2Mzc4MDA0.DrZwjg.Dpv0JWxtpB8aCcdwW9pymObl914')
