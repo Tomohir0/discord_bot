@@ -71,10 +71,9 @@ async def on_message(message):  # 関数名はon_messageのみ
                 await bot.send_message(message.channel, explanation)
             # 神魔登録関数
             elif mc.startswith("神魔登録"):  # 「神魔登録」で始まるか調べる
-                if mc.count("1") * mc.count("2") * mc.count("3") != 0:
-                    # 神魔
-                    shinma　= [mc[mc.index("1") + 1:mc.index("2")], mc[mc.index("2") + 1:mc.index("3")]]  # 神魔、日付
-                    date_register = datetime.date.today()
+                if mc.count("1") * mc.count("2") * mc.count("3") != 0:# 神魔
+                    shinma　= [mc[mc.index("1") + 1:mc.index("2")], mc[mc.index("2") + 1:mc.index("3")]] # 神魔、日付
+                    date_register = date_today
                     with open('shinma.pickle', 'wb') as f:
                         pickle.dump(shinma, f)
                     # 登録完了のメッセージ
