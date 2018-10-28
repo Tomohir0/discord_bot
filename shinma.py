@@ -28,9 +28,6 @@ async def on_message(message):  # 関数名はon_messageのみ
     global date_register, shinma1, shinma2  # Global宣言
     mc = message.content
     if bot.user != message.author:  # botによるbotの反応を避ける   
-        # ぼっち関数
-        if "ソウ" == message.author.name:
-            await bot.send_message("ぼっちのソウさん ")
         # おはよう関数
         if mc.startswith("おはよう"):
             m = "Good morning, " + message.author.name
@@ -54,27 +51,32 @@ async def on_message(message):  # 関数名はon_messageのみ
             m = message.author.name + "(´³`) ㄘゅ:two_hearts:"  # メッセージを書きます
             # メッセージが送られてきたチャンネルへメッセージを送ります
             await bot.send_message(message.channel, m)
-        # 神魔登録説明関数
-        elif mc.startswith("神魔登録説明"):
-            explanation = ("本日の神魔登録を行いたい際には「神魔登録」から始まり「神魔登録1杖剣槍2本槌弓3」のように1,2,3を区切りとして発言してください。"
-                        "\nbotから日付と共に「登録完了」と返事が出れば完了です。"
-                        "\n「神魔」とだけ言った場合、その日に登録された神魔が通知されます。"
-                        "\n「神魔登録説明」でこの説明を繰り返します。")  # 説明
-            await bot.send_message(message.channel, explanation)
-        # 神魔登録関数
-        elif mc.startswith("神魔登録"):  # 「神魔登録」で始まるか調べる
-            if mc.count("1")*mc.count("2")*mc.count("3") != 0:
-                shinma1 = mc[mc.index("1") + 1: mc.index("2")]  # 第一神魔
-                shinma2 = mc[mc.index("2") + 1: mc.index("3")]  # 第二神魔
-                date_register = datetime.date.today()  # 神魔登録の日付
-                # 登録完了のメッセージ
-                await bot.send_message(message.channel, "登録完了 on " + str(date_register))
-        # 神魔呼び出し関数
-        elif mc.startswith("神魔") and len(mc) == 2:
-            if date_today != date_register:  # 直近の神魔登録日が今日ではない場合
-                await bot.send_message(message.channel, str(date_today) + "の神魔は登録されていません")
-            else:  # 今日神魔が登録されていた場合
-                await bot.send_message(message.channel, "第一神魔は{}\n第二神魔は{}".format(shinma1, shinma2))
+        # 神魔関連
+        if mc.startswith("神魔"):
+            # ぼっち関数
+            if "ソウ" == message.author.name:
+                await bot.send_message("ぼっちのソウさん ")
+            # 神魔登録説明関数
+            if mc.startswith("神魔登録説明"):
+                explanation = ("本日の神魔登録を行いたい際には「神魔登録」から始まり「神魔登録1杖剣槍2本槌弓3」のように1,2,3を区切りとして発言してください。"
+                            "\nbotから日付と共に「登録完了」と返事が出れば完了です。"
+                            "\n「神魔」とだけ言った場合、その日に登録された神魔が通知されます。"
+                            "\n「神魔登録説明」でこの説明を繰り返します。")  # 説明
+                await bot.send_message(message.channel, explanation)
+            # 神魔登録関数
+            elif mc.startswith("神魔登録"):  # 「神魔登録」で始まるか調べる
+                if mc.count("1")*mc.count("2")*mc.count("3") != 0:
+                    shinma1 = mc[mc.index("1") + 1: mc.index("2")]  # 第一神魔
+                    shinma2 = mc[mc.index("2") + 1: mc.index("3")]  # 第二神魔
+                    date_register = datetime.date.today()  # 神魔登録の日付
+                    # 登録完了のメッセージ
+                    await bot.send_message(message.channel, "登録完了 on " + str(date_register))
+            # 神魔呼び出し関数
+            elif mc.startswith("神魔") and len(mc) == 2:
+                if date_today != date_register:  # 直近の神魔登録日が今日ではない場合
+                    await bot.send_message(message.channel, str(date_today) + "の神魔は登録されていません")
+                else:  # 今日神魔が登録されていた場合
+                    await bot.send_message(message.channel, "第一神魔は{}\n第二神魔は{}".format(shinma1, shinma2))
         await bot.process_commands(message)  # bot.commandも使えるために必要
 
 # 神魔登録をリセットする関数も欲しい？？
