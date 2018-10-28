@@ -115,7 +115,7 @@ async def vc():
     if len([member.name for member in channel.voice_members]) == 0:
         await bot.say("今のところは" + channel.name + "には一人もいない……一人も……")
     else:
-        member_list = pprint([member.name for member in channel.voice_members])
+        member_list = pprint.pformat([member.name for member in channel.voice_members])
         await bot.say(channel.name + "にいるのは\n" + member_list.replace(",", "\n") + "\nだよ！")
 
 @bot.command(description='チャンネルidは別commandで使用することができるかもしれません。')
