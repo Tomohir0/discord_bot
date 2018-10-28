@@ -3,6 +3,7 @@ import datetime
 import pprint
 import random
 from discord.ext import commands
+import pickle
 
 description = ('''神魔管理のために作られたbotです。挨拶をしたり愛をささやいたりもします。
 \n「神魔登録説明」で神魔登録などについての説明を表示します。\nその他のcommandについては「?help」を確認してください。「?」を文頭に置いて適宜使用できます。''')
@@ -59,7 +60,7 @@ async def on_message(message):  # 関数名はon_messageのみ
         if mc.startswith("神魔"):
             # ぼっち関数
             if "413309417082322955" == message.author.id:
-                await bot.send_message(message.channel, ぼっちの{}さん ".format(message.author.name))
+                await bot.send_message(message.channel, "ぼっちの{}さん ".format(message.author.name))
             # 神魔登録説明関数
             if mc.startswith("神魔登録説明"):
                 explanation = ("本日の神魔登録を行いたい際には「神魔登録」から始まり「神魔登録1杖剣槍2本槌弓3」のように1,2,3を区切りとして発言してください。"
@@ -69,10 +70,12 @@ async def on_message(message):  # 関数名はon_messageのみ
                 await bot.send_message(message.channel, explanation)
             # 神魔登録関数
             elif mc.startswith("神魔登録"):  # 「神魔登録」で始まるか調べる
-                if mc.count("1")*mc.count("2")*mc.count("3") != 0:
+                if mc.count("1") * mc.count("2") * mc.count("3") != 0:
                     shinma1 = mc[mc.index("1") + 1: mc.index("2")]  # 第一神魔
                     shinma2 = mc[mc.index("2") + 1: mc.index("3")]  # 第二神魔
                     date_register = datetime.date.today()  # 神魔登録の日付
+                    with open('shinma.pickle', 'wb') as f:
+                        pickle.dump(shinma1, f)
                     # 登録完了のメッセージ
                     await bot.send_message(message.channel, "登録完了 on " + str(date_register))
             # 神魔呼び出し関数
@@ -80,7 +83,9 @@ async def on_message(message):  # 関数名はon_messageのみ
                 if date_today != date_register:  # 直近の神魔登録日が今日ではない場合
                     await bot.send_message(message.channel, str(date_today) + "の神魔は登録されていません")
                 else:  # 今日神魔が登録されていた場合
-                    await bot.send_message(message.channel, "第一神魔は{}\n第二神魔は{}".format(shinma1, shinma2))
+                    with open('shinma.pickle', 'rb') as f:
+                        shinma3 = pickle.load(f)
+                    await bot.send_message(message.channel, "第一神魔は{}\n第二神魔は{},{}".format(shinma1, shinma2, shinma3))
         await bot.process_commands(message)  # bot.commandも使えるために必要
 
 # 神魔登録をリセットする関数も欲しい？？
