@@ -12,9 +12,8 @@ description = ('''神魔管理のために作られたbotです。挨拶をし�
 \n「神魔登録説明」で神魔登録などについての説明を表示します。\nその他のcommandについては「?help」を確認してください。「?」を文頭に置いて適宜使用できます。''')
 bot = commands.Bot(command_prefix='?', description=description)
 date_register = "2000-01-01"
-shinma1 = ""
-shinma2 = ""
-note = ""
+
+id = ["server_id", "channel_id", "author_id"]
 # async外で保存するためにGlobal変数を用いる
 
 
@@ -29,13 +28,18 @@ async def on_ready():
 @bot.event
 async def on_message(message):  # 関数名はon_messageのみ
     date_today = datetime.date.today()
-    global date_register, shinma1, shinma2  # Global宣言
+    global id  # Global宣言
     mc = message.content
     if bot.user != message.author:  # botによるbotの反応を避ける
-        # ぼっち関数
+        id[0] = message.server.id
+        id[1] = message.channel.id
+        id[2] = message.author.id  # commandのためにid用意
+        # ぼっち関数など
         if mc.startswith("?"):  # 呼びかけ追加
-            if "413309417082322955" == message.author.id:
+            if "413309417082322955" == id[2]:
                 await bot.send_message(message.channel, "ぼっちの{}さん ".format(message.author.name))
+        await bot.process_commands(message)  # bot.commandも使えるために必要
+        
         # おはよう関数
         if mc.startswith("おはよう"):
             m = "Good morning, " + message.author.name
@@ -62,7 +66,7 @@ async def on_message(message):  # 関数名はon_messageのみ
         # 神魔関連
         if mc.startswith("神魔"):
             # ぼっち関数
-            if "413309417082322955" == message.author.id:
+            if "413309417082322955" == id[2]:
                 await bot.send_message(message.channel, "ぼっちの{}さん ".format(message.author.name))
             # 神魔登録説明関数
             if mc.startswith("神魔登録説明"):
@@ -73,19 +77,25 @@ async def on_message(message):  # 関数名はon_messageのみ
                 await bot.send_message(message.channel, explanation)
             # 神魔登録関数
             elif mc.startswith("神魔登録"):  # 「神魔登録」で始まるか調べる
-                if mc.count("1")*mc.count("2")*mc.count("3") != 0:
-                    shinma1 = mc[mc.index("1") + 1: mc.index("2")]  # 第一神魔
-                    shinma2 = mc[mc.index("2") + 1: mc.index("3")]  # 第二神魔
-                    date_register = datetime.date.today()  # 神魔登録の日付
-                    # 登録完了のメッセージ
-                    await bot.send_message(message.channel, "登録完了 on " + str(date_register))
+                if mc.count("1") == 1 and mc.count("2") == 1 and mc.count("3") == 1:
+                    if mc.index("1") < mc.index("2") and mc.index("2") < mc.index("3"):
+                        shinma1 = mc[mc.index("1") + 1: mc.index("2")]  # 第一神魔
+                        shinma2 =mc[mc.index("2") + 1: mc.index("3")]  # 第二神魔
+                        date_register = datetime.date.today()  # 神魔登録の日付
+                        f_name = "/tmp/shinma_" + id[0] + ".pkl"
+                        with open(f_name, 'wb') as f:
+                            pickle.dump([shinma1, shinma2, date_register], f)
+                        # 登録完了のメッセージ
+                        await bot.send_message(message.channel, "登録完了 on " + str(date_register))
             # 神魔呼び出し関数
             elif mc.startswith("神魔") and len(mc) == 2:
-                if date_today != date_register:  # 直近の神魔登録日が今日ではない場合
+                f_name = "/tmp/shinma_" + id[0] + ".pkl"
+                with open(f_name, 'rb') as f:
+                    shinma = pickle.load(f)
+                if date_today != shinma[2]:  # 直近の神魔登録日が今日ではない場合
                     await bot.send_message(message.channel, str(date_today) + "の神魔は登録されていません")
                 else:  # 今日神魔が登録されていた場合
-                    await bot.send_message(message.channel, "第一神魔は{}\n第二神魔は{}".format(shinma1, shinma2))
-        await bot.process_commands(message)  # bot.commandも使えるために必要
+                    await bot.send_message(message.channel, "第一神魔は{}\n第二神魔は{}".format(shinma[0], shinma[1]))
 
 # 神魔登録をリセットする関数も欲しい？？
 
@@ -93,7 +103,8 @@ async def on_message(message):  # 関数名はon_messageのみ
 @bot.command(description='過去の更新情報はhttps://github.com/Tomohir0/discord_botのshinma.pyのHistoryやREADMEを確認してください。')
 async def new():
     """最近の更新情報をお知らせします。"""
-    m = ("Oct,29:ch_listの一時削除。noteやcallを追加。pickle実験したいなー"
+    m = ("Oct,30:pickle実装できた―！これでサーバー再起動しても変数とか消えない！"
+        "\nOct,29:ch_listの一時削除。noteやcallを追加。pickle実験したいなー"
     "\nOct,28:ch_listやvc_randを追加。各commandのdescriptionを充実。セリフを感情豊かに")
     await bot.say(m)
 
@@ -152,34 +163,19 @@ async def vc_rand(num: int):
 
 
 @bot.command()
-async def write(memo: str):
-    "メモを記録します。「?call」で呼び出します。"
-    global note
-    note = memo
+async def note(memo: str):
+    "ユーザーごとにメモを記録します。「?call」で呼び出します。"
+    f_name = "/tmp/memo_" + id[2] + ".pkl"
+    with open(f_name, 'wb') as f:
+        pickle.dump(memo,f)
     await bot.say("覚えました！！")
+
 
 @bot.command()
 async def call():
-    "「?write」で記録したメモを呼び出します。"
-    global note
-    await bot.say(note)
-
-
-@bot.command()
-async def writep(memo: str):
-    "メモを記録します。「?call」で呼び出します。"
-    with open('/tmp/memo.pkl', 'wb') as f:
-        pickle.dump(memo,f)
-    await bot.say("覚えました！！")
-    with open('/tmp/memo.pkl', 'rb') as f2:
-        memo2 = pickle.load(f2)
-    await bot.say(memo2)
-
-
-@bot.command()
-async def callp():
-    "「?write」で記録したメモを呼び出します。"
-    with open('/tmp/memo.pkl', 'rb') as f:
+    "「?note」で記録したあなたのメモを呼び出します。"
+    f_name = "/tmp/memo_" + id[2] + ".pkl"
+    with open(f_name, 'rb') as f:
         memo = pickle.load(f)
     await bot.say(memo)
 
