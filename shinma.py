@@ -11,7 +11,6 @@ from discord.ext import commands
 description = ('''神魔管理のために作られたbotです。挨拶をしたり愛をささやいたりもします。
 \n「神魔登録説明」で神魔登録などについての説明を表示します。\nその他のcommandについては「?help」を確認してください。「?」を文頭に置いて適宜使用できます。''')
 bot = commands.Bot(command_prefix='?', description=description)
-date_register = "2000-01-01"
 
 id = ["server_id", "channel_id", "author_id"]
 # async外で保存するためにGlobal変数を用いる
@@ -33,7 +32,7 @@ async def on_message(message):  # 関数名はon_messageのみ
     if bot.user != message.author:  # botによるbotの反応を避ける
         id[0] = message.server.id
         id[1] = message.channel.id
-        id[2] = message.author.id  # commandのためにid用意
+        id[2] = message.author.id  # commandのためにid用意。天才
         # ぼっち関数など
         if mc.startswith("?"):  # 呼びかけ追加
             if "413309417082322955" == id[2]:
@@ -103,7 +102,7 @@ async def on_message(message):  # 関数名はon_messageのみ
 @bot.command(description='過去の更新情報はhttps://github.com/Tomohir0/discord_botのshinma.pyのHistoryやREADMEを確認してください。')
 async def new():
     """最近の更新情報をお知らせします。"""
-    m = ("Oct,30:pickle実装できた―！これでサーバー再起動しても変数とか消えない！"
+    m = ("Oct,30:pickle実装できた―！これでサーバー再起動しても変数とか消えなくなった！保存する変数も無限大に！何でもできる！！noteの上位種をいくつか作成！いろいろ保存しよう！"
         "\nOct,29:ch_listの一時削除。noteやcallを追加。pickle実験したいなー"
     "\nOct,28:ch_listやvc_randを追加。各commandのdescriptionを充実。セリフを感情豊かに")
     await bot.say(m)
@@ -121,12 +120,10 @@ async def roll(dice: str):
     result = ', '.join(str(random.randint(1, limit)) for r in range(rolls))
     await bot.say("ダイスロール！\n" + result)
 
-
 @bot.command(description='「?choice A B C」などのように入力してください。')
 async def choose(*choices: str):
     """選択肢からランダムに一つ選びます。「?choose」の後に選択肢をスペースで区切って入力してください。"""
     await bot.say(random.choice(choices) + "にするしかないじゃない！")
-
 
 @bot.command(description='「?vc」で「コロシアムVC」の参加メンバーの(ニックネームではない)名前一覧が得られます。')
 async def vc():
@@ -137,7 +134,7 @@ async def vc():
     else:
         member_list = pprint.pformat(
             [member.name for member in channel.voice_members])
-        await bot.say(channel.name + "にいるのは\n" + member_list.replace(",", "\n") + "\nだよ！")
+        await bot.say(channel.name + "にいるのは\n" + member_list.replace(",", "\n") + "\nだよ！") # replaceで改行して見やすく
 
 
 '''
@@ -162,7 +159,7 @@ async def vc_rand(num: int):
         await bot.say(random.sample(member_list, num) + "！\n君に決めた！")
 
 
-@bot.command()
+@bot.command(description='「?note 楽器神魔の場面で魔書ばかり引きました」と記録しても、他の人に読み出されることはありません。')
 async def note(memo: str):
     "ユーザーごとにメモを記録します。「?call」で呼び出します。"
     f_name = "/tmp/memo_" + id[2] + ".pkl"
@@ -170,13 +167,81 @@ async def note(memo: str):
         pickle.dump(memo,f)
     await bot.say("覚えました！！")
 
-
-@bot.command()
+@bot.command(description='気まぐれに「?call」してみましょう。あなたのかつてのmemoが降ってきます。')
 async def call():
     "「?note」で記録したあなたのメモを呼び出します。"
     f_name = "/tmp/memo_" + id[2] + ".pkl"
     with open(f_name, 'rb') as f:
         memo = pickle.load(f)
     await bot.say(memo)
+
+@bot.command(description='一個だけじゃ保存メモリが足りないというあなたに。無数に保存できます。「?notep secret 私の好きな人は……」であなたの秘密を登録できます。')
+async def notep(label_alphabet: str,memo: str):
+    "「?memo」の上位版です。各ユーザーごとに複数のメモを保存できます。ラベル名はアルファベットまたは数字が使用できます。"
+    f_name = "/tmp/memo_" + id[2] + "_" + label_alphabet + ".pkl"
+    with open(f_name, 'wb') as f:
+        pickle.dump(memo, f)  # memoを保存
+    f_name2 = "/tmp/memo_label_" + id[2] + ".pkl"
+    if not os.path.isfile(f_name2): # 存在しないときの処理
+        old_labels = []
+    else:
+        with open(f_name2, "rb") as f:
+            old_labels = pickle.load(f)
+    with open(f_name2, "wb") as f:
+        pickle.dump(old_labels.append(label_alphabet)) # 古いリストに付け足す形で
+    await bot.say("覚えました！！")
+
+@bot.command(description='気まぐれに「?callp secret」してみましょう。あなたのsecretがserverに晒されます。')
+async def callp(label_alphabet: str):
+    "「?notep」で記録したあなたのメモを呼び出します。"
+    f_name = "/tmp/memo_" + id[2] + "_" + label_alphabet + ".pkl"
+    with open(f_name, 'rb') as f:
+        memo = pickle.load(f)
+    await bot.say(memo)
+
+@bot.ccomand(description='「?notep」を使っているのはいいけれど、どんなlabelを使ったか忘れてしまったあなたのために。あなたのnotepのlabel一覧を表示します。')
+async def call_labelp():
+    "「?notep」でメモを保存した際に用いたlabel一覧を表示します。"
+    f_name = "/tmp/memo_label_" + id[2] +".pkl"
+    with open(f_name, 'rb') as f:
+        labels = pickle.load(f)
+    labels_pformat = pprint.pformat(labels)
+    await bot.say("あなたのメモのラベル一覧は\n" + labels_pformat.replace(",", "\n") + "\nでした！")
+
+
+@bot.command(description='みんなで無数に保存できます。')
+async def notes(label_alphabet: str, memo: str):
+    "「?notep」のserver共有版です。"
+    f_name = "/tmp/memo_" + id[0] + "_" + label_alphabet + ".pkl"
+    with open(f_name, 'wb') as f:
+        pickle.dump(memo, f)  # memoを保存
+    f_name2 = "/tmp/memo_label_" + id[0] + ".pkl"
+    if not os.path.isfile(f_name2):  # 存在しないときの処理
+        old_labels = []
+    else:
+        with open(f_name2, "rb") as f:
+            old_labels = pickle.load(f)
+    with open(f_name2, "wb") as f:
+        pickle.dump(old_labels.append(label_alphabet))  # 古いリストに付け足す形で
+    await bot.say("覚えました！！")
+
+
+@bot.command(description='')
+async def calls(label_alphabet: str):
+    "「?callp」のserver版です。"
+    f_name = "/tmp/memo_" + id[0] + "_" + label_alphabet + ".pkl"
+    with open(f_name, 'rb') as f:
+        memo = pickle.load(f)
+    await bot.say(memo)
+
+@bot.ccomand(description='')
+async def call_labels():
+    "「?call_labelp」のserver版です。"
+    f_name = "/tmp/memo_label_" + id[0] + ".pkl"
+    with open(f_name, 'rb') as f:
+        labels = pickle.load(f)
+    labels_pformat = pprint.pformat(labels)
+    await bot.say("このserverのメモのラベル一覧は\n" + labels_pformat.replace(",", "\n") + "\nでした！")
+
 
 bot.run('NTA1NDA0OTE4NTI2Mzc4MDA0.DrZwjg.Dpv0JWxtpB8aCcdwW9pymObl914')
