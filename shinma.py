@@ -3,6 +3,7 @@ import datetime
 import pprint
 import random
 
+import os
 import pickle
 
 from discord.ext import commands
@@ -170,7 +171,8 @@ async def writep(memo: str):
     f = open('/tmp/memo.pkl', 'wb')
     pickle.dump(memo,f)
     await bot.say("覚えました！！")
-    memo2 = pickle.load(f)
+    f2 = open('/tmp/memo.pkl', 'rb')
+    memo2 = pickle.load(f2)
     await bot.say(memo2)
 
 
