@@ -201,6 +201,7 @@ async def callp(label_alphabet: str):
         memo = pickle.load(f)
     await bot.say(memo)
 
+'''
 @bot.ccomand(description='「?notep」を使っているのはいいけれど、どんなlabelを使ったか忘れてしまったあなたのために。あなたのnotepのlabel一覧を表示します。')
 async def call_labelp():
     "「?notep」でメモを保存した際に用いたlabel一覧を表示します。"
@@ -243,5 +244,5 @@ async def call_labels():
     labels_pformat = pprint.pformat(labels)
     await bot.say("このserverのメモのラベル一覧は\n" + labels_pformat.replace(",", "\n") + "\nでした！")
 
-
+'''
 bot.run('NTA1NDA0OTE4NTI2Mzc4MDA0.DrZwjg.Dpv0JWxtpB8aCcdwW9pymObl914')
