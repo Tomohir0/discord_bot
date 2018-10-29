@@ -170,6 +170,9 @@ async def writep(memo: str):
     f = open('/tmp/memo.pkl', 'wb')
     pickle.dump(memo,f)
     await bot.say("覚えました！！")
+    memo2 = pickle.load(f)
+    await bot.say(memo2)
+
 
 @bot.command()
 async def callp():
