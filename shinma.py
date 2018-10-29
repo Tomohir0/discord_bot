@@ -225,8 +225,9 @@ async def notes(label_alphabet: str, memo: str):
     f_name = "/tmp/memo_" + id[0] + "_" + label_alphabet + ".pkl"
     with open(f_name, 'wb') as f:
         pickle.dump(memo, f)  # memoを保存
-    f_name2 = "/tmp/memo_label_" + id[0] + ".pkl"
-'''    if not os.path.isfile(f_name2):  # 存在しないときの処理
+    await bot.say("覚えました！！")
+'''    f_name2 = "/tmp/memo_label_" + id[0] + ".pkl"
+    if not os.path.isfile(f_name2):  # 存在しないときの処理
         old_labels = []
     else:
         with open(f_name2, 'rb') as f:
@@ -234,20 +235,21 @@ async def notes(label_alphabet: str, memo: str):
     with open(f_name2, 'wb') as f:
         pickle.dump(old_labels.append(label_alphabet),f)  # 古いリストに付け足す形で
         '''
-    await bot.say("覚えました！！")
+
 
 @bot.command()
 async def calls(label_alphabet: str):
     "「?callp」のserver版です。"
     global id
     f_name = "/tmp/memo_" + id[0] + "_" + label_alphabet + ".pkl"
+    with open(f_name, 'rb') as f:
+        memo = pickle.load(f)
+    await bot.say(memo)
 '''    if not os.path.isfile(f_name):  # 存在しないときの処理
         await bot.say("ないよ！\n" + label_alphabet + "のメモないよ！")
     else:
         '''
-    with open(f_name, 'rb') as f:
-        memo = pickle.load(f)
-    await bot.say(memo)
+
 
 '''
 @bot.ccomand()
