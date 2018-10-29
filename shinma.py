@@ -103,7 +103,8 @@ async def on_message(message):  # 関数名はon_messageのみ
 async def new():
     """最近の更新情報をお知らせします。"""
     m = ("Oct,30:pickle実装できた―！これでサーバー再起動しても変数とか消えなくなった！保存する変数も無限大に！"
-    "何でもできる！！noteの上位種をいくつか作成！いろいろ保存しよう！ログ保存もあるといい？現役メンバーの一覧あれば出欠確認も簡単にできそう"
+    "\n何でもできる！！noteの上位種をいくつか作成！いろいろ保存しよう！ログ保存もあるといい？現役メンバーの一覧あれば出欠確認も簡単にできそう"
+    "\nよくよく試してみるとダメだった……………………。server起動ごとにfileは消えます…………"
         "\nOct,29:ch_listの一時削除。noteやcallを追加。pickle実験したいなー"
     "\nOct,28:ch_listやvc_randを追加。各commandのdescriptionを充実。セリフを感情豊かに")
     await bot.say(m)
@@ -239,19 +240,25 @@ async def calls(label_alphabet: str):
     "「?callp」のserver版です。"
     global id
     f_name = "/tmp/memo_" + id[0] + "_" + label_alphabet + ".pkl"
-    with open(f_name, 'rb') as f:
-        memo = pickle.load(f)
-    await bot.say(memo)
-'''
+    if not os.path.isfile(f_name):  # 存在しないときの処理
+        await bot.say("ないよ！" + label_alphabet + "のメモないよ！")
+    else:
+        with open(f_name, 'rb') as f:
+            memo = pickle.load(f)
+        await bot.say(memo)
+
 @bot.ccomand()
 async def call_labels():
     "「?call_labelp」のserver版です。"
     global id
     f_name = "/tmp/memo_label_" + id[0] + ".pkl"
-    with open(f_name, 'rb') as f:
-        labels = pickle.load(f)
-    labels_pformat = pprint.pformat(labels)
-    await bot.say("このserverのメモのラベル一覧は\n" + labels_pformat.replace(",", "\n") + "\nでした！")
-'''
+    if not os.path.isfile(f_name):  # 存在しないときの処理
+        await bot.say("ないよ！\nまだlabel一個もないよ！")
+    else:
+        with open(f_name, 'rb') as f:
+            labels = pickle.load(f)
+        labels_pformat = pprint.pformat(labels)
+        await bot.say("このserverのメモのラベル一覧は\n" + labels_pformat.replace(",", "\n") + "\nでした！")
+
 
 bot.run('NTA1NDA0OTE4NTI2Mzc4MDA0.DrZwjg.Dpv0JWxtpB8aCcdwW9pymObl914')
