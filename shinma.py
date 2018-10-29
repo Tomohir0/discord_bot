@@ -168,19 +168,19 @@ async def call():
 @bot.command()
 async def writep(memo: str):
     "メモを記録します。「?call」で呼び出します。"
-    f = open('/tmp/memo.pkl', 'wb')
-    pickle.dump(memo,f)
+    with open('/tmp/memo.pkl', 'wb') as f:
+        pickle.dump(memo,f)
     await bot.say("覚えました！！")
-    f2 = open('/tmp/memo.pkl', 'rb')
-    memo2 = pickle.load(f2)
+    with open('/tmp/memo.pkl', 'rb') as f2:
+        memo2 = pickle.load(f2)
     await bot.say(memo2)
 
 
 @bot.command()
 async def callp():
     "「?write」で記録したメモを呼び出します。"
-    f = open('/tmp/memo.pkl', 'rb')
-    memo = pickle.load(f)
+    with open('/tmp/memo.pkl', 'rb') as f:
+        memo = pickle.load(f)
     await bot.say(memo)
 
 bot.run('NTA1NDA0OTE4NTI2Mzc4MDA0.DrZwjg.Dpv0JWxtpB8aCcdwW9pymObl914')
