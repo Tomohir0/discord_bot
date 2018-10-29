@@ -167,7 +167,7 @@ async def call():
 @bot.command()
 async def writep(memo: str):
     "メモを記録します。「?call」で呼び出します。"
-    f = open('singer.pickle', 'wb')
+    f = open('memo.pkl', 'wb')
     pickle.dump(memo,f)
     await bot.say("覚えました！！")
 
