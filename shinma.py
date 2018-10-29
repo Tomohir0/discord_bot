@@ -224,14 +224,14 @@ async def notes(label_alphabet: str, memo: str):
     f_name = "/tmp/memo_" + id[0] + "_" + label_alphabet + ".pkl"
     with open(f_name, 'wb') as f:
         pickle.dump(memo, f)  # memoを保存
-#    f_name2 = "/tmp/memo_label_" + id[0] + ".pkl"
-#    if not os.path.isfile(f_name2):  # 存在しないときの処理
-#        old_labels = []
-#    else:
-#        with open(f_name2, 'rb') as f:
-#            old_labels = pickle.load(f)
-#    with open(f_name2, 'wb') as f:
-#        pickle.dump(old_labels.append(label_alphabet),f)  # 古いリストに付け足す形で
+    f_name2 = "/tmp/memo_label_" + id[0] + ".pkl"
+    if not os.path.isfile(f_name2):  # 存在しないときの処理
+        old_labels = []
+    else:
+        with open(f_name2, 'rb') as f:
+            old_labels = pickle.load(f)
+    with open(f_name2, 'wb') as f:
+        pickle.dump(old_labels.append(label_alphabet),f)  # 古いリストに付け足す形で
     await bot.say("覚えました！！")
 
 @bot.command()
