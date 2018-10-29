@@ -102,7 +102,8 @@ async def on_message(message):  # 関数名はon_messageのみ
 @bot.command(description='過去の更新情報はhttps://github.com/Tomohir0/discord_botのshinma.pyのHistoryやREADMEを確認してください。')
 async def new():
     """最近の更新情報をお知らせします。"""
-    m = ("Oct,30:pickle実装できた―！これでサーバー再起動しても変数とか消えなくなった！保存する変数も無限大に！何でもできる！！noteの上位種をいくつか作成！いろいろ保存しよう！"
+    m = ("Oct,30:pickle実装できた―！これでサーバー再起動しても変数とか消えなくなった！保存する変数も無限大に！"
+    "何でもできる！！noteの上位種をいくつか作成！いろいろ保存しよう！ログ保存もあるといい？現役メンバーの一覧あれば出欠確認も簡単にできそう"
         "\nOct,29:ch_listの一時削除。noteやcallを追加。pickle実験したいなー"
     "\nOct,28:ch_listやvc_randを追加。各commandのdescriptionを充実。セリフを感情豊かに")
     await bot.say(m)
