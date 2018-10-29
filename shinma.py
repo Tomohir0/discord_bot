@@ -102,9 +102,7 @@ async def on_message(message):  # 関数名はon_messageのみ
 @bot.command(description='過去の更新情報はhttps://github.com/Tomohir0/discord_botのshinma.pyのHistoryやREADMEを確認してください。')
 async def new():
     """最近の更新情報をお知らせします。"""
-    m = ("Oct,30:pickle実装できた―！これでサーバー再起動しても変数とか消えなくなった！保存する変数も無限大に！"
-    "\n何でもできる！！noteの上位種をいくつか作成！いろいろ保存しよう！ログ保存もあるといい？現役メンバーの一覧あれば出欠確認も簡単にできそう"
-    "\nよくよく試してみるとダメだった……………………。server起動ごとにfileは消えます…………"
+    m = ("Oct,30:pickle実装できたけれど、結局server起動ごとに変数は消えてしまう……。でもserverで共有できるメモ機能のnotesとcallsを実装したよ。"
         "\nOct,29:ch_listの一時削除。noteやcallを追加。pickle実験したいなー"
     "\nOct,28:ch_listやvc_randを追加。各commandのdescriptionを充実。セリフを感情豊かに")
     await bot.say(m)
@@ -218,9 +216,9 @@ async def call_labelp():
     await bot.say("あなたのメモのラベル一覧は\n" + labels_pformat.replace(",", "\n") + "\nでした！")
 '''
 
-@bot.command(description='みんなで無数に保存できます。')
+@bot.command(description='「?notes secret ギルマスは実は高校生」とすれば、secretラベルで「ギルマスは実は高校生」を読み出せます。ラベル名はアルファベットのみ。スペースが区切りとみなされます')
 async def notes(label_alphabet: str, memo: str):
-    "「?notep」のserver共有版です。"
+    "serverのみんなでmemoを共有できます。「?notes」は記録を行います。"
     global id
     f_name = "/tmp/memo_" + id[0] + "_" + label_alphabet + ".pkl"
     with open(f_name, 'wb') as f:
@@ -236,10 +234,9 @@ async def notes(label_alphabet: str, memo: str):
         pickle.dump(old_labels.append(label_alphabet),f)  # 古いリストに付け足す形で
         '''
 
-
-@bot.command()
+@bot.command(description='「?calls secret」でsecretとして保存されたメモを読み出します。')
 async def calls(label_alphabet: str):
-    "「?callp」のserver版です。"
+    "「?notes」で保存されたmemoを読み出すことができます。"
     global id
     f_name = "/tmp/memo_" + id[0] + "_" + label_alphabet + ".pkl"
     with open(f_name, 'rb') as f:
