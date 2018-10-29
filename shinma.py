@@ -177,7 +177,7 @@ async def call():
     await bot.say(memo)
 
 
-@bot.command(description='一個だけじゃ保存メモリが足りないというあなたに。無数に保存できます。「?notep secret 私の好きな人は……」であなたの秘密を登録できます。')
+@bot.command(description='一個だけじゃ保存メモリが足りないというあなたに。無数に保存できます。「?notep secret,私の好きな人は……」であなたの秘密を登録できます。')
 async def notep(label_alphabet: str,memo: str):
     "「?memo」の上位版です。各ユーザーごとに複数のメモを保存できます。ラベル名はアルファベットまたは数字が使用できます。"
     f_name = "/tmp/memo_" + id[2] + "_" + label_alphabet + ".pkl"
@@ -186,6 +186,7 @@ async def notep(label_alphabet: str,memo: str):
     f_name2 = "/tmp/memo_label_" + id[2] + ".pkl"
     if not os.path.isfile(f_name2): # 存在しないときの処理
         old_labels = []
+        await bot.say("aa")
     else:
         with open(f_name2, 'rb') as f:
             old_labels = pickle.load(f)
@@ -201,7 +202,7 @@ async def callp(label_alphabet: str):
         memo = pickle.load(f)
     await bot.say(memo)
 
-'''
+
 @bot.ccomand(description='「?notep」を使っているのはいいけれど、どんなlabelを使ったか忘れてしまったあなたのために。あなたのnotepのlabel一覧を表示します。')
 async def call_labelp():
     "「?notep」でメモを保存した際に用いたlabel一覧を表示します。"
@@ -244,5 +245,5 @@ async def call_labels():
     labels_pformat = pprint.pformat(labels)
     await bot.say("このserverのメモのラベル一覧は\n" + labels_pformat.replace(",", "\n") + "\nでした！")
 
-'''
+
 bot.run('NTA1NDA0OTE4NTI2Mzc4MDA0.DrZwjg.Dpv0JWxtpB8aCcdwW9pymObl914')
