@@ -135,8 +135,7 @@ async def write(memo: str):
 async def call():
     "「?write」で記録したメモを呼び出します。"
     global note
-    tmp = "aa"
-    await bot.say(note + tmp)
+    await bot.say(note)
 
 @bot.command()
 async def add(num1: int, num2: int):

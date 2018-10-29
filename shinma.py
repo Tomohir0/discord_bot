@@ -2,6 +2,9 @@ import discord
 import datetime
 import pprint
 import random
+
+import pickle
+
 from discord.ext import commands
 
 description = ('''神魔管理のために作られたbotです。挨拶をしたり愛をささやいたりもします。
@@ -154,11 +157,25 @@ async def write(memo: str):
     note = memo
     await bot.say("覚えました！！")
 
-
 @bot.command()
 async def call():
     "「?write」で記録したメモを呼び出します。"
     global note
     await bot.say(note)
+
+
+@bot.command()
+async def writep(memo: str):
+    "メモを記録します。「?call」で呼び出します。"
+    f = open('singer.pickle', 'wb')
+    pickle.dump(memo,f)
+    await bot.say("覚えました！！")
+
+@bot.command()
+async def callp():
+    "「?write」で記録したメモを呼び出します。"
+    f = open('memo.pkl', 'rb')
+    memo = pickle.load(f)
+    await bot.say(memo)
 
 bot.run('NTA1NDA0OTE4NTI2Mzc4MDA0.DrZwjg.Dpv0JWxtpB8aCcdwW9pymObl914')
