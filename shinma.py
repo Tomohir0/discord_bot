@@ -187,9 +187,9 @@ async def notep(label_alphabet: str,memo: str):
     if not os.path.isfile(f_name2): # 存在しないときの処理
         old_labels = []
     else:
-        with open(f_name2, "rb") as f:
+        with open(f_name2, 'rb') as f:
             old_labels = pickle.load(f)
-    with open(f_name2, "wb") as f:
+    with open(f_name2, 'wb') as f:
         pickle.dump(old_labels.append(label_alphabet),f) # 古いリストに付け足す形で
     await bot.say("覚えました！！")
 
@@ -220,9 +220,9 @@ async def notes(label_alphabet: str, memo: str):
     if not os.path.isfile(f_name2):  # 存在しないときの処理
         old_labels = []
     else:
-        with open(f_name2, "rb") as f:
+        with open(f_name2, 'rb') as f:
             old_labels = pickle.load(f)
-    with open(f_name2, "wb") as f:
+    with open(f_name2, 'wb') as f:
         pickle.dump(old_labels.append(label_alphabet),f)  # 古いリストに付け足す形で
     await bot.say("覚えました！！")
 
