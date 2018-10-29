@@ -89,7 +89,8 @@ async def on_message(message):  # 関数名はon_messageのみ
 @bot.command(description='過去の更新情報はhttps://github.com/Tomohir0/discord_botのshinma.pyのHistoryやREADMEを確認してください。')
 async def new():
     """最近の更新情報をお知らせします。"""
-    m = "ch_listやvc_randを追加。各commandのdescriptionを充実。セリフを感情豊かに"
+    m = ("Oct,29:ch_listの一時削除。noteやcallを追加。pickle実験したいなー"
+    "\nOct,28:ch_listやvc_randを追加。各commandのdescriptionを充実。セリフを感情豊かに")
     await bot.say(m)
 
 
@@ -124,6 +125,7 @@ async def vc():
         await bot.say(channel.name + "にいるのは\n" + member_list.replace(",", "\n") + "\nだよ！")
 
 
+'''
 @bot.command(description='チャンネルidは別commandで使用することができるかもしれません。')
 async def ch_list():
     "各チャンネルの名前とidの組を表示します。"
@@ -132,7 +134,7 @@ async def ch_list():
     await bot.say("チャンネル一覧を表示するよ！メモの用意はできたかな？")
     for (name, id) in zip(channel_name, channel_id):
         await bot.say(name+", " + id)
-
+'''
 
 @bot.command(description='「?vc_rand 2」で「コロシアムVC」の参加メンバーから二人を選びます。')
 async def vc_rand(num: int):
@@ -143,5 +145,20 @@ async def vc_rand(num: int):
         await bot.say("変だよ！\n今のVCには{}人しかいないのに、人数指定が{}人は変だよ！".format(len(member_list), num))
     else:
         await bot.say(random.sample(member_list, num) + "！\n君に決めた！")
+
+
+@bot.command()
+async def write(memo: str):
+    "メモを記録します。「?call」で呼び出します。"
+    global note
+    note = memo
+    await bot.say("覚えました！！")
+
+
+@bot.command()
+async def call():
+    "「?write」で記録したメモを呼び出します。"
+    global note
+    await bot.say(note)
 
 bot.run('NTA1NDA0OTE4NTI2Mzc4MDA0.DrZwjg.Dpv0JWxtpB8aCcdwW9pymObl914')

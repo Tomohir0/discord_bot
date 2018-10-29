@@ -111,27 +111,6 @@ async def rem(content: str):
     note = content
     await bot.say("I've remembered.")
 
-@bot.command()
-async def call():
-    global note
-    await bot.say(note)
-
-
-@bot.command()
-async def vc():
-    "VCチャンネルの参加メンバーの名前一覧を表示します。"
-    channel = bot.get_channel("385094571824119818")
-    member_list = pprint.pformat(
-        [member.name for member in channel.voice_members])
-    await bot.say(member_list.replace(",", "\n"))
-    
-@bot.command()
-async def ch_list():
-    "各チャンネルの名前とidの組を表示します。"
-    channel_id = [channel.id for channel in bot.get_all_channels()]
-    channel_name = [channel.name for channel in bot.get_all_channels()]
-    for (id, name) in zip(channel_name, channel_id):
-        await bot.say(id+" : "+name)
 '''
 
 
@@ -144,6 +123,24 @@ async def vc_rand(num: int):
         await bot.say("変だよ！\n今のVCには{}人しかいないのに、人数指定が{}人は変だよ！".format(len(member_list), num))
     else:
         await bot.say(random.sample(member_list, num))
+
+@bot.command()
+async def write(memo: str):
+    "メモを記録します。「?call」で呼び出します。"
+    global note
+    note = memo
+    await bot.say("覚えました！！")
+
+@bot.command()
+async def call():
+    "「?write」で記録したメモを呼び出します。"
+    global note
+    tmp = "aa"
+    await bot.say(note + tmp)
+
+@bot.command()
+async def add(num1: int, num2: int):
+    await bot.say(str(num1 + num2))
 
 
 
