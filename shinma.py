@@ -176,6 +176,7 @@ async def call():
         memo = pickle.load(f)
     await bot.say(memo)
 
+'''
 @bot.command(description='一個だけじゃ保存メモリが足りないというあなたに。無数に保存できます。「?notep secret 私の好きな人は……」であなたの秘密を登録できます。')
 async def notep(label_alphabet: str,memo: str):
     "「?memo」の上位版です。各ユーザーごとに複数のメモを保存できます。ラベル名はアルファベットまたは数字が使用できます。"
@@ -209,7 +210,6 @@ async def call_labelp():
     labels_pformat = pprint.pformat(labels)
     await bot.say("あなたのメモのラベル一覧は\n" + labels_pformat.replace(",", "\n") + "\nでした！")
 
-
 @bot.command(description='みんなで無数に保存できます。')
 async def notes(label_alphabet: str, memo: str):
     "「?notep」のserver共有版です。"
@@ -225,7 +225,6 @@ async def notes(label_alphabet: str, memo: str):
     with open(f_name2, "wb") as f:
         pickle.dump(old_labels.append(label_alphabet))  # 古いリストに付け足す形で
     await bot.say("覚えました！！")
-
 
 @bot.command(description='')
 async def calls(label_alphabet: str):
@@ -243,6 +242,6 @@ async def call_labels():
         labels = pickle.load(f)
     labels_pformat = pprint.pformat(labels)
     await bot.say("このserverのメモのラベル一覧は\n" + labels_pformat.replace(",", "\n") + "\nでした！")
-
+'''
 
 bot.run('NTA1NDA0OTE4NTI2Mzc4MDA0.DrZwjg.Dpv0JWxtpB8aCcdwW9pymObl914')
