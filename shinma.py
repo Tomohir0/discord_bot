@@ -163,6 +163,7 @@ async def vc_rand(num: int):
 @bot.command(description='「?note 楽器神魔の場面で魔書ばかり引きました」と記録しても、他の人に読み出されることはありません。')
 async def note(memo: str):
     "ユーザーごとにメモを記録します。「?call」で呼び出します。"
+    global id
     f_name = "/tmp/memo_" + id[2] + ".pkl"
     with open(f_name, 'wb') as f:
         pickle.dump(memo,f)
@@ -171,6 +172,7 @@ async def note(memo: str):
 @bot.command(description='気まぐれに「?call」してみましょう。あなたのかつてのmemoが降ってきます。')
 async def call():
     "「?note」で記録したあなたのメモを呼び出します。"
+    global id
     f_name = "/tmp/memo_" + id[2] + ".pkl"
     with open(f_name, 'rb') as f:
         memo = pickle.load(f)
@@ -180,6 +182,7 @@ async def call():
 @bot.command(description='一個だけじゃ保存メモリが足りないというあなたに。無数に保存できます。「?notep secret,私の好きな人は……」であなたの秘密を登録できます。')
 async def notep(label_alphabet: str,memo: str):
     "「?memo」の上位版です。各ユーザーごとに複数のメモを保存できます。ラベル名はアルファベットまたは数字が使用できます。"
+    global id
     f_name = "/tmp/memo_" + id[2] + "_" + label_alphabet + ".pkl"
     with open(f_name, 'wb') as f:
         pickle.dump(memo, f)  # memoを保存
@@ -197,6 +200,7 @@ async def notep(label_alphabet: str,memo: str):
 @bot.command(description='気まぐれに「?callp secret」してみましょう。あなたのsecretがserverに晒されます。')
 async def callp(label_alphabet: str):
     "「?notep」で記録したあなたのメモを呼び出します。"
+    global id
     f_name = "/tmp/memo_" + id[2] + "_" + label_alphabet + ".pkl"
     with open(f_name, 'rb') as f:
         memo = pickle.load(f)
@@ -206,6 +210,7 @@ async def callp(label_alphabet: str):
 @bot.ccomand(description='「?notep」を使っているのはいいけれど、どんなlabelを使ったか忘れてしまったあなたのために。あなたのnotepのlabel一覧を表示します。')
 async def call_labelp():
     "「?notep」でメモを保存した際に用いたlabel一覧を表示します。"
+    global id
     f_name = "/tmp/memo_label_" + id[2] +".pkl"
     with open(f_name, 'rb') as f:
         labels = pickle.load(f)
@@ -215,6 +220,7 @@ async def call_labelp():
 @bot.command(description='みんなで無数に保存できます。')
 async def notes(label_alphabet: str, memo: str):
     "「?notep」のserver共有版です。"
+    global id
     f_name = "/tmp/memo_" + id[0] + "_" + label_alphabet + ".pkl"
     with open(f_name, 'wb') as f:
         pickle.dump(memo, f)  # memoを保存
@@ -231,6 +237,7 @@ async def notes(label_alphabet: str, memo: str):
 @bot.command(description='')
 async def calls(label_alphabet: str):
     "「?callp」のserver版です。"
+    global id
     f_name = "/tmp/memo_" + id[0] + "_" + label_alphabet + ".pkl"
     with open(f_name, 'rb') as f:
         memo = pickle.load(f)
@@ -239,6 +246,7 @@ async def calls(label_alphabet: str):
 @bot.ccomand(description='')
 async def call_labels():
     "「?call_labelp」のserver版です。"
+    global id
     f_name = "/tmp/memo_label_" + id[0] + ".pkl"
     with open(f_name, 'rb') as f:
         labels = pickle.load(f)
