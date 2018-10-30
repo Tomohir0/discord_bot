@@ -4,14 +4,13 @@ import pprint
 import random
 from discord.ext import commands
 import pickle
+import os
 
 description = ('''Test用\nその他のcommandについては「?help」を確認してください。「?」を文頭に置いて適宜使用できます。''')
 bot = commands.Bot(command_prefix='?', description=description)
 date_today = datetime.date.today()
 date_register = "2000-01-01"
-shinma1 = ""
-shinma2 = ""
-note = ""
+id = ["0", "0", "0"]  # server,channel,author
 # async外で保存するためにGlobal変数を用いる
 
 
@@ -26,62 +25,77 @@ async def on_ready():
 @bot.event
 async def on_message(message):  # 関数名はon_messageのみ
     date_today = datetime.date.today()
-    global date_register, shinma1, shinma2  # Global宣言
+    global id  # Global宣言
     mc = message.content
-    # ぼっち関数
-    if "ソウ" == message.author.name:
-        await bot.send_message("ぼっちのソウさん ")
-    # おはよう関数
-    if mc.startswith("おはよう"):
-        m = "Good morning, " + message.author.name
-        await bot.send_message(message.channel, m)
-    # こんにちは・こんばんは関数
-    elif mc.startswith("こんにちは") or mc.startswith("こんばんは"):
-        m = "Hi, " + message.author.name  # メッセージを書きます
-        # メッセージが送られてきたチャンネルへメッセージを送ります
-        await bot.send_message(message.channel, m)
-    # 愛してる関数
-    elif mc.startswith("好き") or mc.startswith("愛してる"):
-        m = "愛してるよ" + message.author.name  # メッセージを書きます
-        # メッセージが送られてきたチャンネルへメッセージを送ります
-        await bot.send_message(message.channel, m)
-    # 友達だよね関数
-    elif mc.startswith("マイ！！フレンド！！") or mc.startswith("友達"):
-        if bot.user != message.author:  # botによるbotの反応を避ける
-            m = "マイ！！フレンド！！" + message.author.display_name + "！！" 
+    if bot.user != message.author:  # botによるbotの反応を避ける
+        id[0] = message.server.id
+        id[1] = message.channel.id
+        id[2] = message.author.id  # commandのためにid用意。天才
+        # ぼっち関数など
+        if mc.startswith("?"):  # 呼びかけ追加
+            if "413309417082322955" == id[2]:
+                await bot.send_message(message.channel, "ぼっちの{}さん ".format(message.author.name))
+        await bot.process_commands(message)  # bot.commandも使えるために必要
+
+        # おはよう関数
+        if mc.startswith("おはよう"):
+            m = "Good morning, " + message.author.name
             await bot.send_message(message.channel, m)
-    # kissして関数
-    elif mc.startswith("キス") or mc.startswith("ちゅ") or mc.startswith("チュ"):
-        m = message.author.name + "(´³`) ㄘゅ:two_hearts:"  # メッセージを書きます
-        # メッセージが送られてきたチャンネルへメッセージを送ります
-        await bot.send_message(message.channel, m)
-    # 神魔登録説明関数
-    elif mc.startswith("神魔登録説明"):
-        explanation = ("本日の神魔登録を行いたい際には「神魔登録」から始まり「神魔登録1杖剣槍2本槌弓3」のように1,2,3を区切りとして発言してください。"
-                       "\nbotから日付と共に「登録完了」と返事が出れば完了です。"
-                       "\n「神魔」とだけ言った場合、その日に登録された神魔が通知されます。"
-                       "\n「神魔登録説明」でこの説明を繰り返します。")  # 説明
-        await bot.send_message(message.channel, explanation)
-    # 神魔登録関数
-    elif mc.startswith("神魔登録"):  # 「神魔登録」で始まるか調べる
-        if mc.count("1") * mc.count("2") * mc.count("3") != 0:
-            shinma1 = mc[mc.index("1") + 1: mc.index("2")]  # 第一神魔
-            shinma2 = mc[mc.index("2") + 1: mc.index("3")]  # 第二神魔
-            date_register = datetime.date.today()  # 神魔登録の日付
-            with open('shinma.pickle', 'wb') as f:
-                pickle.dump(shinma1, f)
-            # 登録完了のメッセージ
-            await bot.send_message(message.channel, "登録完了 on " + str(date_register))
-    # 神魔呼び出し関数
-    elif mc.startswith("神魔") and len(mc) == 2:
-        if date_today != date_register:  # 直近の神魔登録日が今日ではない場合
-            await bot.send_message(message.channel, str(date_today) + "の神魔は登録されていません")
-        else:  # 今日神魔が登録されていた場合
-            with open('shinma.pickle', 'rb') as f:
-                shinma3=pickle.load(f)
-            await bot.send_message(message.channel, "第一神魔は{}\n第二神魔は{},{}".format(shinma1, shinma2,shinma3))
-    
-    await bot.process_commands(message)  # bot.commandも使えるために必要
+        # こんにちは・こんばんは関数
+        elif mc.startswith("こんにちは") or mc.startswith("こんばんは"):
+            m = "Hi, " + message.author.name  # メッセージを書きます
+            # メッセージが送られてきたチャンネルへメッセージを送ります
+            await bot.send_message(message.channel, m)
+        # 愛してる関数
+        elif mc.startswith("好き") or mc.startswith("愛してる"):
+            m = "愛してるよ" + message.author.name  # メッセージを書きます
+            # メッセージが送られてきたチャンネルへメッセージを送ります
+            await bot.send_message(message.channel, m)
+        # 友達だよね関数
+        elif mc.startswith("マイ！！フレンド！！") or mc.startswith("友達"):
+                m = "マイ！！フレンド！！" + message.author.display_name + "！！"
+                await bot.send_message(message.channel, m)
+        # kissして関数
+        elif mc.startswith("キス") or mc.startswith("ちゅ") or mc.startswith("チュ") or mc.startswith("kiss"):
+            m = message.author.name + "(´³`) ㄘゅ:two_hearts:"  # メッセージを書きます
+            # メッセージが送られてきたチャンネルへメッセージを送ります
+            await bot.send_message(message.channel, m)
+        elif mc.startswith("おなかすいた") or mc.startswith("お腹空いた") or mc.startswith("お腹すいた"):
+            m = "わかる。めっちゃお腹空いた。"
+            await bot.send_message(message.channel, m)
+        # 神魔関連
+        if mc.startswith("神魔"):
+            # ぼっち関数
+            if "413309417082322955" == id[2]:
+                await bot.send_message(message.channel, "ぼっちの{}さん ".format(message.author.name))
+            # 神魔登録説明関数
+            if mc.startswith("神魔登録説明"):
+                explanation = ("本日の神魔登録を行いたい際には「神魔登録」から始まり「神魔登録1杖剣槍2本槌弓3」のように1,2,3を区切りとして発言してください。"
+                               "\nbotから日付と共に「登録完了」と返事が出れば完了です。"
+                               "\n「神魔」とだけ言った場合、その日に登録された神魔が通知されます。"
+                               "\n「神魔登録説明」でこの説明を繰り返します。")  # 説明
+                await bot.send_message(message.channel, explanation)
+            # 神魔登録関数
+            elif mc.startswith("神魔登録"):  # 「神魔登録」で始まるか調べる
+                if mc.count("1") == 1 and mc.count("2") == 1 and mc.count("3") == 1:
+                    if mc.index("1") < mc.index("2") and mc.index("2") < mc.index("3"):
+                        shinma1 = mc[mc.index("1") + 1: mc.index("2")]  # 第一神魔
+                        shinma2 = mc[mc.index("2") + 1: mc.index("3")]  # 第二神魔
+                        date_register = datetime.date.today()  # 神魔登録の日付
+                        f_name = "/tmp/shinma_" + id[0] + ".pkl"
+                        with open(f_name, 'wb') as f:
+                            pickle.dump([shinma1, shinma2, date_register], f)
+                        # 登録完了のメッセージ
+                        await bot.send_message(message.channel, "登録完了 on " + str(date_register))
+            # 神魔呼び出し関数
+            elif mc.startswith("神魔") and len(mc) == 2:
+                f_name = "/tmp/shinma_" + id[0] + ".pkl"
+                with open(f_name, 'rb') as f:
+                    shinma = pickle.load(f)
+                if date_today != shinma[2]:  # 直近の神魔登録日が今日ではない場合
+                    await bot.send_message(message.channel, str(date_today) + "の神魔は登録されていません")
+                else:  # 今日神魔が登録されていた場合
+                    await bot.send_message(message.channel, "第一神魔は{}\n第二神魔は{}".format(shinma[0], shinma[1]))
 
 # 神魔登録をリセットする関数も欲しい？？
 
@@ -98,20 +112,25 @@ async def roll(dice: str):
     result = ', '.join(str(random.randint(1, limit)) for r in range(rolls))
     await bot.say(result)
 
+
+@bot.command(description='「?vc」で「コロシアムVC」の参加メンバーの(ニックネームではない)名前一覧が得られます。',pass_context=True)
+async def vvc(ctx: commands.Context):
+    "「コロシアムVC」の参加メンバーの名前一覧を表示します。"
+    channel = bot.get_channel("385094571383848965")
+    if len([member.name for member in channel.voice_members]) == 0:
+        await bot.say("今、" + channel.name + "には一人もいない……一人も……")
+    else:
+        member_list = pprint.pformat(
+            [member.name for member in channel.voice_members])
+        # replaceで改行して見やすく
+        await bot.say(channel.name + "にいるのは\n" + member_list.replace(",", "\n") + "\nだよ！")
+
 '''
 @bot.command(description='「?choice A B C」などのように入力してください')
 async def choose(*choices: str):
     """ランダムに一つ選びます。「?choose」の後に選択肢をスペースで区切って入力してください。"""
     await bot.say(random.choice(choices))
 
-
-@bot.command()
-async def rem(content: str):
-    global note
-    note = content
-    await bot.say("I've remembered.")
-
-'''
 
 
 @bot.command(description='「?vc_rand 2」で「コロシアムVC」の参加メンバーから二人を選びます。')
@@ -141,6 +160,55 @@ async def call():
 async def add(num1: int, num2: int):
     await bot.say(str(num1 + num2))
 
+'''
+@bot.group(pass_context = True)
+async def absent(ctx: commands.Context):
+    "あなたがその日に欠席する場合は「?absent」の後に「me」と入力してください。他の人の場合は一覧から対応する数字を入力してください。"
+#    global id
+#    name_list = [member.name for member in bot.get_all_members()]
+#    id_list = [member.id for member in bot.get_all_members()]
+#    name = name_list[id_list.index(id[2])]
+    if ctx.invoked_subcommand is None:
+        await bot.say("以下のリストから名前を探して、その横にある数字をこたえてね。その人の欠席を登録するよ！あなた自身の場合は「me」でOK!")
+#        for name_tmp in name_list:
+#            m += str(name_list.index(name_tmp) + 1) + ", " + name_tmp + "\n"
+        await bot.say("さあ、数字または「me」を入力してね！")
+
+@absent.command(me_or_number="me", pass_context=True)
+async def absent_me(ctx: commands.Context):
+#    user = ctx.message.author
+#    absent_list[id_list.index(user.id)] = "absent"
+    await bot.say("はお休み！")
+
+@absent.command(me_or_number="1", pass_context=True)
+async def absent_other(ctx: commands.Context):
+    await bot.say("OK")
+
+
+# bot.group dont go well...
+
+@bot.command()
+async def show_role():
+    roles = pprint.pformat(discord.Role)
+    await bot.say(roles.replace(",","\n"))
+
+
+@bot.command(pass_context=True)
+async def get_role(ctx):
+    user = ctx.message.author
+    await bot.say(user.name)
+    role = discord.utils.get(user.server.roles, name="Absent")
+    await bot.say(role.name)
+    await bot.add_roles(user, role)
+    await bot.say(user.name)
+
+
+@bot.command(pass_context=True)
+async def foo(ctx):
+    await bot.say("a")
+    await bot.say(ctx.message.content)
+    user_tmp = ctx.message.author
+    await bot.say(user_tmp.name)
 
 
 bot.run('NTA1NjYxMTE3NjIwNTUxNjgx.DrW1Uw.KC36a1LyMlHdYoHtnSS-X2802EM')

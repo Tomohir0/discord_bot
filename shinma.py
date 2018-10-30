@@ -37,7 +37,6 @@ async def on_message(message):  # 関数名はon_messageのみ
         if mc.startswith("?"):  # 呼びかけ追加
             if "413309417082322955" == id[2]:
                 await bot.send_message(message.channel, "ぼっちの{}さん ".format(message.author.name))
-        await bot.process_commands(message)  # bot.commandも使えるために必要
         
         # おはよう関数
         if mc.startswith("おはよう"):
@@ -62,6 +61,9 @@ async def on_message(message):  # 関数名はon_messageのみ
             m = message.author.name + "(´³`) ㄘゅ:two_hearts:"  # メッセージを書きます
             # メッセージが送られてきたチャンネルへメッセージを送ります
             await bot.send_message(message.channel, m)
+        elif mc.startswith("おなかすいた") or mc.startswith("お腹空いた") or mc.startswith("お腹すいた"):
+            m = "わかる。めっちゃお腹空いた。"
+            await bot.send_message(message.channel,m)
         # 神魔関連
         if mc.startswith("神魔"):
             # ぼっち関数
@@ -95,6 +97,7 @@ async def on_message(message):  # 関数名はon_messageのみ
                     await bot.send_message(message.channel, str(date_today) + "の神魔は登録されていません")
                 else:  # 今日神魔が登録されていた場合
                     await bot.send_message(message.channel, "第一神魔は{}\n第二神魔は{}".format(shinma[0], shinma[1]))
+        await bot.process_commands(message)  # bot.commandも使えるために必要
 
 # 神魔登録をリセットする関数も欲しい？？
 
@@ -102,7 +105,8 @@ async def on_message(message):  # 関数名はon_messageのみ
 @bot.command(description='過去の更新情報はhttps://github.com/Tomohir0/discord_botのshinma.pyのHistoryやREADMEを確認してください。')
 async def new():
     """最近の更新情報をお知らせします。"""
-    m = ("Oct,30:pickle実装できたけれど、結局server起動ごとに変数は消えてしまう……。でもserverで共有できるメモ機能のnotesとcallsを実装したよ。"
+    m = ("Oct,31:ctx実装。役職機能実装。absentを使って役職をabsentに。role_reset_allで戻せるから安心して！"
+        "Oct,30:pickle実装できたけれど、結局server起動ごとに変数は消えてしまう……。でもserverで共有できるメモ機能のnotesとcallsを実装したよ。"
         "\nOct,29:ch_listの一時削除。noteやcallを追加。pickle実験したいなー"
     "\nOct,28:ch_listやvc_randを追加。各commandのdescriptionを充実。セリフを感情豊かに")
     await bot.say(m)
@@ -123,7 +127,11 @@ async def roll(dice: str):
 @bot.command(description='「?choice A B C」などのように入力してください。')
 async def choose(*choices: str):
     """選択肢からランダムに一つ選びます。「?choose」の後に選択肢をスペースで区切って入力してください。"""
-    await bot.say(random.choice(choices) + "にするしかないじゃない！")
+    if random.randint(1,2) == 1:
+        await bot.say(random.choice(choices) + "にするしかないじゃない！")
+    else:
+        await bot.say("ﾀﾞﾗﾗﾗﾗﾗﾗﾗﾗﾗ～\nダン！！\n見事選ばれたのは" + random.choice(choices) + "でした！！")
+
 
 @bot.command(description='「?vc」で「コロシアムVC」の参加メンバーの(ニックネームではない)名前一覧が得られます。')
 async def vc():
@@ -160,19 +168,17 @@ async def vc_rand(num: int):
 
 
 @bot.command(description='「?note 楽器神魔の場面で魔書ばかり引きました」と記録しても、他の人に読み出されることはありません。')
-async def note(memo: str):
+async def note(ctx: commands.Context,memo: str):
     "ユーザーごとにメモを記録します。「?call」で呼び出します。"
-    global id
-    f_name = "/tmp/memo_" + id[2] + ".pkl"
+    f_name = "/tmp/memo_" + ctx.message.server.id + ".pkl"
     with open(f_name, 'wb') as f:
         pickle.dump(memo,f)
     await bot.say("覚えました！！")
 
-@bot.command(description='気まぐれに「?call」してみましょう。あなたのかつてのmemoが降ってきます。')
-async def call():
+@bot.command(description='気まぐれに「?call」してみましょう。あなたのかつてのmemoが降ってきます。', pass_context=True)
+async def call(ctx: commands.Context):
     "「?note」で記録したあなたのメモを呼び出します。"
-    global id
-    f_name = "/tmp/memo_" + id[2] + ".pkl"
+    f_name = "/tmp/memo_" + ctx.message.server.id + ".pkl"
     with open(f_name, 'rb') as f:
         memo = pickle.load(f)
     await bot.say(memo)
@@ -216,11 +222,11 @@ async def call_labelp():
     await bot.say("あなたのメモのラベル一覧は\n" + labels_pformat.replace(",", "\n") + "\nでした！")
 '''
 
-@bot.command(description='「?notes secret ギルマスは実は高校生」とすれば、secretラベルで「ギルマスは実は高校生」を読み出せます。ラベル名はアルファベットのみ。スペースが区切りとみなされます')
-async def notes(label_alphabet: str, memo: str):
-    "serverのみんなでmemoを共有できます。「?notes」は記録を行います。"
-    global id
-    f_name = "/tmp/memo_" + id[0] + "_" + label_alphabet + ".pkl"
+
+@bot.command(description='serverのみんなでmemoを共有できます。', pass_context=True)
+async def notes(ctx: commands.Context, label: str, *, memo: str):
+    "「?notes secret ギルマスは実は高校生」とすれば、secretラベルで「ギルマスは実は高校生」を記録できます。ラベル名は英数字のみ。スペースが区切りとみなされます"
+    f_name = "/tmp/memo_" + ctx.message.author.id + "_" + label + ".pkl"
     with open(f_name, 'wb') as f:
         pickle.dump(memo, f)  # memoを保存
     await bot.say("覚えました！！")
@@ -231,19 +237,19 @@ async def notes(label_alphabet: str, memo: str):
         with open(f_name2, 'rb') as f:
             old_labels = pickle.load(f)
     with open(f_name2, 'wb') as f:
-        pickle.dump(old_labels.append(label_alphabet),f)  # 古いリストに付け足す形で
+        pickle.dump(old_labels.append(label),f)  # 古いリストに付け足す形で
         '''
 
-@bot.command(description='「?calls secret」でsecretとして保存されたメモを読み出します。')
-async def calls(label_alphabet: str):
-    "「?notes」で保存されたmemoを読み出すことができます。"
-    global id
-    f_name = "/tmp/memo_" + id[0] + "_" + label_alphabet + ".pkl"
+
+@bot.command(description='「?notes」で保存されたmemoを読み出すことができます。', pass_context=True)
+async def calls(ctx: commands.Context, label: str):
+    "「?calls secret」でsecretとして保存されたメモを読み出します。"
+    f_name = "/tmp/memo_" + ctx.message.author.id + "_" + label + ".pkl"
     with open(f_name, 'rb') as f:
         memo = pickle.load(f)
     await bot.say(memo)
 '''    if not os.path.isfile(f_name):  # 存在しないときの処理
-        await bot.say("ないよ！\n" + label_alphabet + "のメモないよ！")
+        await bot.say("ないよ！\n" + label + "のメモないよ！")
     else:
         '''
 
@@ -262,5 +268,31 @@ async def call_labels():
         labels_pformat = pprint.pformat(labels)
         await bot.say("このserverのメモのラベル一覧は\n" + labels_pformat.replace(",", "\n") + "\nでした！")
 '''
+
+
+@bot.command(description='',pass_context=True)
+async def absent(ctx: commands.Context):
+    "役職をAbsentに変更して遅刻しそうないし欠席の可能性があることを明確にできます。「?role_reset」で全員のAbsentをもとに戻せます。"
+    user = ctx.message.author
+    role = discord.utils.get(user.server.roles, name="Absent")
+    await bot.add_roles(user, role)
+
+
+@bot.command(description='', pass_context=True)
+async def role_reset_single(ctx: commands.Context):
+    "あなた一人の役職を@everyoneに戻せます。"
+    user = ctx.message.author
+    role = discord.utils.get(user.server.roles, name="@everyone")
+    await bot.add_roles(user, role)
+
+
+@bot.command(description='', pass_context=True)
+async def role_reset_all(ctx: commands.Context):
+    "Absentの人の役職をすべて@everyoneに戻せます。"
+    user = ctx.message.author
+    role = discord.utils.get(user.server.roles, name="@everyone")
+    for member in user.server.members:
+        if member.role.name == "Absent":
+            await bot.add_roles(member, role)
 
 bot.run('NTA1NDA0OTE4NTI2Mzc4MDA0.DrZwjg.Dpv0JWxtpB8aCcdwW9pymObl914')
