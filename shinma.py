@@ -236,7 +236,7 @@ async def role_reset(ctx: commands.Context):
 
 @bot.command(description='', pass_context=True)
 async def tmp_up(ctx: commands.Context):
-    for file_name in glob.glob("/tmp/*.*"):
+    for file_name in glob.glob("tmp/*.*"):
         await bot.say(file_name)
         s3.Object(bucket_name, file_name).upload_file(file_name)
     await bot.say("Finished")
@@ -244,8 +244,9 @@ async def tmp_up(ctx: commands.Context):
 @bot.command(description='', pass_context=True)
 async def tmp_dl(ctx: commands.Context):
     client = boto3.client('s3')
-    file_lists = client.list_objects(Bucket=bucket_name, Prefix="/tmp/")
+    file_lists = client.list_objects(Bucket=bucket_name, Prefix="tmp/")
     for file_name in file_lists:
+        await bot.say(file_name)
         s3.Object(bucket_name, file_name).download_file(file_name)
     await bot.say("Finished")
 
