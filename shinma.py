@@ -159,10 +159,10 @@ async def vc():
 async def notes(ctx: commands.Context, label: str, *, memo: str):
     "「?notes secret ギルマスは実は高校生」とすれば、secretラベルで「ギルマスは実は高校生」を記録できます。スペースが区切りとみなされます"
     json_key = "memo_" + ctx.message.author.server.id + ".json"  # 読み出し
-#    obj = s3.Object(bucket_name, json_key)
+    obj = s3.Object(bucket_name, json_key)
 #    memos = json.loads(obj.get()['Body'].read())  # s3からjson => dict
-    memos[label] = memo # 追加
-    r = obj.put(Body=json.dumps(memos))
+#    memos[label] = memo # 追加
+    r = obj.put(Body=json.dumps({"1": memo}))
     await bot.say("覚えました！！")
 
 
