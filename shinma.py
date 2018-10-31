@@ -245,8 +245,8 @@ async def tmp_up(ctx: commands.Context):
 async def tmp_dl(ctx: commands.Context):
     client = boto3.client('s3')
     response = client.list_objects(Bucket=bucket_name, Prefix="tmp/")
-    await bot.say(response)
-    for file_name in response:
+    file_list = [content['Key'] for content in response['Contents']]
+    for file_name in file_list:
         await bot.say(file_name)
         s3.Object(bucket_name, file_name).download_file("/"+file_name)
     await bot.say("Finished")
