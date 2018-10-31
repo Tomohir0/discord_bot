@@ -108,11 +108,13 @@ async def on_message(message):  # 関数名はon_messageのみ
 @bot.command(description='sourceは https://github.com/Tomohir0/discord_bot/blob/master/shinma.py を確認してください。')
 async def new():
     """最近の更新情報をお知らせします。"""
-    m_new = ("Oct,31:役割を忘れすぎているから神魔botに無理やり神魔を思い出させたよ！限定的にpickle復活！"
+    m_new = ("Oct,31:ファイルベースをjsonからpickleに！今までのスピードが帰ってきたぜ！！"
+    "\ntmp_upとtmp_dlのときのみS3とやり取りするんだよ！効率的！新しい関数はないけど、毎回出してるとややこしいもんね！"
+        "\nOct,31:役割を忘れすぎているから神魔botに無理やり神魔を思い出させたよ！限定的にpickle復活！"
         "\nOct,31:s3連携完了だああああ！これでbotを更新してもdataが消えることはなくなったああ！fixし放題だね！"
     "\nその代わり、ちょっと反応遅くなっちゃったけど許してほしいな……)call_labelsも実装したよ！")
-    m_old = ("\n\nOct,31:ctx実装。役職機能実装。absentを使って役職をAbsentに。role_resetで戻せるから安心して！"
-         "\nOct,30:pickle実装できたけれど、結局server起動ごとに変数は消えてしまう……。でもserverで共有できるメモ機能のnotesとcallsを実装したよ。")
+    #m_old = ("\n\nOct,31:ctx実装。役職機能実装。absentを使って役職をAbsentに。role_resetで戻せるから安心して！"
+    #     "\nOct,30:pickle実装できたけれど、結局server起動ごとに変数は消えてしまう……。でもserverで共有できるメモ機能のnotesとcallsを実装したよ。")
     #     "\nOct,29:ch_listの一時削除。noteやcallを追加。pickle実験したいなー"
     #     "\nOct,28:ch_listやvc_randを追加。各commandのdescriptionを充実。セリフを感情豊かに"
     m2 = ("\n\n過去の更新情報については https://github.com/Tomohir0/discord_bot/blob/master/README ")
@@ -155,42 +157,45 @@ async def vc():
 
 
 @bot.command(description='serverのみんなでmemoを共有できます。', pass_context=True)
-async def notes(ctx: commands.Context, label: str, memo: str):
-    "「?notes secret ギルマスは実は高校生」とすれば、secretラベルで「ギルマスは実は高校生」を記録できます。スペースが区切りとみなされます"
-    json_key = "memo_" + ctx.message.author.server.id + ".json"  # 読み出し
-    obj = s3.Object(bucket_name, json_key)
-    if obj.delete_marker == None:
-        memos = json.loads(obj.get()['Body'].read())  # s3からjson => dict
-    else:
+async def notes(ctx: commands.Context, label: str, *, memo: str):
+    "「?notes secret ギルマスは実は高校生」とすれば、secretラベルで「ギルマスは実は高校生」を記録できます。"
+    f_name = "/tmp/memo_" + ctx.message.author.server.id + ".pkl"
+    if not os.path.isfile(f_name):  # 存在しないときの処理
         memos = {}
-    memos[label] = memo  # 追加
-    obj.put(Body=json.dumps(memos))
+    else:
+        with open(f_name, 'rb') as f:
+            memos = pickle.load(f)
+    memos[label] = memo
+    with open(f_name, 'wb') as f:
+        pickle.dump(memos, f)  # 古いリストに付け足す形で
     await bot.say("覚えました！！")
 
 
 @bot.command(description='「?notes」で保存されたmemoを読み出すことができます。', pass_context=True)
 async def calls(ctx: commands.Context, label: str):
     "「?calls secret」でsecretとして保存されたメモを読み出します。"
-    json_key = "memo_" + ctx.message.author.server.id + ".json"
-    obj = s3.Object(bucket_name, json_key)
-    if obj.delete_marker != None:
+    f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
+    if not os.path.isfile(f_name):  # 存在しないときの処理
         await bot.say("まだこのserverにはメモがないよ……。?notesを使ってほしいな……")
     else:
-        memos = json.loads(obj.get()['Body'].read())  # s3からjson => dict
-        await bot.say(memos.get(label,label + "のメモないよ！"))
-
+        with open(f_name, 'rb') as f:
+            memos = pickle.load(f)
+            await bot.say(memos.get(label, label + "なんてlabelのメモないよ！"))
 
 @bot.command(description=' ', pass_context=True)
 async def call_labels(ctx: commands.Context):
     "「?notes」のlabelの一覧を表示します。"
-    json_key = "memo_" + ctx.message.author.server.id + ".json"
-    obj = s3.Object(bucket_name, json_key)
-    if obj.delete_marker != None:
+    f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
+    if not os.path.isfile(f_name):  # 存在しないときの処理
         await bot.say("まだこのserverにはメモがないよ……。?notesを使ってほしいな……")
     else:
-        memos = json.loads(obj.get()['Body'].read())  # s3からjson => dict
-        await bot.say(pprint.pformat(memos.keys()).replace(",","\n"))
-
+        with open(f_name, 'rb') as f:
+            memos = pickle.load(f)
+            m = "ここのmemoのlabel一覧は\n"
+            for label in memos.keys():
+                m += label + "\n"
+            m += "だよ！"
+            await bot.say(m)
 
 @bot.command(description='「?vc_rand 2」で「コロシアムVC」の参加メンバーから二人を選びます。')
 async def vc_rand(num: int):
@@ -242,7 +247,6 @@ async def tmp_dl(ctx: commands.Context):
     for file_name in file_lists:
         s3.Object(bucket_name, file_name).download_file(file_name)
     await bot.say("Finished")
-
 
 
 bot.run('NTA1NDA0OTE4NTI2Mzc4MDA0.DrZwjg.Dpv0JWxtpB8aCcdwW9pymObl914')

@@ -29,7 +29,7 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):  # 関数名はon_messageのみ
-    id["", "", ""]
+    id=["", "", ""]
     date_today = datetime.date.today()
     mc = message.content
     if bot.user != message.author:  # botによるbotの反応を避ける
@@ -219,27 +219,31 @@ async def call():
 
 
 @bot.command(description='serverのみんなでmemoを共有できます。', pass_context=True)
-async def notess(ctx: commands.Context, label: str, memo: str):
-    "「?notes secret ギルマスは実は高校生」とすれば、secretラベルで「ギルマスは実は高校生」を記録できます。スペースが区切りとみなされます"
-    json_key = "memo_" + ctx.message.author.server.id + ".json"  # 読み出し
-    obj = s3.Object(bucket_name, json_key)
-    if obj.delete_marker == None:
-        memos = json.loads(obj.get()['Body'].read())  # s3からjson => dict
-    else:
+async def notess(ctx: commands.Context, label: str, *, memo: str):
+    "「?notes secret ギルマスは実は高校生」とすれば、secretラベルで「ギルマスは実は高校生」を記録できます。ラベル名は英数字のみ。スペースが区切りとみなされます"
+    f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
+    if not os.path.isfile(f_name):  # 存在しないときの処理
         memos = {}
-    memos[label] = memo # 追加
-    obj.put(Body=json.dumps(memos))
+    else:
+        with open(f_name, 'rb') as f:
+            memos = pickle.load(f)
+    memos[label] = memo
+    with open(f_name, 'wb') as f:
+        pickle.dump(memos, f)  # 古いリストに付け足す形で
     await bot.say("覚えました！！")
-
+    
 
 @bot.command(description='「?notes」で保存されたmemoを読み出すことができます。', pass_context=True)
 async def callss(ctx: commands.Context, label: str):
     "「?calls secret」でsecretとして保存されたメモを読み出します。"
-    json_key = "memo_" + ctx.message.author.server.id + ".json"
-    obj = s3.Object(bucket_name, json_key)
-    await bot.say(str(obj.delete_marker))
-    memos = json.loads(obj.get()['Body'].read())  # s3からjson => dict
-    await bot.say(memos[label])
+    f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
+    if not os.path.isfile(f_name):  # 存在しないときの処理
+        await bot.say("まだこのserverにはメモがないよ……。?notesを使ってほしいな……")
+    else:
+        with open(f_name, 'rb') as f:
+            memos = pickle.load(f)
+            await bot.say(memos.get(label, label + "なんてlabelのメモないよ！"))
+    
 
 
 bot.run('NTA1NjYxMTE3NjIwNTUxNjgx.DrW1Uw.KC36a1LyMlHdYoHtnSS-X2802EM')
