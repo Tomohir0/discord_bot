@@ -14,8 +14,9 @@ bucket_name = "tomo-discord"
 s3 = boto3.resource('s3')
 # s3連携
 
-description = ('''神魔管理のために作られたbotです。挨拶をしたり愛をささやいたりもします。
-\n「神魔登録説明」で神魔登録などについての説明を表示します。\nその他のcommandについては「?help」を確認してください。「?」を文頭に置いて適宜使用できます。''')
+description = ("神魔管理のために作られたbotです。挨拶をしたり愛をささやいたりもします。"
+                "\n「神魔登録説明」で神魔登録などについての説明を表示します。\nその他のcommandについては「?help」を確認してください。「?」を文頭に置いて適宜使用できます。"
+               "\nsourceは https://github.com/Tomohir0/discord_bot/blob/master/shinma.py を確認してください。")
 bot = commands.Bot(command_prefix='?', description=description)
 
 # async外で保存するためにGlobal変数を用いる
@@ -137,7 +138,7 @@ async def roll(dice: str):
 @bot.command(description='「?choice A B C」などのように入力してください。')
 async def choose(*choices: str):
     """選択肢からランダムに一つ選びます。「?choose」の後に選択肢をスペースで区切って入力してください。"""
-    if random.randint(1, 2) == 1:
+    if random.randint(1, 3) > 1:
         await bot.say(random.choice(choices) + "にするしかないじゃない！")
     else:
         await bot.say("ﾀﾞﾗﾗﾗﾗﾗﾗﾗﾗﾗ～\nダン！！\n見事選ばれたのは" + random.choice(choices) + "でした！！")
@@ -182,7 +183,7 @@ async def calls(ctx: commands.Context, label: str):
             memos = pickle.load(f)
             await bot.say(memos.get(label, label + "なんてlabelのメモないよ！"))
 
-@bot.command(description=' ', pass_context=True)
+@bot.command(description=' ', pass_context=True,)
 async def call_labels(ctx: commands.Context):
     "「?notes」のlabelの一覧を表示します。"
     f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
@@ -238,7 +239,7 @@ async def role_reset(ctx: commands.Context):
 async def tmp_up(ctx: commands.Context):
     for file_name in glob.glob("/tmp/*.*"):
         await bot.say(file_name)
-        s3.Object(bucket_name, file_name).upload_file(file_name[1:])
+        s3.Object(bucket_name, file_name[1:]).upload_file(file_name)
     await bot.say("Finished")
 
 @bot.command(description='', pass_context=True)
