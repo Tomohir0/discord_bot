@@ -29,6 +29,7 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):  # 関数名はon_messageのみ
+    id["", "", ""]
     date_today = datetime.date.today()
     mc = message.content
     if bot.user != message.author:  # botによるbotの反応を避ける

@@ -2,11 +2,11 @@ import discord
 import datetime
 import pprint
 import random
-
+from discord.ext import commands
 import os
 import pickle
+import glob
 
-from discord.ext import commands
 
 import json
 import boto3
@@ -41,7 +41,7 @@ async def on_message(message):  # 関数名はon_messageのみ
         # ぼっち関数など
         if mc.startswith("?"):  # 呼びかけ追加
             if "413309417082322955" == id[2]:
-                await bot.send_message(message.channel, "ぼっちの{}さん ".format(message.author.name))
+                await bot.send_message(message.channel, "えっちな{}さん ".format(message.author.name))
 
         # おはよう関数
         if mc.startswith("おはよう"):
@@ -73,7 +73,7 @@ async def on_message(message):  # 関数名はon_messageのみ
         if mc.startswith("神魔"):
             # ぼっち関数
             if "413309417082322955" == id[2]:
-                await bot.send_message(message.channel, "ぼっちの{}さん ".format(message.author.name))
+                await bot.send_message(message.channel, "えっちな{}さん ".format(message.author.name))
             # 神魔登録説明関数
             if mc.startswith("神魔登録説明"):
                 explanation = ("本日の神魔登録を行いたい際には「神魔登録」から始まり「神魔登録1杖剣槍2本槌弓3」のように1,2,3を区切りとして発言してください。"
@@ -113,8 +113,8 @@ async def new():
     "\nその代わり、ちょっと反応遅くなっちゃったけど許してほしいな……)call_labelsも実装したよ！")
     m_old = ("\n\nOct,31:ctx実装。役職機能実装。absentを使って役職をAbsentに。role_resetで戻せるから安心して！"
          "\nOct,30:pickle実装できたけれど、結局server起動ごとに変数は消えてしまう……。でもserverで共有できるメモ機能のnotesとcallsを実装したよ。")
-#         "\nOct,29:ch_listの一時削除。noteやcallを追加。pickle実験したいなー"
-#         "\nOct,28:ch_listやvc_randを追加。各commandのdescriptionを充実。セリフを感情豊かに"
+    #     "\nOct,29:ch_listの一時削除。noteやcallを追加。pickle実験したいなー"
+    #     "\nOct,28:ch_listやvc_randを追加。各commandのdescriptionを充実。セリフを感情豊かに"
     m2 = ("\n\n過去の更新情報については https://github.com/Tomohir0/discord_bot/blob/master/README ")
     await bot.say(m_new + m_old + m2)
 
@@ -228,6 +228,21 @@ async def role_reset(ctx: commands.Context):
     for member in user.server.members:
         if member.role.name == "Absent":
             await bot.add_roles(member, role)
+
+@bot.command(description='', pass_context=True)
+async def tmp_up(ctx: commands.Context):
+    for file_name in glob.glob("/tmp/*.*"):
+        s3.Object(bucket_name, file_name).upload_file(file_name)
+    await bot.say("Finished")
+
+@bot.command(description='', pass_context=True)
+async def tmp_dl(ctx: commands.Context):
+    file_lists = s3.list_objects(Bucket=bucket_name, Prefix="/tmp/")
+    for file_name in file_lists:
+        s3.Object(bucket_name, file_name).download_file(file_name)
+    await bot.say("Finished")
+
+
 
 bot.run('NTA1NDA0OTE4NTI2Mzc4MDA0.DrZwjg.Dpv0JWxtpB8aCcdwW9pymObl914')
 
