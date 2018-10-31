@@ -16,7 +16,6 @@ description = ('''Test用\nその他のcommandについては「?help」を確�
 bot = commands.Bot(command_prefix='?', description=description)
 date_today = datetime.date.today()
 date_register = "2000-01-01"
-id = ["0", "0", "0"]  # server,channel,author
 # async外で保存するためにGlobal変数を用いる
 
 
@@ -31,7 +30,6 @@ async def on_ready():
 @bot.event
 async def on_message(message):  # 関数名はon_messageのみ
     date_today = datetime.date.today()
-    global id  # Global宣言
     mc = message.content
     if bot.user != message.author:  # botによるbotの反応を避ける
         id[0] = message.server.id
@@ -41,7 +39,6 @@ async def on_message(message):  # 関数名はon_messageのみ
         if mc.startswith("?"):  # 呼びかけ追加
             if "413309417082322955" == id[2]:
                 await bot.send_message(message.channel, "ぼっちの{}さん ".format(message.author.name))
-        await bot.process_commands(message)  # bot.commandも使えるために必要
 
         # おはよう関数
         if mc.startswith("おはよう"):
@@ -102,9 +99,7 @@ async def on_message(message):  # 関数名はon_messageのみ
                     await bot.send_message(message.channel, str(date_today) + "の神魔は登録されていません")
                 else:  # 今日神魔が登録されていた場合
                     await bot.send_message(message.channel, "第一神魔は{}\n第二神魔は{}".format(shinma[0], shinma[1]))
-
-# 神魔登録をリセットする関数も欲しい？？
-
+        await bot.process_commands(message)  # bot.commandも使えるために必要
 
 @bot.command()
 async def roll(dice: str):

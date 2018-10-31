@@ -18,7 +18,6 @@ description = ('''神魔管理のために作られたbotです。挨拶をし�
 \n「神魔登録説明」で神魔登録などについての説明を表示します。\nその他のcommandについては「?help」を確認してください。「?」を文頭に置いて適宜使用できます。''')
 bot = commands.Bot(command_prefix='?', description=description)
 
-id = ["0", "0", "0"]  # server,channel,author
 # async外で保存するためにGlobal変数を用いる
 
 
@@ -33,7 +32,6 @@ async def on_ready():
 @bot.event
 async def on_message(message):  # 関数名はon_messageのみ
     date_today = datetime.date.today()
-    global id  # Global宣言
     mc = message.content
     if bot.user != message.author:  # botによるbotの反応を避ける
         id[0] = message.server.id
@@ -60,8 +58,8 @@ async def on_message(message):  # 関数名はon_messageのみ
             await bot.send_message(message.channel, m)
         # 友達だよね関数
         elif mc.startswith("マイ！！フレンド！！") or mc.startswith("友達"):
-            m = "マイ！！フレンド！！" + message.author.display_name + "！！"
-            await bot.send_message(message.channel, m)
+                m = "マイ！！フレンド！！" + message.author.display_name + "！！"
+                await bot.send_message(message.channel, m)
         # kissして関数
         elif mc.startswith("キス") or mc.startswith("ちゅ") or mc.startswith("チュ") or mc.startswith("kiss"):
             m = message.author.name + "(´³`) ㄘゅ:two_hearts:"  # メッセージを書きます
@@ -89,37 +87,33 @@ async def on_message(message):  # 関数名はon_messageのみ
                         shinma1 = mc[mc.index("1") + 1: mc.index("2")]  # 第一神魔
                         shinma2 = mc[mc.index("2") + 1: mc.index("3")]  # 第二神魔
                         date_register = datetime.date.today()  # 神魔登録の日付
-                        json_key = "shinma_" + id[0] + ".json"  
-                        obj = s3.Object(bucket_name, json_key)
-                        obj.put(Body=json.dumps({"1": shinma1, "2": shinma2, "date": "date_register"}))
+                        f_name = "/tmp/shinma_" + id[0] + ".pkl"
+                        with open(f_name, 'wb') as f:
+                            pickle.dump([shinma1, shinma2, date_register], f)
                         # 登録完了のメッセージ
                         await bot.send_message(message.channel, "登録完了 on " + str(date_register))
             # 神魔呼び出し関数
             elif mc.startswith("神魔") and len(mc) == 2:
-                json_key = "shinma_" + id[0] + ".json"  
-                obj = s3.Object(bucket_name, json_key)     
-                if obj.delete_marker != None:
-                    await bot.say("まだこのserverでは神魔登録されてないよ……")
-                else:
-                    shinma = json.loads(obj.get()['Body'].read())  # 読み出し
-                    if str(date_today) !=shinma["date"] :  # 直近の神魔登録日が今日ではない場合
-                        await bot.send_message(message.channel, str(date_today) + "の神魔は登録されていません")
-                    else:  # 今日神魔が登録されていた場合
-                        await bot.send_message(message.channel, "第一神魔は{}\n第二神魔は{}".format(shinma["1"], shinma["2"]))
+                f_name = "/tmp/shinma_" + id[0] + ".pkl"
+                with open(f_name, 'rb') as f:
+                    shinma = pickle.load(f)
+                if date_today != shinma[2]:  # 直近の神魔登録日が今日ではない場合
+                    await bot.send_message(message.channel, str(date_today) + "の神魔は登録されていません")
+                else:  # 今日神魔が登録されていた場合
+                    await bot.send_message(message.channel, "第一神魔は{}\n第二神魔は{}".format(shinma[0], shinma[1]))
         await bot.process_commands(message)  # bot.commandも使えるために必要
-
-# 神魔登録をリセットする関数も欲しい？？
 
 
 @bot.command(description='sourceは https://github.com/Tomohir0/discord_bot/blob/master/shinma.py を確認してください。')
 async def new():
     """最近の更新情報をお知らせします。"""
-    m_new = ("Oct,31:s3連携完了だああああ！これでbotを更新してもdataが消えることはなくなったああ！fixし放題だね！"
-    "(\nその代わり、ちょっと反応遅くなっちゃったけど許してほしいな……)call_labelsも実装したよ！")
+    m_new = ("Oct,31:役割を忘れすぎているから神魔botに無理やり神魔を思い出させたよ！限定的にpickle復活！"
+        "\nOct,31:s3連携完了だああああ！これでbotを更新してもdataが消えることはなくなったああ！fixし放題だね！"
+    "\nその代わり、ちょっと反応遅くなっちゃったけど許してほしいな……)call_labelsも実装したよ！")
     m_old = ("\n\nOct,31:ctx実装。役職機能実装。absentを使って役職をAbsentに。role_resetで戻せるから安心して！"
-         "\nOct,30:pickle実装できたけれど、結局server起動ごとに変数は消えてしまう……。でもserverで共有できるメモ機能のnotesとcallsを実装したよ。"
-         "\nOct,29:ch_listの一時削除。noteやcallを追加。pickle実験したいなー"
-         "\nOct,28:ch_listやvc_randを追加。各commandのdescriptionを充実。セリフを感情豊かに")
+         "\nOct,30:pickle実装できたけれど、結局server起動ごとに変数は消えてしまう……。でもserverで共有できるメモ機能のnotesとcallsを実装したよ。")
+#         "\nOct,29:ch_listの一時削除。noteやcallを追加。pickle実験したいなー"
+#         "\nOct,28:ch_listやvc_randを追加。各commandのdescriptionを充実。セリフを感情豊かに"
     m2 = ("\n\n過去の更新情報については https://github.com/Tomohir0/discord_bot/blob/master/README ")
     await bot.say(m_new + m_old + m2)
 
