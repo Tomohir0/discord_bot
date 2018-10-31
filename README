@@ -8,8 +8,17 @@
 :Procile, requirements.txt, runtime.txt| heroku用のテキスト
 
 # update
+- 細かい修正は随時。
+## Oct,31
+- ctx実装。役職機能実装(server側の変更も必要)。absentを使って役職をAbsentに。role_reset_allで戻せるから安心して！
+- S3とHerokuの連携を図りたい……。
+## Oct,30
+- pickle実装できたけれど、結局server起動ごとに変数は消えてしまう……。でもserverで共有できるメモ機能のnotesとcallsを実装したよ。
+## Oct,29
+- ch_listの一時削除。noteやcallを追加。pickle実験したいなー
 ## Oct 28,2018
 - bot.commandも実装。rollなどを行えるように。VCチャンネルのメンバーリストも取得可能に。(現状ではsource内にチャンネルidを記載する形で指定)
+- ch_listやvc_randを追加。各commandのdescriptionを充実。セリフを感情豊かに
 ## Oct 27,2018
 - 作成。神魔登録機能や簡単な挨拶機能を備える。
 - 呼応反応を充実。

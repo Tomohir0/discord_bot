@@ -6,6 +6,12 @@ from discord.ext import commands
 import pickle
 import os
 
+import json
+import boto3
+bucket_name = "tomo-discord"
+s3 = boto3.resource('s3')
+#s3連携
+
 description = ('''Test用\nその他のcommandについては「?help」を確認してください。「?」を文頭に置いて適宜使用できます。''')
 bot = commands.Bot(command_prefix='?', description=description)
 date_today = datetime.date.today()
@@ -132,7 +138,6 @@ async def choose(*choices: str):
     await bot.say(random.choice(choices))
 
 
-
 @bot.command(description='「?vc_rand 2」で「コロシアムVC」の参加メンバーから二人を選びます。')
 async def vc_rand(num: int):
     "「コロシアムVC」の参加メンバーのからランダムに指定された人数を選びます。"
@@ -143,18 +148,6 @@ async def vc_rand(num: int):
     else:
         await bot.say(random.sample(member_list, num))
 
-@bot.command()
-async def write(memo: str):
-    "メモを記録します。「?call」で呼び出します。"
-    global note
-    note = memo
-    await bot.say("覚えました！！")
-
-@bot.command()
-async def call():
-    "「?write」で記録したメモを呼び出します。"
-    global note
-    await bot.say(note)
 
 @bot.command()
 async def add(num1: int, num2: int):
@@ -209,6 +202,28 @@ async def foo(ctx):
     await bot.say(ctx.message.content)
     user_tmp = ctx.message.author
     await bot.say(user_tmp.name)
+
+@bot.event
+async def on_resumed():
+    await bot.say("STOP")
+
+
+@bot.command()
+async def note(memo: str):
+    "メモを記録します。「?call」で呼び出します。"
+    json_key = "memo.json"
+    obj = s3.Object(bucket_name, json_key)
+    obj.put(Body=json.dumps({"1":memo}))
+    await bot.say("覚えました！！")
+
+
+@bot.command()
+async def call():
+    "「?note」で記録したメモを呼び出します。"
+    json_key = "memo.json"
+    obj = s3.Object(bucket_name, json_key)
+    memos = json.loads( obj.get()['Body'].read())
+    await bot.say(memos["1"])
 
 
 bot.run('NTA1NjYxMTE3NjIwNTUxNjgx.DrW1Uw.KC36a1LyMlHdYoHtnSS-X2802EM')
