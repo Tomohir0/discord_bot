@@ -159,7 +159,7 @@ async def vc():
 @bot.command(description='serverのみんなでmemoを共有できます。', pass_context=True)
 async def notes(ctx: commands.Context, label: str, *, memo: str):
     "「?notes secret ギルマスは実は高校生」とすれば、secretラベルで「ギルマスは実は高校生」を記録できます。"
-    f_name = "/tmp/memo_" + ctx.message.author.server.id + ".pkl"
+    f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
     if not os.path.isfile(f_name):  # 存在しないときの処理
         memos = {}
     else:
