@@ -203,10 +203,6 @@ async def foo(ctx):
     user_tmp = ctx.message.author
     await bot.say(user_tmp.name)
 
-@bot.event
-async def on_resumed():
-    await bot.say("STOP")
-
 
 @bot.command()
 async def note(memo: str):
@@ -227,22 +223,25 @@ async def call():
 
 
 @bot.command(description='serverのみんなでmemoを共有できます。', pass_context=True)
-async def notes(ctx: commands.Context, label: str, memo: str):
+async def notess(ctx: commands.Context, label: str, memo: str):
     "「?notes secret ギルマスは実は高校生」とすれば、secretラベルで「ギルマスは実は高校生」を記録できます。スペースが区切りとみなされます"
     json_key = "memo_" + ctx.message.author.server.id + ".json"  # 読み出し
-    await bot.say(json_key)
     obj = s3.Object(bucket_name, json_key)
-    memos = json.loads(obj.get()['Body'].read())  # s3からjson => dict
+    if obj.delete_marker == None:
+        memos = json.loads(obj.get()['Body'].read())  # s3からjson => dict
+    else:
+        memos = {}
     memos[label] = memo # 追加
-    obj.put(Body=json.dumps({"1": memo}))
+    obj.put(Body=json.dumps(memos))
     await bot.say("覚えました！！")
 
 
 @bot.command(description='「?notes」で保存されたmemoを読み出すことができます。', pass_context=True)
-async def calls(ctx: commands.Context, label: str):
+async def callss(ctx: commands.Context, label: str):
     "「?calls secret」でsecretとして保存されたメモを読み出します。"
     json_key = "memo_" + ctx.message.author.server.id + ".json"
     obj = s3.Object(bucket_name, json_key)
+    await bot.say(str(obj.delete_marker))
     memos = json.loads(obj.get()['Body'].read())  # s3からjson => dict
     await bot.say(memos[label])
 

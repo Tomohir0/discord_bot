@@ -89,20 +89,23 @@ async def on_message(message):  # 関数名はon_messageのみ
                         shinma1 = mc[mc.index("1") + 1: mc.index("2")]  # 第一神魔
                         shinma2 = mc[mc.index("2") + 1: mc.index("3")]  # 第二神魔
                         date_register = datetime.date.today()  # 神魔登録の日付
-                        f_name = "/tmp/shinma_" + id[0] + ".pkl"
-                        with open(f_name, 'wb') as f:
-                            pickle.dump([shinma1, shinma2, date_register], f)
+                        json_key = "shinma_" + id[0] + ".json"  
+                        obj = s3.Object(bucket_name, json_key)
+                        obj.put(Body=json.dumps({"1": shinma1, "2": shinma2, "date": date_register}))
                         # 登録完了のメッセージ
                         await bot.send_message(message.channel, "登録完了 on " + str(date_register))
             # 神魔呼び出し関数
             elif mc.startswith("神魔") and len(mc) == 2:
-                f_name = "/tmp/shinma_" + id[0] + ".pkl"
-                with open(f_name, 'rb') as f:
-                    shinma = pickle.load(f)
-                if date_today != shinma[2]:  # 直近の神魔登録日が今日ではない場合
-                    await bot.send_message(message.channel, str(date_today) + "の神魔は登録されていません")
-                else:  # 今日神魔が登録されていた場合
-                    await bot.send_message(message.channel, "第一神魔は{}\n第二神魔は{}".format(shinma[0], shinma[1]))
+                json_key = "shinma_" + id[0] + ".json"  
+                obj = s3.Object(bucket_name, json_key)     
+                if obj.delete_marker != None:
+                    await bot.say("まだこのserverでは神魔登録されてないよ……")
+                else:
+                    shinma = json.loads(obj.get()['Body'].read())  # 読み出し
+                    if date_today !=shinma["date"] :  # 直近の神魔登録日が今日ではない場合
+                        await bot.send_message(message.channel, str(date_today) + "の神魔は登録されていません")
+                    else:  # 今日神魔が登録されていた場合
+                        await bot.send_message(message.channel, "第一神魔は{}\n第二神魔は{}".format(shinma["1"], shinma["2"]))
         await bot.process_commands(message)  # bot.commandも使えるために必要
 
 # 神魔登録をリセットする関数も欲しい？？
@@ -111,8 +114,8 @@ async def on_message(message):  # 関数名はon_messageのみ
 @bot.command(description='sourceは https://github.com/Tomohir0/discord_bot/blob/master/shinma.py を確認してください。')
 async def new():
     """最近の更新情報をお知らせします。"""
-    m_new = ("Oct,31:s3連携完了だああああ！これでbotを更新してもdataが消えることはなくなったああ！fixし放題だね！")
-    m_old = ("\nOct,31:ctx実装。役職機能実装。absentを使って役職をAbsentに。role_reset_allで戻せるから安心して！"
+    m_new = ("Oct,31:s3連携完了だああああ！これでbotを更新してもdataが消えることはなくなったああ！fixし放題だね！call_labelsも実装したよ！")
+    m_old = ("\nOct,31:ctx実装。役職機能実装。absentを使って役職をAbsentに。role_resetで戻せるから安心して！"
          "\nOct,30:pickle実装できたけれど、結局server起動ごとに変数は消えてしまう……。でもserverで共有できるメモ機能のnotesとcallsを実装したよ。"
          "\nOct,29:ch_listの一時削除。noteやcallを追加。pickle実験したいなー"
          "\nOct,28:ch_listやvc_randを追加。各commandのdescriptionを充実。セリフを感情豊かに")
@@ -156,15 +159,17 @@ async def vc():
 
 
 @bot.command(description='serverのみんなでmemoを共有できます。', pass_context=True)
-async def notes(ctx: commands.Context, label: str, *, memo: str):
+async def notes(ctx: commands.Context, label: str, memo: str):
     "「?notes secret ギルマスは実は高校生」とすれば、secretラベルで「ギルマスは実は高校生」を記録できます。スペースが区切りとみなされます"
     json_key = "memo_" + ctx.message.author.server.id + ".json"  # 読み出し
     obj = s3.Object(bucket_name, json_key)
-#    memos = json.loads(obj.get()['Body'].read())  # s3からjson => dict
-#    memos[label] = memo # 追加
-    obj.put(Body=json.dumps({"1": memo}))
+    if obj.delete_marker == None:
+        memos = json.loads(obj.get()['Body'].read())  # s3からjson => dict
+    else:
+        memos = {}
+    memos[label] = memo  # 追加
+    obj.put(Body=json.dumps(memos))
     await bot.say("覚えました！！")
-
 
 
 @bot.command(description='「?notes」で保存されたmemoを読み出すことができます。', pass_context=True)
@@ -172,8 +177,11 @@ async def calls(ctx: commands.Context, label: str):
     "「?calls secret」でsecretとして保存されたメモを読み出します。"
     json_key = "memo_" + ctx.message.author.server.id + ".json"
     obj = s3.Object(bucket_name, json_key)
-    memos = json.loads(obj.get()['Body'].read())  # s3からjson => dict
-    await bot.say(memos[label])
+    if obj.delete_marker != None:
+        await bot.say("まだこのserverにはメモがないよ……。?notesを使ってほしいな……")
+    else:
+        memos = json.loads(obj.get()['Body'].read())  # s3からjson => dict
+        await bot.say(memos.get(label,label + "のメモないよ！"))
 
 
 @bot.command(description=' ', pass_context=True)
@@ -181,8 +189,11 @@ async def call_labels(ctx: commands.Context):
     "「?notes」のlabelの一覧を表示します。"
     json_key = "memo_" + ctx.message.author.server.id + ".json"
     obj = s3.Object(bucket_name, json_key)
-    memos = json.loads(obj.get()['Body'].read())  # s3からjson => dict
-    await bot.say(pprint.pformat(memos.keys()).replace(",","\n"))
+    if obj.delete_marker != None:
+        await bot.say("まだこのserverにはメモがないよ……。?notesを使ってほしいな……")
+    else:
+        memos = json.loads(obj.get()['Body'].read())  # s3からjson => dict
+        await bot.say(pprint.pformat(memos.keys()).replace(",","\n"))
 
 
 @bot.command(description='「?vc_rand 2」で「コロシアムVC」の参加メンバーから二人を選びます。')
@@ -209,7 +220,7 @@ async def absent(ctx: commands.Context):
 async def present(ctx: commands.Context):
     "あなた一人の役職を@everyoneに戻します。"
     user = ctx.message.author
-    role = discord.utils.get(user.server.roles, name="Present")
+    role = discord.utils.get(user.server.roles, name="@everyone")
     await bot.add_roles(user, role)
 
 
