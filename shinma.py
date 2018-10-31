@@ -176,8 +176,7 @@ async def calls(ctx: commands.Context, label: str):
     await bot.say(memos[label])
 
 
-
-@bot.ccomand(description=' ', pass_context=True)
+@bot.command(description=' ', pass_context=True)
 async def call_labels(ctx: commands.Context):
     "「?notes」のlabelの一覧を表示します。"
     json_key = "memo_" + ctx.message.author.server.id + ".json"
