@@ -102,7 +102,7 @@ async def on_message(message):  # 関数名はon_messageのみ
                     await bot.say("まだこのserverでは神魔登録されてないよ……")
                 else:
                     shinma = json.loads(obj.get()['Body'].read())  # 読み出し
-                    if date_today !=shinma["date"] :  # 直近の神魔登録日が今日ではない場合
+                    if str(date_today) !=shinma["date"] :  # 直近の神魔登録日が今日ではない場合
                         await bot.send_message(message.channel, str(date_today) + "の神魔は登録されていません")
                     else:  # 今日神魔が登録されていた場合
                         await bot.send_message(message.channel, "第一神魔は{}\n第二神魔は{}".format(shinma["1"], shinma["2"]))
