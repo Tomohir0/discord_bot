@@ -183,21 +183,22 @@ async def show_role():
 
 
 @bot.command(pass_context=True)
-async def get_role(ctx):
+async def get_roles(ctx):
     user = ctx.message.author
     await bot.say(user.name)
+    if user.role.name != "Absent":
+        role = discord.utils.get(user.server.roles, name="Absent")
+        await bot.say(role.name)
+        await bot.add_roles(user, role)
+        await bot.say(user.name)
+
+
+@bot.command(description=' ', pass_context=True)
+async def presents(ctx: commands.Context):
+    "あなた一人の役職をAbsentから戻します。"
+    user = ctx.message.author
     role = discord.utils.get(user.server.roles, name="Absent")
-    await bot.say(role.name)
-    await bot.add_roles(user, role)
-    await bot.say(user.name)
-
-
-@bot.command(pass_context=True)
-async def foo(ctx):
-    await bot.say("a")
-    await bot.say(ctx.message.content)
-    user_tmp = ctx.message.author
-    await bot.say(user_tmp.name)
+    await bot.remove_roles(user, role)
 
 
 @bot.command()

@@ -3,12 +3,11 @@ from discord.ext import commands
 import datetime
 import pprint
 import random
+
 import os
 import pickle
 import glob
 
-from boto3.session import Session
-import json
 import boto3
 bucket_name = "tomo-discord"
 s3 = boto3.resource('s3')
@@ -157,6 +156,17 @@ async def vc():
         await bot.say(channel.name + "にいるのは\n" + member_list.replace(",", "\n") + "\nだよ！")
 
 
+@bot.command(description='「?vc_rand 2」で「コロシアムVC」の参加メンバーから二人を選びます。')
+async def vc_rand(num: int):
+    "「コロシアムVC」の参加メンバーの中からランダムに指定された人数を選びます。"
+    channel = bot.get_channel("413951021891452932")
+    member_list = [member.display_name for member in channel.voice_members]
+    if len(member_list) < num or num < 1:
+        await bot.say("変だよ！\n今のVCには{}人しかいないのに、人数指定が{}人は変だよ！".format(len(member_list), num))
+    else:
+        await bot.say(random.sample(member_list, num) + "！\n君に決めた！")
+
+
 @bot.command(description='serverのみんなでmemoを共有できます。', pass_context=True)
 async def notes(ctx: commands.Context, label: str, *, memo: str):
     "「?notes secret ギルマスは実は高校生」とすれば、secretラベルで「ギルマスは実は高校生」を記録できます。"
@@ -170,7 +180,6 @@ async def notes(ctx: commands.Context, label: str, *, memo: str):
     with open(f_name, 'wb') as f:
         pickle.dump(memos, f)  # 古いリストに付け足す形で
     await bot.say("覚えました！！")
-
 
 @bot.command(description='「?notes」で保存されたmemoを読み出すことができます。', pass_context=True)
 async def calls(ctx: commands.Context, label: str):
@@ -192,59 +201,48 @@ async def call_labels(ctx: commands.Context):
     else:
         with open(f_name, 'rb') as f:
             memos = pickle.load(f)
-            m = "ここのmemoのlabel一覧は\n"
+            await bot.say("ここのmemoのlabel一覧は\n")
             for label in memos.keys():
-                m += label + "\n"
-            m += "だよ！"
-            await bot.say(m)
-
-@bot.command(description='「?vc_rand 2」で「コロシアムVC」の参加メンバーから二人を選びます。')
-async def vc_rand(num: int):
-    "「コロシアムVC」の参加メンバーの中からランダムに指定された人数を選びます。"
-    channel = bot.get_channel("413951021891452932")
-    member_list = [member.display_name for member in channel.voice_members]
-    if len(member_list) < num or num < 1:
-        await bot.say("変だよ！\n今のVCには{}人しかいないのに、人数指定が{}人は変だよ！".format(len(member_list), num))
-    else:
-        await bot.say(random.sample(member_list, num) + "！\n君に決めた！")
-
-
+                await bot.say(label)
+            await bot.say("\nだよ！")
 
 @bot.command(description=' ', pass_context=True)
 async def absent(ctx: commands.Context):
-    "役職をAbsentに変更して遅刻しそうないし欠席の可能性があることを明確にできます。「?role_reset」で全員のAbsentをもとに戻せます。"
+    "役職をAbsentに変更。遅刻しそうないし欠席の可能性を示せます。「?role_reset」で全員のAbsentをもとに戻せます。"
     user = ctx.message.author
     role = discord.utils.get(user.server.roles, name="Absent")
     await bot.add_roles(user, role)
 
 
-@bot.command(description=' ', pass_context=True)
+@bot.command(description='「やっぱり出れるわ」というときのために。', pass_context=True)
 async def present(ctx: commands.Context):
-    "あなた一人の役職を@everyoneに戻します。"
+    "あなた一人の役職Absentを解除します。"
     user = ctx.message.author
-    role = discord.utils.get(user.server.roles, name="@everyone")
-    await bot.add_roles(user, role)
+    role = discord.utils.get(user.server.roles, name="Absent")
+    await bot.remove_roles(user, role)
 
-
-@bot.command(description=' ', pass_context=True)
+@bot.command(description='コロシアムが終了したら役職を戻しておきましょう。', pass_context=True)
 async def role_reset(ctx: commands.Context):
-    "Absentの人の役職をすべて@everyoneに戻せます。"
+    "役職Absentをすべて解除します。"
     user = ctx.message.author
-    role = discord.utils.get(user.server.roles, name="@everyone")
+    role = discord.utils.get(user.server.roles, name="Absent")
     for member in user.server.members:
         if member.role.name == "Absent":
-            await bot.add_roles(member, role)
+            await bot.remove_roles(member, role)
 
-@bot.command(description='', pass_context=True)
+@bot.command(description='bot再起動する前に使用して、tmpフォルダ内のファイルが失われるのを防ぎましょう。', pass_context=True)
 async def tmp_up(ctx: commands.Context):
+    "tmpフォルダ内のfileをs3に避難させます(upload)。"
     for file_name in glob.glob("/tmp/*.*"):
         await bot.say(file_name)
-        s3.Object(bucket_name, file_name[1:]).upload_file(file_name)
+        s3.Object(bucket_name, file_name[1:]).upload_file(file_name)  # "/tmp/"のままではs3においては""(空欄)ディレクトリ内のtmpディレクトリにアクセスしてしまう
     await bot.say("Finished")
 
-@bot.command(description='', pass_context=True)
+@bot.command(description='bot再起動後に使用して、tmpフォルダ内にあるべきファイルを復活させましょう。', pass_context=True)
 async def tmp_dl(ctx: commands.Context):
+    "s3からtmpフォルダにfileを復帰させます。(download)"
     client = boto3.client('s3')
+    # "/tmp/"のままではs3においては""(空欄)ディレクトリ内のtmpディレクトリにアクセスしてしまう
     response = client.list_objects(Bucket=bucket_name, Prefix="tmp/")
     file_list = [content['Key'] for content in response['Contents']]
     for file_name in file_list:
