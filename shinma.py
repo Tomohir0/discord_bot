@@ -33,6 +33,7 @@ async def on_ready():
 async def on_message(message):  # 関数名はon_messageのみ
     date_today = datetime.date.today()
     mc = message.content
+    id = ["", "", ""]
     if bot.user != message.author:  # botによるbotの反応を避ける
         id[0] = message.server.id
         id[1] = message.channel.id
