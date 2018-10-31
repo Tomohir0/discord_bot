@@ -177,7 +177,7 @@ async def calls(ctx: commands.Context, label: str):
 
 
 
-@bot.ccomand(description='', pass_context=True)
+@bot.ccomand(description=' ', pass_context=True)
 async def call_labels(ctx: commands.Context):
     "「?notes」のlabelの一覧を表示します。"
     json_key = "memo_" + ctx.message.author.server.id + ".json"
@@ -198,7 +198,7 @@ async def vc_rand(num: int):
 
 
 
-@bot.command(description='', pass_context=True)
+@bot.command(description=' ', pass_context=True)
 async def absent(ctx: commands.Context):
     "役職をAbsentに変更して遅刻しそうないし欠席の可能性があることを明確にできます。「?role_reset」で全員のAbsentをもとに戻せます。"
     user = ctx.message.author
@@ -206,7 +206,7 @@ async def absent(ctx: commands.Context):
     await bot.add_roles(user, role)
 
 
-@bot.command(description='', pass_context=True)
+@bot.command(description=' ', pass_context=True)
 async def role_reset_single(ctx: commands.Context):
     "あなた一人の役職を@everyoneに戻せます。"
     user = ctx.message.author
@@ -214,7 +214,7 @@ async def role_reset_single(ctx: commands.Context):
     await bot.add_roles(user, role)
 
 
-@bot.command(description='', pass_context=True)
+@bot.command(description=' ', pass_context=True)
 async def role_reset_all(ctx: commands.Context):
     "Absentの人の役職をすべて@everyoneに戻せます。"
     user = ctx.message.author
@@ -225,68 +225,3 @@ async def role_reset_all(ctx: commands.Context):
 
 bot.run('NTA1NDA0OTE4NTI2Mzc4MDA0.DrZwjg.Dpv0JWxtpB8aCcdwW9pymObl914')
 
-
-'''
-@bot.command(description='チャンネルidは別commandで使用することができるかもしれません。')
-async def ch_list():
-    "各チャンネルの名前とidの組を表示します。"
-    channel_id = [channel.id for channel in bot.get_all_channels()]
-    channel_name = [channel.name for channel in bot.get_all_channels()]
-    await bot.say("チャンネル一覧を表示するよ！メモの用意はできたかな？")
-    for (name, id) in zip(channel_name, channel_id):
-        await bot.say(name+", " + id)
-
-
-@bot.command(description='「?note 楽器神魔の場面で魔書ばかり引きました」と記録しても、他の人に読み出されることはありません。')
-async def note(ctx: commands.Context,memo: str):
-    "ユーザーごとにメモを記録します。「?call」で呼び出します。"
-    f_name = "/tmp/memo_" + ctx.message.server.id + ".pkl"
-    with open(f_name, 'wb') as f:
-        pickle.dump(memo,f)
-    await bot.say("覚えました！！")
-
-@bot.command(description='気まぐれに「?call」してみましょう。あなたのかつてのmemoが降ってきます。', pass_context=True)
-async def call(ctx: commands.Context):
-    "「?note」で記録したあなたのメモを呼び出します。"
-    f_name = "/tmp/memo_" + ctx.message.server.id + ".pkl"
-    with open(f_name, 'rb') as f:
-        memo = pickle.load(f)
-    await bot.say(memo)
-
-@bot.command(description='一個だけじゃ保存メモリが足りないというあなたに。無数に保存できます。「?notep secret,私の好きな人は……」であなたの秘密を登録できます。')
-async def notep(label_alphabet: str,memo: str):
-    "「?memo」の上位版です。各ユーザーごとに複数のメモを保存できます。ラベル名はアルファベットまたは数字が使用できます。"
-    global id
-    f_name = "/tmp/memo_" + id[2] + "_" + label_alphabet + ".pkl"
-    with open(f_name, 'wb') as f:
-        pickle.dump(memo, f)  # memoを保存
-    f_name2 = "/tmp/memo_label_" + id[2] + ".pkl"
-    if not os.path.isfile(f_name2): # 存在しないときの処理
-        old_labels = []
-        await bot.say("aa")
-    else:
-        with open(f_name2, 'rb') as f:
-            old_labels = pickle.load(f)
-    with open(f_name2, 'wb') as f:
-        pickle.dump(old_labels.append(label_alphabet),f) # 古いリストに付け足す形で
-    await bot.say("覚えました！！")
-
-@bot.command(description='気まぐれに「?callp secret」してみましょう。あなたのsecretがserverに晒されます。')
-async def callp(label_alphabet: str):
-    "「?notep」で記録したあなたのメモを呼び出します。"
-    global id
-    f_name = "/tmp/memo_" + id[2] + "_" + label_alphabet + ".pkl"
-    with open(f_name, 'rb') as f:
-        memo = pickle.load(f)
-    await bot.say(memo)
-
-@bot.ccomand(description='「?notep」を使っているのはいいけれど、どんなlabelを使ったか忘れてしまったあなたのために。あなたのnotepのlabel一覧を表示します。')
-async def call_labelp():
-    "「?notep」でメモを保存した際に用いたlabel一覧を表示します。"
-    global id
-    f_name = "/tmp/memo_label_" + id[2] +".pkl"
-    with open(f_name, 'rb') as f:
-        labels = pickle.load(f)
-    labels_pformat = pprint.pformat(labels)
-    await bot.say("あなたのメモのラベル一覧は\n" + labels_pformat.replace(",", "\n") + "\nでした！")
-'''
