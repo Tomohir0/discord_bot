@@ -232,6 +232,7 @@ async def role_reset(ctx: commands.Context):
 @bot.command(description='', pass_context=True)
 async def tmp_up(ctx: commands.Context):
     for file_name in glob.glob("/tmp/*.*"):
+        await bot.say(file_name)
         s3.Object(bucket_name, file_name).upload_file(file_name)
     await bot.say("Finished")
 
