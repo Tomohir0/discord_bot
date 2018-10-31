@@ -158,11 +158,11 @@ async def vc():
 @bot.command(description='serverのみんなでmemoを共有できます。', pass_context=True)
 async def notes(ctx: commands.Context, label: str, *, memo: str):
     "「?notes secret ギルマスは実は高校生」とすれば、secretラベルで「ギルマスは実は高校生」を記録できます。スペースが区切りとみなされます"
-    json_key = "memo_" + ctx.message.author.server.id + ".json" # 読み出し
+    json_key = "memo_" + ctx.message.author.server.id + ".json"  # 読み出し
     obj = s3.Object(bucket_name, json_key)
     memos = json.loads(obj.get()['Body'].read())  # s3からjson => dict
     memos[label] = memo # 追加
-    obj.put(Body=json.dumps(memos))
+    r = obj.put(Body=json.dumps(memos))
     await bot.say("覚えました！！")
 
 
@@ -206,15 +206,15 @@ async def absent(ctx: commands.Context):
 
 
 @bot.command(description=' ', pass_context=True)
-async def role_reset_single(ctx: commands.Context):
-    "あなた一人の役職を@everyoneに戻せます。"
+async def present(ctx: commands.Context):
+    "あなた一人の役職を@everyoneに戻します。"
     user = ctx.message.author
     role = discord.utils.get(user.server.roles, name="@everyone")
     await bot.add_roles(user, role)
 
 
 @bot.command(description=' ', pass_context=True)
-async def role_reset_all(ctx: commands.Context):
+async def role_reset(ctx: commands.Context):
     "Absentの人の役職をすべて@everyoneに戻せます。"
     user = ctx.message.author
     role = discord.utils.get(user.server.roles, name="@everyone")
