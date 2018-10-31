@@ -226,4 +226,25 @@ async def call():
     await bot.say(memos["1"])
 
 
+@bot.command(description='serverのみんなでmemoを共有できます。', pass_context=True)
+async def notes(ctx: commands.Context, label: str, memo: str):
+    "「?notes secret ギルマスは実は高校生」とすれば、secretラベルで「ギルマスは実は高校生」を記録できます。スペースが区切りとみなされます"
+    json_key = "memo_" + ctx.message.author.server.id + ".json"  # 読み出し
+    await bot.say(json_key)
+    obj = s3.Object(bucket_name, json_key)
+    memos = json.loads(obj.get()['Body'].read())  # s3からjson => dict
+    memos[label] = memo # 追加
+    obj.put(Body=json.dumps({"1": memo}))
+    await bot.say("覚えました！！")
+
+
+@bot.command(description='「?notes」で保存されたmemoを読み出すことができます。', pass_context=True)
+async def calls(ctx: commands.Context, label: str):
+    "「?calls secret」でsecretとして保存されたメモを読み出します。"
+    json_key = "memo_" + ctx.message.author.server.id + ".json"
+    obj = s3.Object(bucket_name, json_key)
+    memos = json.loads(obj.get()['Body'].read())  # s3からjson => dict
+    await bot.say(memos[label])
+
+
 bot.run('NTA1NjYxMTE3NjIwNTUxNjgx.DrW1Uw.KC36a1LyMlHdYoHtnSS-X2802EM')

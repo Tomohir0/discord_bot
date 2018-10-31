@@ -162,7 +162,7 @@ async def notes(ctx: commands.Context, label: str, *, memo: str):
     obj = s3.Object(bucket_name, json_key)
 #    memos = json.loads(obj.get()['Body'].read())  # s3からjson => dict
 #    memos[label] = memo # 追加
-    r = obj.put(Body=json.dumps({"1": memo}))
+    obj.put(Body=json.dumps({"1": memo}))
     await bot.say("覚えました！！")
 
 
@@ -209,7 +209,7 @@ async def absent(ctx: commands.Context):
 async def present(ctx: commands.Context):
     "あなた一人の役職を@everyoneに戻します。"
     user = ctx.message.author
-    role = discord.utils.get(user.server.roles, name="@everyone")
+    role = discord.utils.get(user.server.roles, name="Present")
     await bot.add_roles(user, role)
 
 
