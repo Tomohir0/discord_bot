@@ -7,7 +7,7 @@ import os
 import pickle
 import glob
 
-
+from boto3.session import Session
 import json
 import boto3
 bucket_name = "tomo-discord"
@@ -244,8 +244,9 @@ async def tmp_up(ctx: commands.Context):
 @bot.command(description='', pass_context=True)
 async def tmp_dl(ctx: commands.Context):
     client = boto3.client('s3')
-    file_lists = client.list_objects(Bucket=bucket_name, Prefix="tmp/")
-    for file_name in file_lists:
+    response = client.list_objects(Bucket=bucket_name, Prefix="tmp/")
+    await bot.say(response)
+    for file_name in response:
         await bot.say(file_name)
         s3.Object(bucket_name, file_name).download_file("/"+file_name)
     await bot.say("Finished")
