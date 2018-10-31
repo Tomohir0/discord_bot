@@ -1,8 +1,8 @@
 import discord
+from discord.ext import commands
 import datetime
 import pprint
 import random
-from discord.ext import commands
 import os
 import pickle
 import glob
@@ -118,7 +118,7 @@ async def new():
     #     "\nOct,29:ch_listの一時削除。noteやcallを追加。pickle実験したいなー"
     #     "\nOct,28:ch_listやvc_randを追加。各commandのdescriptionを充実。セリフを感情豊かに"
     m2 = ("\n\n過去の更新情報については https://github.com/Tomohir0/discord_bot/blob/master/README ")
-    await bot.say(m_new + m_old + m2)
+    await bot.say(m_new + m2)
 
 
 @bot.command(description='「?roll 2d6」で「3, 5」などが得られます。')
@@ -243,7 +243,8 @@ async def tmp_up(ctx: commands.Context):
 
 @bot.command(description='', pass_context=True)
 async def tmp_dl(ctx: commands.Context):
-    file_lists = s3.list_objects(Bucket=bucket_name, Prefix="/tmp/")
+    client = boto3.client('s3')
+    file_lists = client.list_objects(Bucket=bucket_name, Prefix="/tmp/")
     for file_name in file_lists:
         s3.Object(bucket_name, file_name).download_file(file_name)
     await bot.say("Finished")
