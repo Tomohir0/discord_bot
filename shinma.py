@@ -91,7 +91,7 @@ async def on_message(message):  # 関数名はon_messageのみ
                         date_register = datetime.date.today()  # 神魔登録の日付
                         json_key = "shinma_" + id[0] + ".json"  
                         obj = s3.Object(bucket_name, json_key)
-                        obj.put(Body=json.dumps({"1": shinma1, "2": shinma2, "date": date_register}))
+                        obj.put(Body=json.dumps({"1": shinma1, "2": shinma2, "date": "date_register"}))
                         # 登録完了のメッセージ
                         await bot.send_message(message.channel, "登録完了 on " + str(date_register))
             # 神魔呼び出し関数
