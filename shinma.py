@@ -275,7 +275,7 @@ async def role_reset(ctx: commands.Context):
         #await bot.say(user.name + "を" + role.name + "から解除しました")
 
 
-'''
+
 @bot.command(description='bot再起動する前に使用して、tmpフォルダ内のファイルが失われるのを防ぎましょう。', pass_context=True)
 async def tmp_up(ctx: commands.Context):
     "tmpフォルダ内のfileをs3に避難させます(upload)。"
@@ -295,7 +295,7 @@ async def tmp_dl(ctx: commands.Context):
         await bot.say(file_name)
         s3.Object(bucket_name, file_name).download_file("/"+file_name)
     await bot.say("Finished")
-'''
+
 
 
 bot.run('NTA1NDA0OTE4NTI2Mzc4MDA0.DrZwjg.Dpv0JWxtpB8aCcdwW9pymObl914')
