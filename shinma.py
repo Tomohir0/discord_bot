@@ -20,6 +20,30 @@ bot = commands.Bot(command_prefix='?', description=description)
 
 # async外で保存するためにGlobal変数を用いる
 
+'''
+s3 function
+'''
+def func_tmp_up():
+    "tmpフォルダ内のfileをs3に避難させます(upload)。"
+    for file_name in glob.glob("/tmp/*.*"):
+        #await bot.say(file_name)
+        # "/tmp/"のままではs3においては""(空欄)ディレクトリ内のtmpディレクトリにアクセスしてしまう
+        s3.Object(bucket_name, file_name[1:]).upload_file(file_name)
+    #await bot.say("Upload's Finished")
+
+def func_tmp_dl():
+    "s3からtmpフォルダにfileを復帰させます。(download)"
+    client = boto3.client('s3')
+    # "/tmp/"のままではs3においては""(空欄)ディレクトリ内のtmpディレクトリにアクセスしてしまう
+    response = client.list_objects(Bucket=bucket_name, Prefix="tmp/")
+    file_list = [content['Key'] for content in response['Contents']]
+    for file_name in file_list:
+        #await bot.say(file_name)
+        s3.Object(bucket_name, file_name).download_file("/"+file_name)
+    #await bot.say("Download's Finished")
+
+
+
 
 @bot.event  # server加入時の処理
 async def on_ready():
@@ -27,7 +51,7 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
-    await bot.add_command(command=tmp_dl)
+    func_tmp_dl()
 
 
 @bot.event
@@ -106,10 +130,16 @@ async def on_message(message):  # 関数名はon_messageのみ
         await bot.process_commands(message)  # bot.commandも使えるために必要
 
 
+@boot.event()
+async def on_command_error():
+    func_tmp_up()
+    await bot.process_commands(message)  # bot.commandも使えるために必要
+
 @bot.command(description='sourceは https://github.com/Tomohir0/discord_bot/blob/master/shinma.py を確認してください。')
 async def new():
     """最近の更新情報をお知らせします。"""
-    m_new = ("Oct,31:ファイルベースをjsonからpickleに！今までのスピードが帰ってきたぜ！！"
+    m_new = ("Nov,1:長かったからcall_labels=>labelsに変更したよ！役職関連の関数をこれで完備だ！これでお休み一目瞭然！tmp_uoとtmp_dlは内部関数に。"
+        "\nOct,31:ファイルベースをjsonからpickleに！今までのスピードが帰ってきたぜ！！"
     "\ntmp_upとtmp_dlのときのみS3とやり取りするんだよ！効率的！新しい関数はないけど、毎回出してるとややこしいもんね！"
         "\nOct,31:役割を忘れすぎているから神魔botに無理やり神魔を思い出させたよ！限定的にpickle復活！"
         "\nOct,31:s3連携完了だああああ！これでbotを更新してもdataが消えることはなくなったああ！fixし放題だね！"
@@ -194,7 +224,7 @@ async def calls(ctx: commands.Context, label: str):
             await bot.say(memos.get(label, label + "なんてlabelのメモないよ！"))
 
 @bot.command(description=' ', pass_context=True,)
-async def call_labels(ctx: commands.Context):
+async def labels(ctx: commands.Context):
     "「?notes」のlabelの一覧を表示します。"
     f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
     if not os.path.isfile(f_name):  # 存在しないときの処理
@@ -234,17 +264,18 @@ async def present(ctx: commands.Context):
         await bot.say(user.name + "を" + role.name + "から解除しました")
 '''
 
-'''
+
 @bot.command(description='コロシアムが終了したら役職を戻しておきましょう。', pass_context=True)
 async def role_reset(ctx: commands.Context):
     "役職「欠席遅刻予定」をすべて解除します。"
     user = ctx.message.author
     role = discord.utils.get(user.server.roles, name="欠席遅刻予定")
-    for member in role.members:
+    for member in user.server.members:
         await bot.remove_roles(member, role)
-        await bot.say(user.name + "を" + role.name + "から解除しました")
-'''
+        #await bot.say(user.name + "を" + role.name + "から解除しました")
 
+
+'''
 @bot.command(description='bot再起動する前に使用して、tmpフォルダ内のファイルが失われるのを防ぎましょう。', pass_context=True)
 async def tmp_up(ctx: commands.Context):
     "tmpフォルダ内のfileをs3に避難させます(upload)。"
@@ -264,6 +295,7 @@ async def tmp_dl(ctx: commands.Context):
         await bot.say(file_name)
         s3.Object(bucket_name, file_name).download_file("/"+file_name)
     await bot.say("Finished")
+'''
 
 
 bot.run('NTA1NDA0OTE4NTI2Mzc4MDA0.DrZwjg.Dpv0JWxtpB8aCcdwW9pymObl914')
