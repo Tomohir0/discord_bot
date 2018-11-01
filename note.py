@@ -3,6 +3,7 @@ from discord.ext import commands
 import pprint
 import os
 import pickle
+import random
 
 ##import boto3
 #bucket_name = "tomo-discord"
@@ -55,5 +56,17 @@ class Note():
                 for label in memos.keys():
                     await self.bot.say(label)
                 await self.bot.say("\nだよ！")
+
+    @commands.command(description='「?notes」で保存されたmemoからランダムに一つを晒します。', pass_context=True)
+    async def callrand(self, ctx: commands.Context):
+        "「?callrand」でメモを1つ晒します。"
+        f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
+        if not os.path.isfile(f_name):  # 存在しないときの処理
+            await self.bot.say("まだこのserverにはメモがないよ……。?notesを使ってほしいな……")
+        else:
+            with open(f_name, 'rb') as f:
+                memos = pickle.load(f)
+                label_selected = random.choice(memos.keys())
+                await self.bot.say(memos.get(label_selected, "ERROR"))
 def setup(bot):
     bot.add_cog(Note(bot))

@@ -10,7 +10,7 @@ import pickle
 ## s3連携
 
 class Sinoalice():
-    "sinoaliceで役に立ちそうな関数を集めたよ！神魔報告関連は別にあるよ！"
+    "sinoaliceで役に立ちそうな関数を集めたよ！神魔報告関連は別にあるよ！ただし、役職に関してはアイコンの丸を灰色以外にしないと機能しません。"
 
     def __init__(self, bot):
         self.bot = bot
@@ -37,9 +37,9 @@ class Sinoalice():
         else:
             await self.bot.say(random.sample(member_list, num) + "！\n君に決めた！")
 
-    @commands.command(description=' ', pass_context=True)
+    @commands.command(description='「コロシアムやばそう」というときのために。', pass_context=True)
     async def absent(ctx: commands.Context):
-        "役職をAbsentに変更。遅刻しそうないし欠席の可能性を示せます。「?role_reset」で全員のAbsentをもとに戻せます。"
+        "役職を「欠席遅刻予定」に変更します。みんなが把握して調整しやすく。"
         user = ctx.message.author
         role = discord.utils.get(user.server.roles, name="欠席遅刻予定")
         await self.bot.say(user.name + "はお休み、了解！")
