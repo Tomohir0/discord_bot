@@ -220,8 +220,9 @@ async def present(ctx: commands.Context):
     "あなたの役職「欠席遅刻予定」を解除します。"
     user = ctx.message.author
     role = discord.utils.get(user.server.roles, name="欠席遅刻予定")
-    if user.role.name == role.name:
+    if user.role == role:
         await bot.remove_roles(user, role)
+        await bot.say(user.name + "を" + role.name + "に変更しました")
 
 @bot.command(description='コロシアムが終了したら役職を戻しておきましょう。', pass_context=True)
 async def role_reset(ctx: commands.Context):
@@ -229,8 +230,9 @@ async def role_reset(ctx: commands.Context):
     user = ctx.message.author
     role = discord.utils.get(user.server.roles, name="欠席遅刻予定")
     for member in user.server.members:
-        if member.role.name == role.name:
+        if member.role == role:
             await bot.remove_roles(member, role)
+            await bot.say(user.name + "を" + role.name + "から解除しました")
 
 @bot.command(description='bot再起動する前に使用して、tmpフォルダ内のファイルが失われるのを防ぎましょう。', pass_context=True)
 async def tmp_up(ctx: commands.Context):
