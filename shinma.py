@@ -211,8 +211,9 @@ async def absent(ctx: commands.Context):
     "役職をAbsentに変更。遅刻しそうないし欠席の可能性を示せます。「?role_reset」で全員のAbsentをもとに戻せます。"
     user = ctx.message.author
     role = discord.utils.get(user.server.roles, name="Absent")
-    if user.role.name != "Absent":
+    if not user in role.members:
         await bot.add_roles(user, role)
+        await bot.say(user.name + "を" + role.name + "に変更しました")
 
 
 @bot.command(description='「やっぱり出れるわ」というときのために。', pass_context=True)
@@ -222,7 +223,7 @@ async def present(ctx: commands.Context):
     role = discord.utils.get(user.server.roles, name="欠席遅刻予定")
     if user in role.members:
         await bot.remove_roles(user, role)
-        await bot.say(user.name + "を" + role.name + "に変更しました")
+        await bot.say(user.name + "を" + role.name + "から解除しました")
     else:
         await bot.say("もうすでに" + role.name + "だよ！")
 
