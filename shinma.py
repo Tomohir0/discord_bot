@@ -13,6 +13,8 @@ bucket_name = "tomo-discord"
 s3 = boto3.resource('s3')
 # s3連携
 
+startup_extensions = ["note", "sinoalice", "tool", "system"]
+
 description = ("神魔管理のために作られたbotです。挨拶をしたり愛をささやいたりもします。"
                 "\n「神魔登録説明」で神魔登録などについての説明を表示します。\nその他のcommandについては「?help」を確認してください。「?」を文頭に置いて適宜使用できます。"
                "\nsourceは https://github.com/Tomohir0/discord_bot/blob/master/shinma.py を確認してください。")
@@ -43,8 +45,6 @@ def func_tmp_dl():
         s3.Object(bucket_name, file_name).download_file("/"+file_name)
     #await bot.say("Download's Finished")
 
-
-startup_extensions = ["note"]
 
 @bot.event  # server加入時の処理
 async def on_ready():
@@ -129,175 +129,6 @@ async def on_message(message):  # 関数名はon_messageのみ
                 else:  # 今日神魔が登録されていた場合
                     await bot.send_message(message.channel, "第一神魔は{}\n第二神魔は{}".format(shinma[0], shinma[1]))
         await bot.process_commands(message)  # bot.commandも使えるために必要
-
-'''
-@bot.event()
-async def on_command_error():
-    func_tmp_up()
-'''
-
-@bot.command(description='sourceは https://github.com/Tomohir0/discord_bot/blob/master/shinma.py を確認してください。')
-async def new():
-    """最近の更新情報をお知らせします。"""
-    m_new = ("Nov,1:長かったからcall_labels=>labelsに変更したよ！役職関連の関数をこれで完備だ！これでお休み一目瞭然！tmp_uoとtmp_dlは内部関数に。"
-        "\nOct,31:ファイルベースをjsonからpickleに！今までのスピードが帰ってきたぜ！！"
-    "\ntmp_upとtmp_dlのときのみS3とやり取りするんだよ！効率的！新しい関数はないけど、毎回出してるとややこしいもんね！"
-        "\nOct,31:役割を忘れすぎているから神魔botに無理やり神魔を思い出させたよ！限定的にpickle復活！"
-        "\nOct,31:s3連携完了だああああ！これでbotを更新してもdataが消えることはなくなったああ！fixし放題だね！"
-    "\nその代わり、ちょっと反応遅くなっちゃったけど許してほしいな……)call_labelsも実装したよ！")
-    #m_old = ("\n\nOct,31:ctx実装。役職機能実装。absentを使って役職をAbsentに。role_resetで戻せるから安心して！"
-    #     "\nOct,30:pickle実装できたけれど、結局server起動ごとに変数は消えてしまう……。でもserverで共有できるメモ機能のnotesとcallsを実装したよ。")
-    #     "\nOct,29:ch_listの一時削除。noteやcallを追加。pickle実験したいなー"
-    #     "\nOct,28:ch_listやvc_randを追加。各commandのdescriptionを充実。セリフを感情豊かに"
-    m2 = ("\n\n過去の更新情報については https://github.com/Tomohir0/discord_bot/blob/master/README ")
-    await bot.say(m_new + m2)
-
-
-@bot.command(description='「?roll 2d6」で「3, 5」などが得られます。')
-async def roll(dice: str):
-    """サイコロを振ることができます。TRPGで使われるNdN記法。2個の6面サイコロの結果がほしい場合は「?roll 2d6」と入力してください。"""
-    try:
-        rolls, limit = map(int, dice.split('d'))
-    except Exception:
-        await bot.say("「NdN」の形じゃないよ！")
-        return
-
-    result = ', '.join(str(random.randint(1, limit)) for r in range(rolls))
-    await bot.say("ダイスロール！\n" + result)
-
-
-@bot.command(description='「?choice A B C」などのように入力してください。')
-async def choose(*choices: str):
-    """選択肢からランダムに一つ選びます。「?choose」の後に選択肢をスペースで区切って入力してください。"""
-    if random.randint(1, 3) > 1:
-        await bot.say(random.choice(choices) + "にするしかないじゃない！")
-    else:
-        await bot.say("ﾀﾞﾗﾗﾗﾗﾗﾗﾗﾗﾗ～\nダン！！\n見事選ばれたのは" + random.choice(choices) + "でした！！")
-
-
-@bot.command(description='「?vc」で「コロシアムVC」の参加メンバーの(ニックネームではない)名前一覧が得られます。')
-async def vc():
-    "「コロシアムVC」の参加メンバーの名前一覧を表示します。"
-    channel = bot.get_channel("413951021891452932")
-    if len([member.name for member in channel.voice_members]) == 0:
-        await bot.say("今、" + channel.name + "には一人もいない……一人も……")
-    else:
-        member_list = pprint.pformat(
-            [member.name for member in channel.voice_members])
-        # replaceで改行して見やすく
-        await bot.say(channel.name + "にいるのは\n" + member_list.replace(",", "\n") + "\nだよ！")
-
-
-@bot.command(description='「?vc_rand 2」で「コロシアムVC」の参加メンバーから二人を選びます。')
-async def vc_rand(num: int):
-    "「コロシアムVC」の参加メンバーの中からランダムに指定された人数を選びます。"
-    channel = bot.get_channel("413951021891452932")
-    member_list = [member.display_name for member in channel.voice_members]
-    if len(member_list) < num or num < 1:
-        await bot.say("変だよ！\n今のVCには{}人しかいないのに、人数指定が{}人は変だよ！".format(len(member_list), num))
-    else:
-        await bot.say(random.sample(member_list, num) + "！\n君に決めた！")
-
-
-'''
-@bot.command(description='serverのみんなでmemoを共有できます。', pass_context=True)
-async def notes(ctx: commands.Context, label: str, *, memo: str):
-    "「?notes secret ギルマスは実は高校生」とすれば、secretラベルで「ギルマスは実は高校生」を記録できます。"
-    f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
-    if not os.path.isfile(f_name):  # 存在しないときの処理
-        memos = {}
-    else:
-        with open(f_name, 'rb') as f:
-            memos = pickle.load(f)
-    memos[label] = memo
-    with open(f_name, 'wb') as f:
-        pickle.dump(memos, f)  # 古いリストに付け足す形で
-    await bot.say("覚えました！！")
-
-@bot.command(description='「?notes」で保存されたmemoを読み出すことができます。', pass_context=True)
-async def calls(ctx: commands.Context, label: str):
-    "「?calls secret」でsecretとして保存されたメモを読み出します。"
-    f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
-    if not os.path.isfile(f_name):  # 存在しないときの処理
-        await bot.say("まだこのserverにはメモがないよ……。?notesを使ってほしいな……")
-    else:
-        with open(f_name, 'rb') as f:
-            memos = pickle.load(f)
-            await bot.say(memos.get(label, label + "なんてlabelのメモないよ！"))
-
-@bot.command(description=' ', pass_context=True,)
-async def labels(ctx: commands.Context):
-    "「?notes」のlabelの一覧を表示します。"
-    f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
-    if not os.path.isfile(f_name):  # 存在しないときの処理
-        await bot.say("まだこのserverにはメモがないよ……。?notesを使ってほしいな……")
-    else:
-        with open(f_name, 'rb') as f:
-            memos = pickle.load(f)
-            await bot.say("ここのmemoのlabel一覧は\n")
-            for label in memos.keys():
-                await bot.say(label)
-            await bot.say("\nだよ！")
-'''
-
-@bot.command(description=' ', pass_context=True)
-async def absent(ctx: commands.Context):
-    "役職をAbsentに変更。遅刻しそうないし欠席の可能性を示せます。「?role_reset」で全員のAbsentをもとに戻せます。"
-    user = ctx.message.author
-    role = discord.utils.get(user.server.roles, name="欠席遅刻予定")
-    await bot.say(user.name + "はお休み、了解！")
-    await bot.add_roles(user, role)
-'''    if not user in role.members:
-        await bot.add_roles(user, role)
-        await bot.say(user.name + "を" + role.name + "に変更しました")
-    else:
-        await bot.say("もうすでに" + role.name + "だよ！")
-'''
-
-@bot.command(description='「やっぱり出れるわ」というときのために。', pass_context=True)
-async def present(ctx: commands.Context):
-    "あなたの役職「欠席遅刻予定」を解除します。"
-    user = ctx.message.author
-    role = discord.utils.get(user.server.roles, name="欠席遅刻予定")
-    await bot.remove_roles(user, role)
-    await bot.say(user.name + "はいける、了解！")
-'''
-    if user in role.members:
-        await bot.remove_roles(user, role)
-        await bot.say(user.name + "を" + role.name + "から解除しました")
-'''
-
-
-@bot.command(description='コロシアムが終了したら役職を戻しておきましょう。', pass_context=True)
-async def role_reset(ctx: commands.Context):
-    "役職「欠席遅刻予定」をすべて解除します。"
-    user = ctx.message.author
-    role = discord.utils.get(user.server.roles, name="欠席遅刻予定")
-    for member in user.server.members:
-        await bot.remove_roles(member, role)
-        #await bot.say(user.name + "を" + role.name + "から解除しました")
-
-
-@bot.command(description='bot再起動する前に使用して、tmpフォルダ内のファイルが失われるのを防ぎましょう。', pass_context=True)
-async def tmp_up(ctx: commands.Context):
-    "tmpフォルダ内のfileをs3に避難させます(upload)。"
-    for file_name in glob.glob("/tmp/*.*"):
-        await bot.say(file_name)
-        s3.Object(bucket_name, file_name[1:]).upload_file(file_name)  # "/tmp/"のままではs3においては""(空欄)ディレクトリ内のtmpディレクトリにアクセスしてしまう
-    await bot.say("Finished")
-
-@bot.command(description='bot再起動後に使用して、tmpフォルダ内にあるべきファイルを復活させましょう。', pass_context=True)
-async def tmp_dl(ctx: commands.Context):
-    "s3からtmpフォルダにfileを復帰させます。(download)"
-    client = boto3.client('s3')
-    # "/tmp/"のままではs3においては""(空欄)ディレクトリ内のtmpディレクトリにアクセスしてしまう
-    response = client.list_objects(Bucket=bucket_name, Prefix="tmp/")
-    file_list = [content['Key'] for content in response['Contents']]
-    for file_name in file_list:
-        await bot.say(file_name)
-        s3.Object(bucket_name, file_name).download_file("/"+file_name)
-    await bot.say("Finished")
-
 
 @bot.event
 async def on_command_error(exception: Exception, ctx: commands.Context):

@@ -4,10 +4,10 @@ import pprint
 import os
 import pickle
 
-import boto3
-bucket_name = "tomo-discord"
-s3 = boto3.resource('s3')
-# s3連携
+##import boto3
+#bucket_name = "tomo-discord"
+#s3 = boto3.resource('s3')
+## s3連携
 
 class Note():
 
@@ -40,7 +40,7 @@ class Note():
                 await self.bot.say(memos.get(label, label + "なんてlabelのメモないよ！"))
 
     @commands.command(description=' ', pass_context=True,)
-    async def call_labels(self, ctx: commands.Context):
+    async def labels(self, ctx: commands.Context):
         "「?notes」のlabelの一覧を表示します。"
         f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
         if not os.path.isfile(f_name):  # 存在しないときの処理

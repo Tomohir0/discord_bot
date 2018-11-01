@@ -12,7 +12,7 @@ bucket_name = "tomo-discord"
 s3 = boto3.resource('s3')
 #s3連携
 
-startup_extensions = ["note"]
+startup_extensions = ["note","sinoalice","tool","system"]
 
 description = ('''Test用\nその他のcommandについては「?help」を確認してください。「?」を文頭に置いて適宜使用できます。''')
 bot = commands.Bot(command_prefix='?', description=description)
