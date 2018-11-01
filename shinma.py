@@ -13,11 +13,14 @@ bucket_name = "tomo-discord"
 s3 = boto3.resource('s3')
 # s3連携
 
-startup_extensions = ["note", "sinoalice", "tool", "system"]
+extension_list = ["note", "sinoalice", "tool", "system"]
+startup_extensions = extension_list # cogの導入
 
 description = ("神魔管理のために作られたbotです。挨拶をしたり愛をささやいたりもします。"
-                "\n「神魔登録説明」で神魔登録などについての説明を表示します。\nその他のcommandについては「?help」を確認してください。「?」を文頭に置いて適宜使用できます。"
-               "\nsourceは https://github.com/Tomohir0/discord_bot/blob/master/shinma.py を確認してください。")
+                "\n「神魔登録説明」で神魔登録などについての説明を表示します。\nその他のcommandについては「?help」を確認してください。"
+                "「?」を文頭に置いて適宜使用できます。"
+                "\nCategoryとしては"+ pprint.pformat(extension_list) + "があります。"
+               "\nsourceは https://github.com/Tomohir0/discord_bot/blob/master/shinma.py")
 bot = commands.Bot(command_prefix='?', description=description)
 
 error_count = 0
@@ -53,7 +56,6 @@ async def on_ready():
     print(bot.user.id)
     print('------')
     func_tmp_dl()
-
 
 @bot.event
 async def on_message(message):  # 関数名はon_messageのみ
@@ -130,7 +132,7 @@ async def on_message(message):  # 関数名はon_messageのみ
                     await bot.send_message(message.channel, "第一神魔は{}\n第二神魔は{}".format(shinma[0], shinma[1]))
         await bot.process_commands(message)  # bot.commandも使えるために必要
 
-@bot.event
+@bot.event # error時に定期的にupload
 async def on_command_error(exception: Exception, ctx: commands.Context):
     global error_count
     channel = bot.get_channel("505977333182758915")
@@ -139,13 +141,14 @@ async def on_command_error(exception: Exception, ctx: commands.Context):
         func_tmp_up()
         await bot.send_message(channel,"up")
 
-if __name__ == "__main__":
+if __name__ == "__main__": # cogへジャンプ
     for extension in startup_extensions:
         try:
             bot.load_extension(extension)
         except Exception as e:
             exc = '{}: {}'.format(type(e).__name__, e)
             print('Failed to load extension {}\n{}'.format(extension, exc))
+
 
 bot.run('NTA1NDA0OTE4NTI2Mzc4MDA0.DrZwjg.Dpv0JWxtpB8aCcdwW9pymObl914')
 
