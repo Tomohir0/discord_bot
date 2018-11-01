@@ -129,10 +129,11 @@ async def on_message(message):  # 関数名はon_messageのみ
                     await bot.send_message(message.channel, "第一神魔は{}\n第二神魔は{}".format(shinma[0], shinma[1]))
         await bot.process_commands(message)  # bot.commandも使えるために必要
 
-
+'''
 @bot.event()
 async def on_command_error():
     func_tmp_up()
+'''
 
 @bot.command(description='sourceは https://github.com/Tomohir0/discord_bot/blob/master/shinma.py を確認してください。')
 async def new():
