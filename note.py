@@ -66,8 +66,8 @@ class Note():
         else:
             with open(f_name, 'rb') as f:
                 memos = pickle.load(f)
-                label_selected = random.choice(memos.keys())
-                await self.bot.say(label_selected)
-                await self.bot.say(memos.get(label_selected, "ERROR"))
+            label_selected = random.choice(memos.keys())
+            await self.bot.say(label_selected)
+            await self.bot.say(memos.get(label_selected, "ERROR"))
 def setup(bot):
     bot.add_cog(Note(bot))
