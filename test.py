@@ -12,6 +12,8 @@ bucket_name = "tomo-discord"
 s3 = boto3.resource('s3')
 #s3連携
 
+startup_extensions = ["note"]
+
 description = ('''Test用\nその他のcommandについては「?help」を確認してください。「?」を文頭に置いて適宜使用できます。''')
 bot = commands.Bot(command_prefix='?', description=description)
 date_today = datetime.date.today()
@@ -218,7 +220,7 @@ async def call():
     memos = json.loads( obj.get()['Body'].read())
     await bot.say(memos["1"])
 
-
+'''
 @bot.command(description='serverのみんなでmemoを共有できます。', pass_context=True)
 async def notess(ctx: commands.Context, label: str, *, memo: str):
     "「?notes secret ギルマスは実は高校生」とすれば、secretラベルで「ギルマスは実は高校生」を記録できます。ラベル名は英数字のみ。スペースが区切りとみなされます"
@@ -245,6 +247,14 @@ async def callss(ctx: commands.Context, label: str):
             memos = pickle.load(f)
             await bot.say(memos.get(label, label + "なんてlabelのメモないよ！"))
     
+'''
 
+if __name__ == "__main__":
+    for extension in startup_extensions:
+        try:
+            bot.load_extension(extension)
+        except Exception as e:
+            exc = '{}: {}'.format(type(e).__name__, e)
+            print('Failed to load extension {}\n{}'.format(extension, exc))
 
 bot.run('NTA1NjYxMTE3NjIwNTUxNjgx.DrW1Uw.KC36a1LyMlHdYoHtnSS-X2802EM')

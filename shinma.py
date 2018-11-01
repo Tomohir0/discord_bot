@@ -44,7 +44,7 @@ def func_tmp_dl():
     #await bot.say("Download's Finished")
 
 
-
+startup_extensions = ["note"]
 
 @bot.event  # server加入時の処理
 async def on_ready():
@@ -199,6 +199,7 @@ async def vc_rand(num: int):
         await bot.say(random.sample(member_list, num) + "！\n君に決めた！")
 
 
+'''
 @bot.command(description='serverのみんなでmemoを共有できます。', pass_context=True)
 async def notes(ctx: commands.Context, label: str, *, memo: str):
     "「?notes secret ギルマスは実は高校生」とすれば、secretラベルで「ギルマスは実は高校生」を記録できます。"
@@ -237,6 +238,7 @@ async def labels(ctx: commands.Context):
             for label in memos.keys():
                 await bot.say(label)
             await bot.say("\nだよ！")
+'''
 
 @bot.command(description=' ', pass_context=True)
 async def absent(ctx: commands.Context):
@@ -276,7 +278,6 @@ async def role_reset(ctx: commands.Context):
         #await bot.say(user.name + "を" + role.name + "から解除しました")
 
 
-
 @bot.command(description='bot再起動する前に使用して、tmpフォルダ内のファイルが失われるのを防ぎましょう。', pass_context=True)
 async def tmp_up(ctx: commands.Context):
     "tmpフォルダ内のfileをs3に避難させます(upload)。"
@@ -306,6 +307,14 @@ async def on_command_error(exception: Exception, ctx: commands.Context):
     if error_count%10 == 1 and ctx.message.author.id == "349102495114592258":
         func_tmp_up()
         await bot.send_message(channel,"up")
+
+if __name__ == "__main__":
+    for extension in startup_extensions:
+        try:
+            bot.load_extension(extension)
+        except Exception as e:
+            exc = '{}: {}'.format(type(e).__name__, e)
+            print('Failed to load extension {}\n{}'.format(extension, exc))
 
 bot.run('NTA1NDA0OTE4NTI2Mzc4MDA0.DrZwjg.Dpv0JWxtpB8aCcdwW9pymObl914')
 
