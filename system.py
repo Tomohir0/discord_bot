@@ -12,6 +12,7 @@ s3 = boto3.resource('s3')
 
 
 class System():
+    "system上存在する関数だよ！new以外はみんなの前ではあまり使われないかも！"
 
     def __init__(self, bot):
         self.bot = bot

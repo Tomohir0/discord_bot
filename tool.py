@@ -12,6 +12,7 @@ import random
 
 
 class Tool():
+    "サイコロとかランダム選択とか、かゆいところに手が届くツールとなる関数だよ！要望があれば何でも言ってみて！"
 
     def __init__(self, bot):
         self.bot = bot

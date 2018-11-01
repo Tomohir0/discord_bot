@@ -55,7 +55,7 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
-    func_tmp_dl()
+    func_tmp_dl() # まずdl
 
 @bot.event
 async def on_message(message):  # 関数名はon_messageのみ
@@ -137,9 +137,9 @@ async def on_command_error(exception: Exception, ctx: commands.Context):
     global error_count
     channel = bot.get_channel("505977333182758915")
     error_count += 1
-    if error_count%10 == 1 and ctx.message.author.id == "349102495114592258":
+    if error_count%10 == 1 and ctx.message.author.id == "349102495114592258":# 毎回はさすがに多い。他の人のerrorは無視
         func_tmp_up()
-        await bot.send_message(channel,"up")
+        await bot.send_message(channel,"up") # 一人serverに報告
 
 if __name__ == "__main__": # cogへジャンプ
     for extension in startup_extensions:

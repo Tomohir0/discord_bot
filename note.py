@@ -9,7 +9,10 @@ import pickle
 #s3 = boto3.resource('s3')
 ## s3連携
 
+
+
 class Note():
+    "メモについての関数があるよ！みんなでメモを保存したり晒したりしよう！"
 
     def __init__(self, bot):
         self.bot = bot

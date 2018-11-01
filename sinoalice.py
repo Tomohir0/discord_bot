@@ -10,10 +10,10 @@ s3 = boto3.resource('s3')
 # s3連携
 
 class Sinolice():
+    "sinoaliceで役に立ちそうな関数を集めたよ！神魔報告関連は別にあるよ！"
 
     def __init__(self, bot):
         self.bot = bot
-    
 
     @commands.command(description='「?vc」で「コロシアムVC」の参加メンバーの(ニックネームではない)名前一覧が得られます。')
     async def vc():
