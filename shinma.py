@@ -296,12 +296,13 @@ async def tmp_dl(ctx: commands.Context):
         s3.Object(bucket_name, file_name).download_file("/"+file_name)
     await bot.say("Finished")
 
+'''
 @bot.event
 async def on_command_error(exception: Exception, ctx: commands.Context):
     channel = bot.get_channel("505977333182758915")
     await ctx.send_message(channel,"error")
     func_tmp_up()
-    await ctx.send_message(channel,"up")
-
+    await bot.send_message(channel,"up")
+'''
 bot.run('NTA1NDA0OTE4NTI2Mzc4MDA0.DrZwjg.Dpv0JWxtpB8aCcdwW9pymObl914')
 
