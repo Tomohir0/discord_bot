@@ -4,12 +4,12 @@ import pprint
 import os
 import pickle
 
-import boto3
-bucket_name = "tomo-discord"
-s3 = boto3.resource('s3')
-# s3連携
+#import boto3
+#bucket_name = "tomo-discord"
+#s3 = boto3.resource('s3')
+## s3連携
 
-class Sinolice():
+class Sinoalice():
     "sinoaliceで役に立ちそうな関数を集めたよ！神魔報告関連は別にあるよ！"
 
     def __init__(self, bot):
