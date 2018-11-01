@@ -27,7 +27,6 @@ class Sinoalice():
             # replaceで改行して見やすく
             await self.bot.say(channel.name + "にいるのは\n" + member_list.replace(",", "\n") + "\nだよ！")
 
-
     @commands.command(description='「?vc_rand 2」で「コロシアムVC」の参加メンバーから二人を選びます。')
     async def vc_rand(num: int):
         "「コロシアムVC」の参加メンバーの中からランダムに指定された人数を選びます。"
@@ -37,7 +36,6 @@ class Sinoalice():
             await self.bot.say("変だよ！\n今のVCには{}人しかいないのに、人数指定が{}人は変だよ！".format(len(member_list), num))
         else:
             await self.bot.say(random.sample(member_list, num) + "！\n君に決めた！")
-
 
     @commands.command(description=' ', pass_context=True)
     async def absent(ctx: commands.Context):
@@ -52,8 +50,6 @@ class Sinoalice():
         else:
             await self.bot.say("もうすでに" + role.name + "だよ！")
     '''
-
-
     @commands.command(description='「やっぱり出れるわ」というときのために。', pass_context=True)
     async def present(ctx: commands.Context):
         "あなたの役職「欠席遅刻予定」を解除します。"
@@ -66,8 +62,6 @@ class Sinoalice():
             await self.bot.remove_roles(user, role)
             await self.bot.say(user.name + "を" + role.name + "から解除しました")
     '''
-
-
     @commands.command(description='コロシアムが終了したら役職を戻しておきましょう。', pass_context=True)
     async def role_reset(ctx: commands.Context):
         "役職「欠席遅刻予定」をすべて解除します。"
@@ -76,7 +70,5 @@ class Sinoalice():
         for member in user.server.members:
             await self.bot.remove_roles(member, role)
             #await self.bot.say(user.name + "を" + role.name + "から解除しました")
-
-
 def setup(bot):
-    bot.add_cog(sinoalice(bot))
+    bot.add_cog(Sinoalice(bot))
