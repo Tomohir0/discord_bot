@@ -79,4 +79,4 @@ class Sinolice():
 
 
 def setup(bot):
-    self.bot.add_cog(sinoalice(bot))
+    bot.add_cog(sinoalice(bot))

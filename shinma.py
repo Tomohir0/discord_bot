@@ -13,13 +13,11 @@ bucket_name = "tomo-discord"
 s3 = boto3.resource('s3')
 # s3連携
 
-extension_list = ["note", "sinoalice", "tool", "system"]
-startup_extensions = extension_list # cogの導入
+startup_extensions = ["note", "sinoalice", "tool", "system"]  # cogの導入
 
 description = ("神魔管理のために作られたbotです。挨拶をしたり愛をささやいたりもします。"
                 "\n「神魔登録説明」で神魔登録などについての説明を表示します。\nその他のcommandについては「?help」を確認してください。"
                 "「?」を文頭に置いて適宜使用できます。"
-                "\nCategoryとしては"+ pprint.pformat(extension_list) + "があります。"
                "\nsourceは https://github.com/Tomohir0/discord_bot/blob/master/shinma.py")
 bot = commands.Bot(command_prefix='?', description=description)
 

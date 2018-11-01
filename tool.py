@@ -40,4 +40,4 @@ class Tool():
 
 
 def setup(bot):
-    self.bot.add_cog(Tool(bot))
+    bot.add_cog(Tool(bot))

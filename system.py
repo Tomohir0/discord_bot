@@ -58,4 +58,4 @@ class System():
 
 
 def setup(bot):
-    self.bot.add_cog(system(bot))
+    bot.add_cog(system(bot))
