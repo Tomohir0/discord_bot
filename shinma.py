@@ -210,7 +210,7 @@ async def call_labels(ctx: commands.Context):
 async def absent(ctx: commands.Context):
     "役職をAbsentに変更。遅刻しそうないし欠席の可能性を示せます。「?role_reset」で全員のAbsentをもとに戻せます。"
     user = ctx.message.author
-    role = discord.utils.get(user.server.roles, name="Absent")
+    role = discord.utils.get(user.server.roles, name="欠席遅刻予定")
     if not user in role.members:
         await bot.add_roles(user, role)
         await bot.say(user.name + "を" + role.name + "に変更しました")
