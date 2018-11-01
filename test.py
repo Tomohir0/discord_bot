@@ -149,7 +149,7 @@ async def vc_rand(num: int):
 async def add(num1: int, num2: int):
     await bot.say(str(num1 + num2))
 
-'''
+
 @bot.group(pass_context = True)
 async def absent(ctx: commands.Context):
     "あなたがその日に欠席する場合は「?absent」の後に「me」と入力してください。他の人の場合は一覧から対応する数字を入力してください。"
@@ -173,7 +173,7 @@ async def absent_me(ctx: commands.Context):
 async def absent_other(ctx: commands.Context):
     await bot.say("OK")
 
-
+'''
 # bot.group dont go well...
 
 @bot.command()
