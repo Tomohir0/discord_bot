@@ -300,6 +300,7 @@ async def tmp_dl(ctx: commands.Context):
 
 @bot.event
 async def on_command_error(exception: Exception, ctx: commands.Context):
+    global error_count
     channel = bot.get_channel("505977333182758915")
     error_count += 1
     if error_count%10 == 1 and ctx.message.author.id == "349102495114592258":
