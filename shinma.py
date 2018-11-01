@@ -27,7 +27,7 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
-    await bot.add_command(tmp_dl)
+    await bot.add_command(command=tmp_dl)
 
 
 @bot.event
@@ -213,6 +213,7 @@ async def absent(ctx: commands.Context):
     user = ctx.message.author
     role = discord.utils.get(user.server.roles, name="欠席遅刻予定")
     await bot.add_roles(user, role)
+    await bot.say(user.name + "はお休み、了解！")
 '''    if not user in role.members:
         await bot.add_roles(user, role)
         await bot.say(user.name + "を" + role.name + "に変更しました")
@@ -226,6 +227,7 @@ async def present(ctx: commands.Context):
     user = ctx.message.author
     role = discord.utils.get(user.server.roles, name="欠席遅刻予定")
     await bot.remove_roles(user, role)
+    await bot.say(user.name + "はいける、了解！")
 '''
     if user in role.members:
         await bot.remove_roles(user, role)
