@@ -27,6 +27,7 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
+    await bot.add_command(tmp_dl)
 
 
 @bot.event
@@ -211,22 +212,27 @@ async def absent(ctx: commands.Context):
     "役職をAbsentに変更。遅刻しそうないし欠席の可能性を示せます。「?role_reset」で全員のAbsentをもとに戻せます。"
     user = ctx.message.author
     role = discord.utils.get(user.server.roles, name="欠席遅刻予定")
-    if not user in role.members:
+    await bot.add_roles(user, role)
+'''    if not user in role.members:
         await bot.add_roles(user, role)
         await bot.say(user.name + "を" + role.name + "に変更しました")
-
+    else:
+        await bot.say("もうすでに" + role.name + "だよ！")
+'''
 
 @bot.command(description='「やっぱり出れるわ」というときのために。', pass_context=True)
 async def present(ctx: commands.Context):
     "あなたの役職「欠席遅刻予定」を解除します。"
     user = ctx.message.author
     role = discord.utils.get(user.server.roles, name="欠席遅刻予定")
+    await bot.remove_roles(user, role)
+'''
     if user in role.members:
         await bot.remove_roles(user, role)
         await bot.say(user.name + "を" + role.name + "から解除しました")
-    else:
-        await bot.say("もうすでに" + role.name + "だよ！")
+'''
 
+'''
 @bot.command(description='コロシアムが終了したら役職を戻しておきましょう。', pass_context=True)
 async def role_reset(ctx: commands.Context):
     "役職「欠席遅刻予定」をすべて解除します。"
@@ -235,6 +241,7 @@ async def role_reset(ctx: commands.Context):
     for member in role.members:
         await bot.remove_roles(member, role)
         await bot.say(user.name + "を" + role.name + "から解除しました")
+'''
 
 @bot.command(description='bot再起動する前に使用して、tmpフォルダ内のファイルが失われるのを防ぎましょう。', pass_context=True)
 async def tmp_up(ctx: commands.Context):
