@@ -18,6 +18,7 @@ description = ("神魔管理のために作られたbotです。挨拶をした�
                "\nsourceは https://github.com/Tomohir0/discord_bot/blob/master/shinma.py を確認してください。")
 bot = commands.Bot(command_prefix='?', description=description)
 
+error_count = 0
 # async外で保存するためにGlobal変数を用いる
 
 '''
@@ -300,9 +301,10 @@ async def tmp_dl(ctx: commands.Context):
 @bot.event
 async def on_command_error(exception: Exception, ctx: commands.Context):
     channel = bot.get_channel("505977333182758915")
-#    await ctx.send_message(channel,"error")
-    func_tmp_up()
-    await bot.send_message(channel,"up")
+    error_count += 1
+    if error_count%10 == 1 and ctx.message.author.id == "349102495114592258":
+        func_tmp_up()
+        await bot.send_message(channel,"up")
 
 bot.run('NTA1NDA0OTE4NTI2Mzc4MDA0.DrZwjg.Dpv0JWxtpB8aCcdwW9pymObl914')
 
