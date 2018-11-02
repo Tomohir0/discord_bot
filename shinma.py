@@ -97,7 +97,7 @@ async def on_message(message):  # 関数名はon_messageのみ
         return 0
     for key in stwith_dict.keys():
        if mc.startswith(key):
-           await bot.say(stwith_dict.get(key)) 
+           await bot.send_message(message.channel, stwith_dict.get(key)) 
     # 神魔関連
     if mc.startswith("神魔"):
         # ぼっち関数
@@ -152,5 +152,5 @@ if __name__ == "__main__": # cogへジャンプ
             print('Failed to load extension {}\n{}'.format(extension, exc))
 
 
-bot.run('NTA1NDA0OTE4NTI2Mzc4MDA0.DrZwjg.Dpv0JWxtpB8aCcdwW9pymObl914')
+bot.run(DISCORD_TOKEN)
 
