@@ -50,15 +50,22 @@ def func_tmp_dl():
     # await bot.say("Download's Finished")
 
 
-@bot.command(description='sourceは https://github.com/Tomohir0/discord_bot/blob/master/shinma.py を確認してください。')
-async def new():
+@bot.command(pass_context=True,description='sourceは https://github.com/Tomohir0/discord_bot/blob/master/shinma.py を確認してください。')
+async def new(ctx:commands.Context):
     """最近の更新情報をお知らせします。"""
-    m_new = ("Nov,2:botが暴走……。tokenの取り扱いをlocalにして外部からは手が届かないように……(すごく今さら……)。ごめんなさい……。"
+    m_new = ("Nov,3:new関数を更新。新しい関数のhelpを表示するように。"
+            "\nNov,2:botが暴走……。tokenの取り扱いをlocalにして外部からは手が届かないように……(すごく今さら……)。ごめんなさい……。"
              "\nNov,2:early returnをいまさら導入。無駄な深さが軽減。その他バグ修正など。"
              "\nNov,2:cogを導入！開発側としては大分大きいけど、使い手としては関数に分類が付いたくらいかな？callrandをとりあえず追加！メモをランダムに開いちゃおう！王様ゲーム的なのも作れそうかも？"
              "\nNov,1:長かったからcall_labels=>labelsに変更したよ！役職関連の関数をこれで完備だ！これでお休み一目瞭然！tmp_uoとtmp_dlは内部関数に。")
-    m2 = ("\n\n過去の更新情報については https://github.com/Tomohir0/discord_bot/blob/master/README ")
-    await bot.say(m_new + m2)
+    await bot.say(m_new)
+    new_funcs = ["callrand", "dels", ""]
+    for func in new_funcs:
+        ctx.message.content = "?help " + func
+        await bot.process_commands(ctx.message)
+    await bot.say("\n\n過去の更新情報については https://github.com/Tomohir0/discord_bot/blob/master/README ")
+
+
 
 
 @bot.event  # server加入時の処理

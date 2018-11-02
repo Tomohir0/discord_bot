@@ -39,6 +39,12 @@ class System():
             s3.Object(bucket_name, file_name).download_file("/"+file_name)
         await self.bot.say("Finished")
 
+    @commands.command(pass_context=True)
+    async def test(self, ctx):
+        "test用だよ。"
+        ctx.message.content = "?help"
+        await self.bot.process_commands(ctx.message)
+
 
 def setup(bot):
     bot.add_cog(System(bot))

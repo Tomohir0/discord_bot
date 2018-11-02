@@ -2,11 +2,11 @@
 このdirectoryはTom-O-HEROがdiscord_botを作成・実験する場です。
 
 # 各ソースについて
-:shinma.py| 神魔速報や挨拶などを行う。主役。
-:note.py,tool.py,sinoalice.py,system.py|cog用のfile
-:Procile, requirements.txt, runtime.txt| heroku用のテキスト
-:test.py| 実験用。
-:hello.py| 挨拶を行う。最初に作ったbot。今では放置。
+: shinma.py | 神魔速報や挨拶などを行う。主役。
+: note.py,tool.py,sinoalice.py,system.py | cog用のfile
+: Procile, requirements.txt, runtime.txt | heroku用のテキスト
+: test.py | 実験用。
+: hello.py | 挨拶を行う。最初に作ったbot。今では放置。
 
 
 # update
