@@ -24,7 +24,7 @@ class Tool():
             rolls, limit = map(int, dice.split('d'))
         except Exception:
             await self.bot.say("「NdN」の形じゃないよ！")
-            return 
+            return 0
 
         result = ', '.join(str(random.randint(1, limit)) for r in range(rolls))
         await self.bot.say("ダイスロール！\n" + result)

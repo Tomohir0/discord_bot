@@ -4,6 +4,7 @@ import pprint
 import random
 import os
 import pickle
+import numpy
 # import numpy as np
 
 #import boto3
@@ -13,7 +14,7 @@ import pickle
 
 
 class Game():
-    ""
+    " "
 
     def __init__(self, bot):
         self.bot = bot
@@ -111,7 +112,7 @@ class Game():
             await self.bot.say("抜けたくなった人は「!esc」を入力してね。新たな参加希望者は「!join」を入力。"
                             "\n全員の入力が完了したら「!start」を入力。ゲームを終了したい場合は「!stop」を。")
             
-   '''
+'''
     @commands.command(description='', pass_context=True)
     async def number_game(self, ctx: commands.Context):
         await self.bot.say("数当てゲームのお時間です。1~100の中にある正解を当てよう！チャンスは全部で約7回！")

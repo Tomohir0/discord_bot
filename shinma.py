@@ -140,7 +140,7 @@ async def on_message(message):  # 関数名はon_messageのみ
                 await bot.send_message(message.channel, "第一神魔は{}\n第二神魔は{}".format(shinma[0], shinma[1]))
     await bot.process_commands(message)  # bot.commandも使えるために必要
 
-
+'''
 @bot.event  # error時に定期的にupload
 async def on_command_error(exception: Exception, ctx: commands.Context):
     global error_count
@@ -149,6 +149,7 @@ async def on_command_error(exception: Exception, ctx: commands.Context):
     if error_count % 10 == 1 and ctx.message.author.id == "349102495114592258":  # 毎回はさすがに多い。他の人のerrorは無視
         func_tmp_up()
         await bot.send_message(channel, "up")  # 一人serverに報告
+'''
 
 if __name__ == "__main__":  # cogへジャンプ
     for extension in startup_extensions:
