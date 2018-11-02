@@ -2,3 +2,4 @@ discord.py==0.16.12
 
 boto==2.49.0
 boto3==1.9.34
+numpy==1.15.3
