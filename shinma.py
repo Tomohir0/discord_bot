@@ -4,6 +4,7 @@ import datetime
 import pprint
 import random
 
+import numpy
 import os
 import pickle
 import glob
