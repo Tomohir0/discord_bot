@@ -59,7 +59,7 @@ class Sinoalice():
         await self.bot.remove_roles(user, role)
         await self.bot.say(user.name + "はいける、了解！")
     '''
-        if user in role.members:
+        if user in role.members:role_mentions
             await self.bot.remove_roles(user, role)
             await self.bot.say(user.name + "を" + role.name + "から解除しました")
     '''

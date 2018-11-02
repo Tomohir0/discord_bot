@@ -1,0 +1,157 @@
+import discord
+from discord.ext import commands
+import pprint
+import random
+import os
+import pickle
+import numpy as np
+
+#import boto3
+#bucket_name = "tomo-discord"
+#s3 = boto3.resource('s3')
+# s3連携
+
+
+class Game():
+    ""
+
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.command(description='', pass_context=True)
+    async def king(self, ctx: commands.Context):
+        "王様ゲームをdiscordで再現……できるかな？まずは「?king」"
+        await self.bot.say("王様ゲームを始めたいなら「!start」、止めたいなら「!stop」を入力してね")
+        for role_name in ["ゲーム参加者", "王様"]:
+            try:
+                role = self.bot.discord.utils.get(ctx.message.server.roles, name=role_name)
+                await self.bot.delete_role(ctx.message.server, role)
+            except Exception:
+                pass
+        role_join = await self.bot.create_role(ctx.message.server, name="ゲーム参加者", hoist=True, position=1)
+        role_king = await self.bot.create_role(ctx.message.server, name="王様", hoist=True, position=2)
+
+        def check_st(msg):
+            return msg.content in ["!start", "!stop"]
+
+        start_or_stop = await self.bot.wait_for_message(check=check_st)
+        if start_or_stop == "!stop":
+            await self.bot.say("終了！お疲れ様！")
+            server = ctx.message.author.server
+            for role_name in ["ゲーム参加者", "王様"]:
+                role = self.bot.discord.utils.get(server.roles, name=role_name)
+                await self.bot.delete_role(server, role)
+
+        await self.bot.say("王様ゲームを始めよう！\n参加希望者は「!join」\n抜けたくなったら「!esc」"
+                           "\n全員の入力が完了したら「!start」\nゲームを終了したい場合は「!stop」")
+
+        def check_join(msg):  # join checkのお時間
+            return msg.content in ["!join", "!esc", "!start", "!stop"]
+        
+        while(True): # !stopで抜ける
+            not_start = True
+            while (not_start): # join
+                join_or = await self.bot.wait_for_message(check=check_join)
+                await self.bot.say(join_or.author.name )
+                if join_or.content == "!stop":
+                    await self.bot.say("終了！お疲れ様！")
+                    server = ctx.message.author.server
+                    for role_name in ["ゲーム参加者", "王様"]:
+                        role = self.bot.discord.utils.get(server.roles, name=role_name)
+                        await self.bot.delete_role(server, role)
+                        return 0
+                if join_or.content == "!join":
+                    await self.bot.add_roles(join_or.author, role_join)
+                if join_or.content == "!esc":
+                    await self.bot.remove_roles(join_or.author, role_join)
+                if join_or.content == "!start":
+                    await self.bot.say("参加者締め切り！役職の「ゲーム参加者」を確認してね！")
+                    not_start = False
+            
+            join_list = [member for member in ctx.message.server.members if role_join in member.roles]
+            join_num = len(join_list)
+            if join_num < 3:
+                await self.bot.say("あ～、少なすぎ……かな？またの機会ということで！")
+                await self.bot.say("終了！お疲れ様！")
+                server = ctx.message.author.server
+                for role_name in ["ゲーム参加者", "王様"]:
+                    role = self.bot.discord.utils.get(server.roles, name=role_name)
+                    await self.bot.delete_role(server, role)
+                    return 0
+
+            await self.bot.say("今回の参加者は" + str(join_num) + "人！\nさて、はじめよう(何か入力してね)")
+            await self.bot.wait_for_message()
+            await self.bot.say("王様だ～れだ！")
+            king = random.choice(join_list)
+            await self.bot.say(king.display_name + "！！"
+                            "\nさあ、王様！ 1~" + str(join_num - 1) + "の数字を使ってご命令を！"
+                            "\n(命令を言い終えたら王自身が「!do」とご入力を！)")
+
+            def check_do(msg):
+                return msg.startswith == "!do" and msg.author == king
+            await self.bot.wait_for_message(check=check_do)
+            await self.bot.say("では番号の発表です！(ここだけ仕様が少し変……)")
+
+            join_list.remove(king)  # 王様を省く
+            join_pairs = zip(join_list.shuffle(), list(
+                range(join_num-1)))  # 数字とのペアを生成
+            m = ""
+            for member, number in join_pairs:
+                m += number + " : " + member.display_name + "\n"
+            await self.bot.say(m)
+
+            await self.bot.say("命令の実行をご確認されるなどして、次に進むべきとご判断なされたならば王様自身が「!next」とご入力を！")
+
+            def check_next(msg):
+                return msg.startswith == "!next" and msg.author == king
+            await self.bot.wait_for_message(check=check_next)
+            await self.bot.say("これで今回の王様ゲームは終わり！")
+            await self.bot.remove_roles(king, role_king)
+
+            await self.bot.say("抜けたくなった人は「!esc」を入力してね。新たな参加希望者は「!join」を入力。"
+                            "\n全員の入力が完了したら「!start」を入力。ゲームを終了したい場合は「!stop」を。")
+            
+   
+    @commands.command(description='', pass_context=True)
+    async def number_game(self, ctx: commands.Context):
+        await self.bot.say("数当てゲームのお時間です。1~100の中にある正解を当てよう！チャンスは全部で約7回！")
+        def check_num(msg):
+           return isinstance(msg, int) and 0 < msg.content < 101
+        answer = random.randint(1, 100)
+        var = random.randint(0, 3)
+
+        for i in range(5+var):
+            await self.bot.say(str(i)+"回目、いくつだと思う～？") # dictでバリエーション増やしたい
+            try_num = await self.bot.wait_for_message(check=check_num)
+            err = try_num - answer
+
+            find_table = {np.arrange(-100,- 30) : "小さすぎるんじゃない？",
+                          np.arrange(-29,-20) : "まだ小さい小さい",
+                          np.arrange(-19,-10) : "うんうん、まだ小さい",
+                          np.arrange(-9,-5) : "ま、まあまあいいと思うよ？もう少し増やせるんじゃない？？",
+                          np.arrange(-4,-2) : "げ",
+                          np.arrange(-1,1) : "うげら",
+                          np.arrange(2,4) : "げ",
+                        np.arrange(5,9) : "えーっと……まだ減らせる、かな……",
+                        np.arrange(10,19) : "うんうん、減らしてこ",
+                        np.arrange(20,29) : "まだ大きいよー！",
+                        np.arrange(30,100) : "大きすぎるんじゃない？"}
+            if err == 0:
+                break
+            for key in find_table.keys():
+                if err in list(key):
+                    await self.bot.say(find_table.get(key))
+                    break
+        if err == 0:
+            await self.bot.say("お見事！")
+            return 0
+        await self.bot.say("残念……。正解は" + str(answer) + "でした！")
+
+
+
+               
+           
+
+
+def setup(bot):
+    bot.add_cog(Game(bot))

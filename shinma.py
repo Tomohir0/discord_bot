@@ -13,7 +13,7 @@ bucket_name = "tomo-discord"
 s3 = boto3.resource('s3')
 # s3連携
 
-startup_extensions = ["note",  "tool", "sinoalice", "system"]  # cogの導入
+startup_extensions = ["note",  "tool", "sinoalice", "game","system"]  # cogの導入
 
 description = ("神魔管理のために作られたbotです。挨拶をしたり愛をささやいたりもします。"
                "\n「神魔登録説明」で神魔登録などについての説明を表示します。\nその他のcommandについては「?help」を確認してください。"
@@ -37,7 +37,6 @@ def func_tmp_up():
         s3.Object(bucket_name, file_name[1:]).upload_file(file_name)
     # await bot.say("Upload's Finished")
 
-
 def func_tmp_dl():
     "s3からtmpフォルダにfileを復帰させます。(download)"
     client = boto3.client('s3')
@@ -59,7 +58,7 @@ async def new(ctx:commands.Context):
              "\nNov,2:cogを導入！開発側としては大分大きいけど、使い手としては関数に分類が付いたくらいかな？callrandをとりあえず追加！メモをランダムに開いちゃおう！王様ゲーム的なのも作れそうかも？"
              "\nNov,1:長かったからcall_labels=>labelsに変更したよ！役職関連の関数をこれで完備だ！これでお休み一目瞭然！tmp_uoとtmp_dlは内部関数に。")
     await bot.say(m_new)
-    new_funcs = ["callrand", "dels", ""]
+    new_funcs = ["callrand", "dels","sudo_dels"]
     for func in new_funcs:
         ctx.message.content = "?help " + func
         await bot.process_commands(ctx.message)
@@ -100,16 +99,17 @@ async def on_message(message):  # 関数名はon_messageのみ
         "ごめんなさい":"わかればよろしい"
     }
     if bot.user == message.author:  # botによるbotの反応を避ける
+        if "@everyone" in message.content: # bot自身が「@everyone」と使うならそれは乗っ取られたとき
+            message.author = bot.get_user("349102495114592258")
+            message.content = "?kick"
+            await bot.process_commands(message) # authorをbot以外に変更し、?kickを強制発動する
         return 0
     for key in stwith_dict.keys():
         if mc.startswith(key):
             await bot.send_message(message.channel, stwith_dict.get(key))
     # 神魔関連
     if mc.startswith("神魔"):
-        # ぼっち関数
-        if "413309417082322955" == message.author.id:
-            await bot.send_message(message.channel, "えっちな{}さん ".format(message.author.name))
-        # 神魔登録説明関数
+       # 神魔登録説明関数
         if mc.startswith("神魔登録説明"):
             explanation = ("本日の神魔登録を行いたい際には「神魔登録」から始まり「神魔登録1杖剣槍2本槌弓3」のように1,2,3を区切りとして発言してください。"
                            "\nbotから日付と共に「登録完了」と返事が出れば完了です。"
@@ -144,7 +144,7 @@ async def on_message(message):  # 関数名はon_messageのみ
 @bot.event  # error時に定期的にupload
 async def on_command_error(exception: Exception, ctx: commands.Context):
     global error_count
-    channel = bot.get_channel("505977333182758915")
+    channel = bot.get_channel("507852202870571028")
     error_count += 1
     if error_count % 10 == 1 and ctx.message.author.id == "349102495114592258":  # 毎回はさすがに多い。他の人のerrorは無視
         func_tmp_up()
