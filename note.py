@@ -109,7 +109,7 @@ class Note():
                 await self.bot.say(label+" : " + memos.get(label)[:10])
             await self.bot.say("\nさあ、どれを見る？label名を入力してね！")
 
-    @call_select.command()
+    @selects.command()
     async def quit(ctx: commands.Context, label: str)
         f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
         with open(f_name, 'rb') as f:
