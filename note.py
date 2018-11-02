@@ -94,19 +94,30 @@ class Note():
         await self.bot.say("\nと思いきや復活！！神！")
         await self.bot.say(label + " : " + memos.get(label))
 
-    @commands.command(description=' ', pass_context=True,)
-    async def call_select(self, ctx: commands.Context):
+    @commands.group(description=' ', pass_context=True,)
+    async def selects(self, ctx: commands.Context):
         "「?notes」のlabelの一覧を見ながらlabelを選択して内容を表示します。"
-        f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
-        if not os.path.isfile(f_name):  # 存在しないときの処理
-            await self.bot.say("まだこのserverにはメモがないよ……。?notesを使ってほしいな……")
-        else:
+        if ctx.invoked_subcommand is None:
+            f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
+            if not os.path.isfile(f_name):  # 存在しないときの処理
+                await self.bot.say("まだこのserverにはメモがないよ……。?notesを使ってほしいな……")
+                return 0
             with open(f_name, 'rb') as f:
                 memos = pickle.load(f)
-            await self.bot.say("ここのmemoのlabel一覧は\n")
+            await self.bot.say("ここのmemoの一覧は\n")
             for label in memos.keys():
-                await self.bot.say(label)
-            await self.bot.say("\nだよ！")
+                await self.bot.say(label+" : " + memos.get(label)[:10])
+            await self.bot.say("\nさあ、どれを見る？label名を入力してね！")
+
+    @call_select.command()
+    async def quit(ctx: commands.Context, label: str)
+        f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
+        with open(f_name, 'rb') as f:
+            memos = pickle.load(f)
+        await self.bot.say(memos.get(label,"ないよ！"))
+
+
+
 
 def setup(bot):
     bot.add_cog(Note(bot))
