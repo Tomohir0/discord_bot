@@ -4,7 +4,7 @@ import pprint
 import random
 import os
 import pickle
-import numpy
+#import numpy
 # import numpy as np
 
 #import boto3
