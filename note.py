@@ -110,7 +110,7 @@ class Note():
             await self.bot.say("\nさあ、どれを見る？label名を入力してね！")
 
     @selects.command()
-    async def quit(self,ctx: commands.Context, label: str):
+    async def call_select(self,ctx: commands.Context, label: str):
         f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
         with open(f_name, 'rb') as f:
             memos = pickle.load(f)
