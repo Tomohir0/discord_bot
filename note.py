@@ -9,7 +9,10 @@ import random
 #bucket_name = "tomo-discord"
 #s3 = boto3.resource('s3')
 ## s3連携
-
+'''
+global
+'''
+del_try_count = 0
 
 class Note():
     "メモについての関数があるよ！みんなでメモを保存したり晒したりしよう！"
@@ -37,14 +40,63 @@ class Note():
         f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
         if not os.path.isfile(f_name):  # 存在しないときの処理
             await self.bot.say("まだこのserverにはメモがないよ……。?notesを使ってほしいな……")
-        else:
-            with open(f_name, 'rb') as f:
-                memos = pickle.load(f)
-            await self.bot.say(memos.get(label, label + "なんてlabelのメモないよ！"))
+            return 0
+        with open(f_name, 'rb') as f:
+            memos = pickle.load(f)
+        await self.bot.say(memos.get(label, label + "なんてlabelのメモないよ！"))
 
     @commands.command(description=' ', pass_context=True,)
     async def labels(self, ctx: commands.Context):
         "「?notes」のlabelの一覧を表示します。"
+        f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
+        if not os.path.isfile(f_name):  # 存在しないときの処理
+            await self.bot.say("まだこのserverにはメモがないよ……。?notesを使ってほしいな……")
+            return 0
+        with open(f_name, 'rb') as f:
+            memos = pickle.load(f)
+        await self.bot.say("ここのmemoのlabel一覧は\n")
+        for label in memos.keys():
+            await self.bot.say(label)
+        await self.bot.say("\nだよ！")
+
+    @commands.command(description='「?notes」で保存されたmemoからランダムに一つを晒します。', pass_context=True)
+    async def callrand(self, ctx: commands.Context):
+        "「?callrand」でメモを1つ晒します。"
+        f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
+        if not os.path.isfile(f_name):  # 存在しないときの処理
+            await self.bot.say("まだこのserverにはメモがないよ……。?notesを使ってほしいな……")
+            return 0
+        with open(f_name, 'rb') as f:
+            memos = pickle.load(f)
+        label_selected = random.choice(list(memos.keys()))
+        await self.bot.say(label_selected +" : "+ memos.get(label_selected, "ERROR"))
+
+    @commands.command(description='「?notes」で保存されたmemoを読み出すことができます。', pass_context=True)
+    async def dels(self, ctx: commands.Context, label: str):
+        "「?dels secret」でsecretとして保存されたメモを削除できる……かも。"
+        global del_try_count
+        f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
+        if not os.path.isfile(f_name):  # 存在しないときの処理
+            await self.bot.say("まだこのserverにはメモがないよ……。?notesを使ってほしいな……")
+            return 0
+        with open(f_name, 'rb') as f:
+                memos = pickle.load(f)
+        if not label in memos:
+            await self.bot.say(label + "なんてラベルないよ！「?labels」使う？")
+            return 0
+        if del_try_count > 3:
+            await self.bot.say("残念！もう回数制限だね！時間をあけて再チャレンジ！")
+            return 0
+        if random.randint(1, 100) > 40:
+            await self.bot.say(label+" : "+memos.pop(label)+"\nは消えちゃった……")
+            return 0
+        await self.bot.say(label + " : " + memos.get(label) + "\nは消えちゃった……")
+        await self.bot.say("\nと思いきや復活！！神！")
+        await self.bot.say(label + " : " + memos.get(label))
+
+    @commands.command(description=' ', pass_context=True,)
+    async def call_select(self, ctx: commands.Context):
+        "「?notes」のlabelの一覧を見ながらlabelを選択して内容を表示します。"
         f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
         if not os.path.isfile(f_name):  # 存在しないときの処理
             await self.bot.say("まだこのserverにはメモがないよ……。?notesを使ってほしいな……")
@@ -55,36 +107,6 @@ class Note():
             for label in memos.keys():
                 await self.bot.say(label)
             await self.bot.say("\nだよ！")
-
-    @commands.command(description='「?notes」で保存されたmemoからランダムに一つを晒します。', pass_context=True)
-    async def callrand(self, ctx: commands.Context):
-        "「?callrand」でメモを1つ晒します。"
-        f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
-        if not os.path.isfile(f_name):  # 存在しないときの処理
-            await self.bot.say("まだこのserverにはメモがないよ……。?notesを使ってほしいな……")
-        else:
-            with open(f_name, 'rb') as f:
-                memos = pickle.load(f)
-            label_selected = random.choice(list(memos.keys()))
-            await self.bot.say(label_selected +" : "+ memos.get(label_selected, "ERROR"))
-
-    @commands.command(description='「?notes」で保存されたmemoを読み出すことができます。', pass_context=True)
-    async def deletes(self, ctx: commands.Context, label: str):
-        "「?delete secret」でsecretとして保存されたメモを削除できる……かも。"
-        f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
-        if not os.path.isfile(f_name):  # 存在しないときの処理
-            await self.bot.say("まだこのserverにはメモがないよ……。?notesを使ってほしいな……")
-        else:
-            with open(f_name, 'rb') as f:
-                memos = pickle.load(f)
-            if not label in memos:
-                await self.bot.say(label + "なんてラベルないよ！「?labels」使う？")
-            elif random.randint(1, 100) > 90:
-                await self.bot.say(label+"の「"+memos.pop(label)+"」は消えちゃった……")
-            else:
-                await self.bot.say(label + "の「" + memos.get(label) + "」は消えちゃった……")
-                await self.bot.say("\nと思いきや復活！！神！")
-                await self.bot.say(label + " : " + memos.get(label))
 
 def setup(bot):
     bot.add_cog(Note(bot))

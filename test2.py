@@ -13,3 +13,12 @@ r = obj.put(Body = json.dumps(test_json))
  
 # get json data
 print(obj.get()['Body'].read())
+
+'''
+f_name2 = "/tmp/storage_" + ctx.message.author.server.id + ".pkl"  # いろいろstorageに入れる
+       if not os.path.isfile(f_name2):  # 存在しないときの処理
+            storage = {}
+        else:
+            with open(f_name, 'rb') as f:
+                storage = pickle.load(f)
+'''
