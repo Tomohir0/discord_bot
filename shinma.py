@@ -77,7 +77,6 @@ async def on_ready():
 async def on_message(message):  # 関数名はon_messageのみ
     date_today = datetime.date.today()
     mc = message.content
-    id = ["", "", ""]
     stwith_dict = { # 呼応一覧
         "おはよ": "Good morning" + message.author.name,
         "こんにちは": "Hi, " + message.author.name,
@@ -94,12 +93,8 @@ async def on_message(message):  # 関数名はon_messageのみ
         "お腹空いた": "わかる。めっちゃお腹空いた。",
         "お腹すいた":"わかる。めっちゃお腹空いた。"
     }
-    if bot.user != message.author:  # botによるbotの反応を避ける
+    if bot.user == message.author:  # botによるbotの反応を避ける
         return 0
-    # ぼっち関数など
-    if mc.startswith("?"):  # 呼びかけ追加
-        if "413309417082322955" == message.author.id:
-            await bot.send_message(message.channel, "えっちな{}さん ".format(message.author.name))
     for key in stwith_dict.keys():
        if mc.startswith(key):
            await bot.say(stwith_dict.get(key)) 

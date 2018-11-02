@@ -71,7 +71,7 @@ class Note():
         label_selected = random.choice(list(memos.keys()))
         await self.bot.say(label_selected +" : "+ memos.get(label_selected, "ERROR"))
 
-    @commands.command(description='「?notes」で保存されたmemoを読み出すことができます。', pass_context=True)
+    @commands.command(description='「?notes」で保存されたmemoを削除することができるかもしれません。', pass_context=True)
     async def dels(self, ctx: commands.Context, label: str):
         "「?dels secret」でsecretとして保存されたメモを削除できる……かも。"
         global del_try_count

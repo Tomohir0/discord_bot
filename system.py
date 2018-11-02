@@ -18,7 +18,7 @@ class System():
         self.bot = bot
 
     @commands.command(description='bot再起動する前に使用して、tmpフォルダ内のファイルが失われるのを防ぎましょう。', pass_context=True)
-    async def tmp_up(ctx: commands.Context):
+    async def tmp_up(self,ctx: commands.Context):
         "tmpフォルダ内のfileをs3に避難させます(upload)。"
         for file_name in glob.glob("/tmp/*.*"):
             await self.bot.say(file_name)
@@ -28,7 +28,7 @@ class System():
 
 
     @commands.command(description='bot再起動後に使用して、tmpフォルダ内にあるべきファイルを復活させましょう。', pass_context=True)
-    async def tmp_dl(ctx: commands.Context):
+    async def tmp_dl(self, ctx: commands.Context):
         "s3からtmpフォルダにfileを復帰させます。(download)"
         client = boto3.client('s3')
         # "/tmp/"のままではs3においては""(空欄)ディレクトリ内のtmpディレクトリにアクセスしてしまう
