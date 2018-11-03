@@ -3,6 +3,7 @@ from discord.ext import commands
 import datetime
 import pprint
 import random
+#import asyncio
 
 import numpy
 import os
@@ -50,23 +51,32 @@ def func_tmp_dl():
     # await bot.say("Download's Finished")
 
 
-@bot.command(pass_context=True,description='sourceは https://github.com/Tomohir0/discord_bot/blob/master/shinma.py を確認してください。')
+@bot.group(pass_context=True,description='sourceは https://github.com/Tomohir0/discord_bot/blob/master/shinma.py を確認してください。')
 async def new(ctx:commands.Context):
     """最近の更新情報をお知らせします。"""
-    m_new = ("Nov,3:new関数を更新。新しい関数のhelpを表示するように。"
-            "\nNov,2:botが暴走……。tokenの取り扱いをlocalにして外部からは手が届かないように……(すごく今さら……)。ごめんなさい……。"
-             "\nNov,2:early returnをいまさら導入。無駄な深さが軽減。その他バグ修正など。"
-             "\nNov,2:cogを導入！開発側としては大分大きいけど、使い手としては関数に分類が付いたくらいかな？callrandをとりあえず追加！メモをランダムに開いちゃおう！王様ゲーム的なのも作れそうかも？"
-             "\nNov,1:長かったからcall_labels=>labelsに変更したよ！役職関連の関数をこれで完備だ！これでお休み一目瞭然！tmp_uoとtmp_dlは内部関数に。")
-    await bot.say(m_new)
-    new_funcs = ["callrand", "dels","sudo_dels"]
+    if ctx.invoked_subcommand is None:
+        m_new = ("Nov,3:神魔登録を含めて少しずつ更新！よりスマートに！notes関連での関数も大分増えた！game関連も少しずつ増えていくかな？"
+                "\nNov,3:new関数を更新。新しい関数のhelpを表示するように。command内での入力を受付可能に！やったぜ！自害プログラムも完備だ！"
+                "\nNov,2:botが暴走……。tokenの取り扱いをlocalにして外部からは手が届かないように……(すごく今さら……)。ごめんなさい……。"
+                "\nNov,2:early returnをいまさら導入。無駄な深さが軽減。その他バグ修正など。"
+                "\nNov,2:cogを導入！開発側としては大分大きいけど、使い手としては関数に分類が付いたくらいかな？callrandをとりあえず追加！メモをランダムに開いちゃおう！王様ゲーム的なのも作れそうかも？"
+                "\nNov,1:長かったからcall_labels=>labelsに変更したよ！役職関連の関数をこれで完備だ！これでお休み一目瞭然！tmp_uoとtmp_dlは内部関数に。")
+        await bot.say(m_new)
+        await bot.say("\n\n過去の更新情報については https://github.com/Tomohir0/discord_bot/blob/master/README.md ")
+
+@new.command(pass_context=True, sub="more")
+async def new_more(ctx: commands.Context):
+    m = ("先日の暴走を受けて。自害プログラムとして「?bot_kick」「?bot_logout」を実装しました。"
+    "このbotが乗っ取られたと判断された場合には即座に「?bot_kick」を入力してください。全serverでこのbotのmessageを削除し、直ちにkick、logoutを行います。"
+    "\nまた、乗っ取りの際に用いられる「@ everyone」が2つ以上含まれたmessageがbot自身から発された場合、bot自らの判断のもと「?bot_kick」を起動します。")
+    await bot.say(m)
+
+@new.command(pass_context=True, sub="func")
+async def new_func(ctx):
+    new_funcs = ["callrand", "dels", "sudo_dels", "king", ]
     for func in new_funcs:
         ctx.message.content = "?help " + func
         await bot.process_commands(ctx.message)
-    await bot.say("\n\n過去の更新情報については https://github.com/Tomohir0/discord_bot/blob/master/README ")
-
-
-
 
 @bot.event  # server加入時の処理
 async def on_ready():
@@ -100,11 +110,12 @@ async def on_message(message):  # 関数名はon_messageのみ
         "ごめんなさい":"わかればよろしい"
     }
     if bot.user == message.author:  # botによるbotの反応を避ける
-        if "@everyone" in message.content: # bot自身が「@everyone」と使うならそれは乗っ取られたとき
+        if message.content.count("@everyone") > 1: # bot自身が「@everyone」と2回も使うならそれは乗っ取られたとき
             message.author = bot.get_user("349102495114592258")
-            message.content = "?kick"
+            message.content = "?bot_kick"
             await bot.process_commands(message) # authorをbot以外に変更し、?kickを強制発動する
         return 0
+
     for key in stwith_dict.keys():
         if mc.startswith(key):
             await bot.send_message(message.channel, stwith_dict.get(key))
@@ -112,24 +123,25 @@ async def on_message(message):  # 関数名はon_messageのみ
     if mc.startswith("神魔"):
        # 神魔登録説明関数
         if mc.startswith("神魔登録説明"):
-            explanation = ("本日の神魔登録を行いたい際には「神魔登録」から始まり「神魔登録1杖剣槍2本槌弓3」のように1,2,3を区切りとして発言してください。"
+            explanation = ("本日の神魔登録を行いたい際にはまずは「神魔登録」と入力してください。"
                            "\nbotから日付と共に「登録完了」と返事が出れば完了です。"
+                           "\n「?reg 第1神魔 第2神魔」でも神魔登録できます。"
                            "\n「神魔」とだけ言った場合、その日に登録された神魔が通知されます。"
                            "\n「神魔登録説明」でこの説明を繰り返します。")  # 説明
             await bot.send_message(message.channel, explanation)
         # 神魔登録関数
         elif mc.startswith("神魔登録"):  # 「神魔登録」で始まるか調べる
-            if not mc.count("1") == 1 and mc.count("2") == 1 and mc.count("3") == 1:
-                return 0
-            if mc.index("1") < mc.index("2") and mc.index("2") < mc.index("3"):
-                shinma1 = mc[mc.index("1") + 1: mc.index("2")]  # 第一神魔
-                shinma2 = mc[mc.index("2") + 1: mc.index("3")]  # 第二神魔
-                date_register = datetime.date.today()  # 神魔登録の日付
-                f_name = "/tmp/shinma_" + message.author.serevr.id + ".pkl"
-                with open(f_name, 'wb') as f:
-                    pickle.dump([shinma1, shinma2, date_register], f)
-                # 登録完了のメッセージ
-                await bot.send_message(message.channel, "登録完了 on " + str(date_register))
+            await bot.send_message(message.channel, "神魔登録を始めよう！\nまずは第1神魔を入力してね！")
+            shinma1 = await bot.wait_for_message() # 神魔入力
+            await bot.send_message(message.channel, "次は第2神魔！")
+            shinma2 = await bot.wait_for_message()
+            date_register = datetime.date.today()  # 神魔登録の日付
+            
+            f_name = "/tmp/shinma_" + message.author.serevr.id + ".pkl"
+            with open(f_name, 'wb') as f:
+                pickle.dump([shinma1.content, shinma2.content, date_register], f)
+            # 登録完了のメッセージ
+            await bot.send_message(message.channel, "登録完了 on " + str(date_register))
         # 神魔呼び出し関数
         elif mc.startswith("神魔") and len(mc) == 2:
             f_name = "/tmp/shinma_" + message.author.server.id + ".pkl"

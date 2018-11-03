@@ -16,6 +16,7 @@ class Sinoalice():
     def __init__(self, bot):
         self.bot = bot
 
+
     @commands.command(description='「?vc」で「コロシアムVC」の参加メンバーの(ニックネームではない)名前一覧が得られます。')
     async def vc(self):
         "「コロシアムVC」の参加メンバーの名前一覧を表示します。"

@@ -97,7 +97,7 @@ class Note():
 
     @dels.command(description='sudo関数です。使用できる人は限られています。', pass_context=True,sudo="sudo")
     async def sudo_dels(self, ctx: commands.Context, label: str):
-        "sudo関数です。labelで指定したメモを確実に削除できます。"
+        "sudo関数です。labelで指定したメモを確実に削除できます。使用できる人は限られています。"
         f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
         if ctx.message.author.id != "349102495114592258":
             await self.bot.say("You are not authorized for sudo function, baby")
@@ -113,7 +113,7 @@ class Note():
         await self.bot.say(label+" : "+memos.pop(label)[:5]+"\nは消えちゃった……")
 
     @commands.command(description=' ', pass_context=True)
-    async def select(self, ctx: commands.Context):
+    async def sel_calls(self, ctx: commands.Context):
         "「?notes」のlabelの一覧を見ながらlabelを選択して内容を表示します。"
         f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
         if not os.path.isfile(f_name):  # 存在しないときの処理
@@ -131,30 +131,30 @@ class Note():
         ctx.message.content = "?calls " + label_input.content
         await self.bot.process_commands(ctx.message)  # calls起動
         
-    @commands.command(description=' ', pass_context=True)
+    @commands.group(description=' ', pass_context=True)
     async def sel_dels(self, ctx: commands.Context):
-        "「?notes」のlabelの一覧を見ながらlabelを選択して消去します。"
-        f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
-        if not os.path.isfile(f_name):  # 存在しないときの処理
-            await self.bot.say("まだこのserverにはメモがないよ……。?notesを使ってほしいな……")
-            return 0
-        with open(f_name, 'rb') as f:
-            memos = pickle.load(f)
-        await self.bot.say("ここのmemoの一覧は")
-        for label in memos.keys():
-            await self.bot.say(label+" : " + memos.get(label)[:5])
-        await self.bot.say("さあ、どれを消す？label名を入力してね！")
+        "labelの一覧を見ながらメモを選択して消去できるかもしれません。"
+        if ctx.invoked_subcommand is None:
+            f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
+            if not os.path.isfile(f_name):  # 存在しないときの処理
+                await self.bot.say("まだこのserverにはメモがないよ……。?notesを使ってほしいな……")
+                return 0
+            with open(f_name, 'rb') as f:
+                memos = pickle.load(f)
+            await self.bot.say("ここのmemoの一覧は")
+            for label in memos.keys():
+                await self.bot.say(label+" : " + memos.get(label)[:5])
+            await self.bot.say("さあ、どれを消す？label名を入力してね！")
 
-        def check(msg):
-            return msg.content in memos.keys()  # check関数
-        label_input = await self.bot.wait_for_message(check=check)  # label入力
-        ctx.message.content = "?dels " + label_input.content
-        await self.bot.process_commands(ctx.message)  # dels起動
+            def check(msg):
+                return msg.content in memos.keys()  # check関数
+            label_input = await self.bot.wait_for_message(check=check)  # label入力
+            ctx.message.content = "?dels " + label_input.content
+            await self.bot.process_commands(ctx.message)  # dels起動
 
-'''
-    @sel_dels.commsnd(description=' ', pass_context=True,sudo="sudo")
+    @sel_dels.command(description=' ', pass_context=True,sudo="sudo")
     async def sudo_sel_dels(self, ctx: commands.Context):
-        "「?notes」のlabelの一覧を見ながらlabelを選択して消去します。"
+        "labelの一覧を見ながらメモを選択して確実に消去できます。sudo関数です。使用できる人は限られています。"
         f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
         if not os.path.isfile(f_name):  # 存在しないときの処理
             await self.bot.say("まだこのserverにはメモがないよ……。?notesを使ってほしいな……")
@@ -171,6 +171,6 @@ class Note():
         label_input = await self.bot.wait_for_message(check=check)  # label入力
         ctx.message.content = "?dels " + label_input.content + " sudo"
         await self.bot.process_commands(ctx.message)  # sudo_dels起動
-'''
+
 def setup(bot):
     bot.add_cog(Note(bot))

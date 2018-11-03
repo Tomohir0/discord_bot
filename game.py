@@ -56,7 +56,7 @@ class Game():
             not_start = True
             while (not_start): # join
                 join_or = await self.bot.wait_for_message(check=check_join)
-                # await self.bot.say(join_or.author.name )
+                await self.bot.say(join_or.author.display_name + "、了解")
                 if join_or.content == "!stop":
                     await self.bot.say("終了！お疲れ様！")
                     for role in [role for role in ctx.message.server.roles if role.name in ["ゲーム参加者", "王様"]]:
@@ -114,13 +114,14 @@ class Game():
 
     @commands.command(description='', pass_context=True)
     async def number_game(self, ctx: commands.Context):
+        "数当てゲーム！範囲は1~100だよ！"
         await self.bot.say("数当てゲームのお時間です。1~100の中にある正解を当てよう！チャンスは全部で約7回！")
         def check_num(msg):
            return 0 < msg.content
         answer = random.randint(1, 100)
         var = random.randint(0, 3)
 
-        for i in range(5+var):
+        for i in range(6+var):
             await self.bot.say(str(i+1)+"回目、いくつだと思う～？") # dictでバリエーション増やしたい
             try_num = await self.bot.wait_for_message(check=check_num)
             await self.bot.say("さてさて……")
@@ -148,7 +149,9 @@ class Game():
             return 0
         await self.bot.say("残念……。正解は" + str(answer) + "でした！")
 
-        
+    @commands.command(pass_context=True)
+    async def dobon(self, ctx):
+        "ドボンゲーム(準備中)"
 
 
 def setup(bot):
