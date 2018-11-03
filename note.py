@@ -131,7 +131,7 @@ class Note():
         ctx.message.content = "?calls " + label_input.content
         await self.bot.process_commands(ctx.message)  # calls起動
         
-    @commands.group(description=' ', pass_context=True)
+    @commands.command(description=' ', pass_context=True)
     async def sel_dels(self, ctx: commands.Context):
         "「?notes」のlabelの一覧を見ながらlabelを選択して消去します。"
         f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
@@ -151,6 +151,7 @@ class Note():
         ctx.message.content = "?dels " + label_input.content
         await self.bot.process_commands(ctx.message)  # dels起動
 
+'''
     @sel_dels.commsnd(description=' ', pass_context=True,sudo="sudo")
     async def sudo_sel_dels(self, ctx: commands.Context):
         "「?notes」のlabelの一覧を見ながらlabelを選択して消去します。"
@@ -170,6 +171,6 @@ class Note():
         label_input = await self.bot.wait_for_message(check=check)  # label入力
         ctx.message.content = "?dels " + label_input.content + " sudo"
         await self.bot.process_commands(ctx.message)  # sudo_dels起動
-
+'''
 def setup(bot):
     bot.add_cog(Note(bot))
