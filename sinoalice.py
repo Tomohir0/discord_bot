@@ -4,6 +4,7 @@ import pprint
 import os
 import pickle
 import random
+import datetime
 
 #import boto3
 #bucket_name = "tomo-discord"
@@ -16,6 +17,15 @@ class Sinoalice():
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.command(pass_context=True)
+    async def reg(self, ctx, shinma1: str, shinma2: str):
+        date_register = datetime.date.today()  # 神魔登録の日付
+        f_name = "/tmp/shinma_" + ctx.message.author.serevr.id + ".pkl"
+        with open(f_name, 'wb') as f:
+            pickle.dump([shinma1, shinma2, date_register], f)
+        # 登録完了のメッセージ
+        await self.bot.send_message(ctx.message.channel, "登録完了 on " + str(date_register))
+        
 
     @commands.command(description='「?vc」で「コロシアムVC」の参加メンバーの(ニックネームではない)名前一覧が得られます。')
     async def vc(self):
@@ -70,7 +80,9 @@ class Sinoalice():
         user = ctx.message.author
         role = discord.utils.get(user.server.roles, name="欠席遅刻予定")
         for member in user.server.members:
-            await self.bot.remove_roles(member, role)
-            #await self.bot.say(user.name + "を" + role.name + "から解除しました")
+            if role in member.roles:
+                await self.bot.remove_roles(member, role)
+                #await self.bot.say(user.name + "を" + role.name + "から解除しました")
+
 def setup(bot):
     bot.add_cog(Sinoalice(bot))

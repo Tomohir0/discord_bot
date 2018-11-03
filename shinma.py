@@ -144,6 +144,9 @@ async def on_message(message):  # 関数名はon_messageのみ
             await bot.send_message(message.channel, "登録完了 on " + str(date_register))
         # 神魔呼び出し関数
         elif mc.startswith("神魔") and len(mc) == 2:
+            if not os.path.isfile(f_name):  # 存在しないときの処理
+                await bot.say("まだこのserverでは神魔登録されてないよ……。? 神魔登録ほしいな……")
+                return 0
             f_name = "/tmp/shinma_" + message.author.server.id + ".pkl"
             with open(f_name, 'rb') as f:
                 shinma = pickle.load(f)
