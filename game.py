@@ -26,19 +26,25 @@ class Game():
         await self.bot.say("王様ゲームを始めたいなら「!start」、止めたいなら「!stop」を入力してね")
 
         for role in [role for role in ctx.message.server.roles if role.name in ["ゲーム参加者", "王様"]]:
-            await self.bot.delete_role(ctx.message.server, role)
-        role_join = await self.bot.create_role(ctx.message.server, name="ゲーム参加者", hoist=True, position=1)
-        role_king = await self.bot.create_role(ctx.message.server, name="王様", hoist=True, position=2)
+            try:
+                await self.bot.delete_role(ctx.message.server, role)
+            except:
+                pass
+        role_join = await self.bot.create_role(ctx.message.server, name="ゲーム参加者", hoist=True, position=0)
+        role_king = await self.bot.create_role(ctx.message.server, name="王様", hoist=True, position=1)
 
         def check_st(msg):
             return msg.content in ["!start", "!stop"]
 
         start_or_stop = await self.bot.wait_for_message(check=check_st)
-        if start_or_stop == "!stop":
+
+        if start_or_stop.content == "!stop":
             await self.bot.say("終了！お疲れ様！")
-            for role in [role for role in ctx.message.server.roles if role.name in ["ゲーム参加者", "王様"]]:
-                await self.bot.delete_role(ctx.message.server, role)
-            return 0
+            try:
+                for role in [role for role in ctx.message.server.roles if role.name in ["ゲーム参加者", "王様"]]:
+                    await self.bot.delete_role(ctx.message.server, role)
+            finally:
+                return 0
 
         await self.bot.say("王様ゲームを始めよう！\n参加希望者は「!join」\n抜けたくなったら「!esc」"
                            "\n全員の入力が完了したら「!start」\nゲームを終了したい場合は「!stop」")
@@ -50,7 +56,7 @@ class Game():
             not_start = True
             while (not_start): # join
                 join_or = await self.bot.wait_for_message(check=check_join)
-                await self.bot.say(join_or.author.name )
+                # await self.bot.say(join_or.author.name )
                 if join_or.content == "!stop":
                     await self.bot.say("終了！お疲れ様！")
                     for role in [role for role in ctx.message.server.roles if role.name in ["ゲーム参加者", "王様"]]:
@@ -110,14 +116,15 @@ class Game():
     async def number_game(self, ctx: commands.Context):
         await self.bot.say("数当てゲームのお時間です。1~100の中にある正解を当てよう！チャンスは全部で約7回！")
         def check_num(msg):
-           return isinstance(msg, int)
+           return 0 < msg.content
         answer = random.randint(1, 100)
         var = random.randint(0, 3)
 
         for i in range(5+var):
             await self.bot.say(str(i+1)+"回目、いくつだと思う～？") # dictでバリエーション増やしたい
             try_num = await self.bot.wait_for_message(check=check_num)
-            err = try_num - answer
+            await self.bot.say("さてさて……")
+            err = try_num.content - answer
 
             find_table = {np.arange(-100,- 30) : "小さすぎるんじゃない？",
                           np.arange(-29,-20) : "まだ小さい小さい",
