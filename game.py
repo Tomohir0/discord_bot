@@ -13,6 +13,8 @@ import numpy as np
 # s3連携
 
 
+
+
 class Game():
     " "
 
@@ -23,12 +25,13 @@ class Game():
     async def king(self, ctx: commands.Context):
         "王様ゲームをdiscordで再現……できるかな？まずは「?king」"
         await self.bot.say("王様ゲームを始めたいなら「!start」、止めたいなら「!stop」を入力してね")
-        for role_name in ["ゲーム参加者", "王様"]:
-            try:
-                role = self.bot.discord.utils.get(ctx.message.server.roles, name=role_name)
-                await self.bot.delete_role(ctx.message.server, role)
-            except Exception:
-                pass
+
+        def del_king_join():
+            for role in ctx.message.server.roles:
+                if role.name in ["ゲーム参加者", "王様"]:
+                    await self.bot.delete_role(ctx.message.server, role)
+
+        del_king_join()
         role_join = await self.bot.create_role(ctx.message.server, name="ゲーム参加者", hoist=True, position=1)
         role_king = await self.bot.create_role(ctx.message.server, name="王様", hoist=True, position=2)
 
@@ -38,10 +41,8 @@ class Game():
         start_or_stop = await self.bot.wait_for_message(check=check_st)
         if start_or_stop == "!stop":
             await self.bot.say("終了！お疲れ様！")
-            server = ctx.message.author.server
-            for role_name in ["ゲーム参加者", "王様"]:
-                role = self.bot.discord.utils.get(server.roles, name=role_name)
-                await self.bot.delete_role(server, role)
+            del_king_join()
+            return 0
 
         await self.bot.say("王様ゲームを始めよう！\n参加希望者は「!join」\n抜けたくなったら「!esc」"
                            "\n全員の入力が完了したら「!start」\nゲームを終了したい場合は「!stop」")
@@ -56,11 +57,8 @@ class Game():
                 await self.bot.say(join_or.author.name )
                 if join_or.content == "!stop":
                     await self.bot.say("終了！お疲れ様！")
-                    server = ctx.message.author.server
-                    for role_name in ["ゲーム参加者", "王様"]:
-                        role = self.bot.discord.utils.get(server.roles, name=role_name)
-                        await self.bot.delete_role(server, role)
-                        return 0
+                    del_king_join()
+                    return 0
                 if join_or.content == "!join":
                     await self.bot.add_roles(join_or.author, role_join)
                 if join_or.content == "!esc":
@@ -74,11 +72,8 @@ class Game():
             if join_num < 3:
                 await self.bot.say("あ～、少なすぎ……かな？またの機会ということで！")
                 await self.bot.say("終了！お疲れ様！")
-                server = ctx.message.author.server
-                for role_name in ["ゲーム参加者", "王様"]:
-                    role = self.bot.discord.utils.get(server.roles, name=role_name)
-                    await self.bot.delete_role(server, role)
-                    return 0
+                del_king_join()
+                return 0
 
             await self.bot.say("今回の参加者は" + str(join_num) + "人！\nさて、はじめよう(何か入力してね)")
             await self.bot.wait_for_message()
@@ -117,12 +112,12 @@ class Game():
     async def number_game(self, ctx: commands.Context):
         await self.bot.say("数当てゲームのお時間です。1~100の中にある正解を当てよう！チャンスは全部で約7回！")
         def check_num(msg):
-           return isinstance(msg, int) and 0 < msg.content < 101
+           return isinstance(msg, int)
         answer = random.randint(1, 100)
         var = random.randint(0, 3)
 
         for i in range(5+var):
-            await self.bot.say(str(i)+"回目、いくつだと思う～？") # dictでバリエーション増やしたい
+            await self.bot.say(str(i+1)+"回目、いくつだと思う～？") # dictでバリエーション増やしたい
             try_num = await self.bot.wait_for_message(check=check_num)
             err = try_num - answer
 
