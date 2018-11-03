@@ -4,8 +4,8 @@ import pprint
 import random
 import os
 import pickle
-#import numpy
-# import numpy as np
+
+import numpy as np
 
 #import boto3
 #bucket_name = "tomo-discord"
@@ -112,7 +112,7 @@ class Game():
             await self.bot.say("抜けたくなった人は「!esc」を入力してね。新たな参加希望者は「!join」を入力。"
                             "\n全員の入力が完了したら「!start」を入力。ゲームを終了したい場合は「!stop」を。")
             
-'''
+
     @commands.command(description='', pass_context=True)
     async def number_game(self, ctx: commands.Context):
         await self.bot.say("数当てゲームのお時間です。1~100の中にある正解を当てよう！チャンスは全部で約7回！")
@@ -126,17 +126,17 @@ class Game():
             try_num = await self.bot.wait_for_message(check=check_num)
             err = try_num - answer
 
-            find_table = {np.arrange(-100,- 30) : "小さすぎるんじゃない？",
-                          np.arrange(-29,-20) : "まだ小さい小さい",
-                          np.arrange(-19,-10) : "うんうん、まだ小さい",
-                          np.arrange(-9,-5) : "ま、まあまあいいと思うよ？もう少し増やせるんじゃない？？",
-                          np.arrange(-4,-2) : "げ",
-                          np.arrange(-1,1) : "うげら",
-                          np.arrange(2,4) : "げ",
-                        np.arrange(5,9) : "えーっと……まだ減らせる、かな……",
-                        np.arrange(10,19) : "うんうん、減らしてこ",
-                        np.arrange(20,29) : "まだ大きいよー！",
-                        np.arrange(30,100) : "大きすぎるんじゃない？"}
+            find_table = {np.arange(-100,- 30) : "小さすぎるんじゃない？",
+                          np.arange(-29,-20) : "まだ小さい小さい",
+                          np.arange(-19,-10) : "うんうん、まだ小さい",
+                          np.arange(-9,-5) : "ま、まあまあいいと思うよ？もう少し増やせるんじゃない？？",
+                          np.arange(-4,-2) : "げ",
+                          np.arange(-1,1) : "うげら",
+                          np.arange(2,4) : "げ",
+                        np.arange(5,9) : "えーっと……まだ減らせる、かな……",
+                        np.arange(10,19) : "うんうん、減らしてこ",
+                        np.arange(20,29) : "まだ大きいよー！",
+                        np.arange(30,100) : "大きすぎるんじゃない？"}
             if err == 0:
                 break
             for key in find_table.keys():
@@ -148,7 +148,7 @@ class Game():
             return 0
         await self.bot.say("残念……。正解は" + str(answer) + "でした！")
 
-    '''           
+        
 
 
 def setup(bot):
