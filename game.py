@@ -26,12 +26,12 @@ class Game():
         "王様ゲームをdiscordで再現……できるかな？まずは「?king」"
         await self.bot.say("王様ゲームを始めたいなら「!start」、止めたいなら「!stop」を入力してね")
 
-        def del_king_join():
+        def del_king_join(ctx):
             for role in ctx.message.server.roles:
                 if role.name in ["ゲーム参加者", "王様"]:
                     await self.bot.delete_role(ctx.message.server, role)
 
-        del_king_join()
+        del_king_join(ctx)
         role_join = await self.bot.create_role(ctx.message.server, name="ゲーム参加者", hoist=True, position=1)
         role_king = await self.bot.create_role(ctx.message.server, name="王様", hoist=True, position=2)
 
@@ -41,7 +41,7 @@ class Game():
         start_or_stop = await self.bot.wait_for_message(check=check_st)
         if start_or_stop == "!stop":
             await self.bot.say("終了！お疲れ様！")
-            del_king_join()
+            del_king_join(ctx)
             return 0
 
         await self.bot.say("王様ゲームを始めよう！\n参加希望者は「!join」\n抜けたくなったら「!esc」"
@@ -57,7 +57,7 @@ class Game():
                 await self.bot.say(join_or.author.name )
                 if join_or.content == "!stop":
                     await self.bot.say("終了！お疲れ様！")
-                    del_king_join()
+                    del_king_join(ctx)
                     return 0
                 if join_or.content == "!join":
                     await self.bot.add_roles(join_or.author, role_join)
@@ -72,7 +72,7 @@ class Game():
             if join_num < 3:
                 await self.bot.say("あ～、少なすぎ……かな？またの機会ということで！")
                 await self.bot.say("終了！お疲れ様！")
-                del_king_join()
+                del_king_join(ctx)
                 return 0
 
             await self.bot.say("今回の参加者は" + str(join_num) + "人！\nさて、はじめよう(何か入力してね)")
