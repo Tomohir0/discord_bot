@@ -9,6 +9,7 @@ import numpy
 import os
 import pickle
 import glob
+import numpy as np
 
 import boto3
 bucket_name = "tomo-discord"

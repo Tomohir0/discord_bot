@@ -113,11 +113,12 @@ class Game():
             
 
     @commands.command(description='', pass_context=True)
-    async def number_game(self, ctx: commands.Context):
+    async def number(self, ctx: commands.Context):
         "数当てゲーム！範囲は1~100だよ！"
         await self.bot.say("数当てゲームのお時間です。1~100の中にある正解を当てよう！チャンスは全部で約7回！")
         def check_num(msg):
-           return 0 < msg.content
+           return int(msg.content) > 0
+        
         answer = random.randint(1, 100)
         var = random.randint(0, 3)
 
@@ -125,28 +126,28 @@ class Game():
             await self.bot.say(str(i+1)+"回目、いくつだと思う～？") # dictでバリエーション増やしたい
             try_num = await self.bot.wait_for_message(check=check_num)
             await self.bot.say("さてさて……")
-            err = try_num.content - answer
+            err = int(try_num.content) - answer
 
-            find_table = {np.arange(-100,- 30) : "小さすぎるんじゃない？",
-                          np.arange(-29,-20) : "まだ小さい小さい",
-                          np.arange(-19,-10) : "うんうん、まだ小さい",
-                          np.arange(-9,-5) : "ま、まあまあいいと思うよ？もう少し増やせるんじゃない？？",
-                          np.arange(-4,-2) : "げ",
-                          np.arange(-1,1) : "うげら",
-                          np.arange(2,4) : "げ",
-                        np.arange(5,9) : "えーっと……まだ減らせる、かな……",
-                        np.arange(10,19) : "うんうん、減らしてこ",
-                        np.arange(20,29) : "まだ大きいよー！",
-                        np.arange(30,100) : "大きすぎるんじゃない？"}
+
+            find_table = {-30 : "小さすぎるんじゃない？",
+                          -20 : "まだ小さい小さい",
+                          -10 : "うんうん、まだ小さい",
+                          -5 : "ま、まあまあいいと思うよ？もう少し増やせるんじゃない？？",
+                          -2 : "げ",
+                          1 : "うげら",
+                          4 : "げ",
+                        9 : "えーっと……まだ減らせる、かな……",
+                        19 : "うんうん、減らしてこ",
+                        29 : "まだ大きいよー！",
+                             100: "大きすぎるんじゃない？"}
+        
             if err == 0:
-                break
+                await self.bot.say("お見事！")
+                return 0
             for key in find_table.keys():
-                if err in list(key):
+                if err <= key:
                     await self.bot.say(find_table.get(key))
-                    break
-        if err == 0:
-            await self.bot.say("お見事！")
-            return 0
+                    break   
         await self.bot.say("残念……。正解は" + str(answer) + "でした！")
 
     @commands.command(pass_context=True)
