@@ -19,9 +19,9 @@ class Tool():
         self.bot = bot
 
     @commands.command(description="",pass_context=True)
-    async def qr(self, ctx, *,text: str):
+    async def qr(self, ctx, *text: str):
         "渡されたテキストからQRコードを生成するよ！プログラミングらしさあるけど、sourceは十行もないよ！"
-        img = qrcode.make(text)
+        img = qrcode.make(" ".join(text))
         img.save("/tmp/img_tmp.png")
         await self.bot.send_file(ctx.message.channel, "/tmp/img_tmp.png")
 

@@ -149,7 +149,7 @@ async def on_message(message):  # 関数名はon_messageのみ
             else:
                 with open(f_name2, 'rb') as f:
                     memos = pickle.load(f)
-            memos["神魔"] = "第一神魔は{}\n第二神魔は{}".format(shinma1.content, shinma2.content)
+            memos["神魔"] = "第一神魔は{}第二神魔は{}".format(shinma1.content, shinma2.content)
             with open(f_name2, 'wb') as f:
                 pickle.dump(memos,f)
             # 登録完了のメッセージ
