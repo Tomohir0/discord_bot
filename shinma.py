@@ -141,8 +141,18 @@ async def on_message(message):  # 関数名はon_messageのみ
             f_name = "/tmp/shinma_" + message.author.serevr.id + ".pkl"
             with open(f_name, 'wb') as f:
                 pickle.dump([shinma1.content, shinma2.content, date_register], f)
+            f_name2 = "/tmp/memos_" + message.author.serevr.id + ".pkl"
+            
+            if os.path.isfile(f_name2) is None: # memosにも登録
+                memos = {}
+            else:
+                with open(f_name2, 'rb') as f:
+                    memos = pickle.load(f)
+            memos["神魔"] = "第一神魔は{}\n第二神魔は{}".format(shinma1.content, shinma2.content)
+            with open(f_name2, 'wb') as f:
+                pickle.dump(memos,f)
             # 登録完了のメッセージ
-            await bot.send_message(message.channel, "登録完了 on " + str(date_register))
+            await bot.send_message(message.channel, "登録完了 on " + str(date_register) + "\n「?calls 神魔」でも確認できるよ！")
         # 神魔呼び出し関数
         elif mc.startswith("神魔") and len(mc) == 2:
             if not os.path.isfile(f_name):  # 存在しないときの処理

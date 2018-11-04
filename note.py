@@ -20,9 +20,39 @@ class Note():
     def __init__(self, bot):
         self.bot = bot
         
-    @commands.command(description='serverのみんなでmemoを共有できます。', pass_context=True)
+    @commands.group(description='serverのみんなでmemoを共有できます。', pass_context=True)
     async def notes(self, ctx: commands.Context, label: str, *, memo: str):
-        "「?notes secret ギルマスは実は高校生」とすれば、secretラベルで「ギルマスは実は高校生」を記録できます。"
+        "「?notes secret ギルマスは実は高校生」とすれば、secretラベルで「ギルマスは実は高校生」を記録できます。label名に重複があれば確認が出ます。"
+        if ctx.invoked_subcommand is None:
+            f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
+            if not os.path.isfile(f_name):  # 存在しないときの処理
+                memos = {}
+            else:
+                with open(f_name, 'rb') as f:
+                    memos = pickle.load(f)
+            if label in memos.keys():
+                await self.bot.say("すでに" + label + "というmemoは存在します。"
+                "\n上書きするなら「w」、後ろに付け足すなら「a」、labelを変更するならそのlabel名を、キャンセルするなら「c」を入力してください。")
+                select = await self.bot.wait_for_message()
+            else:
+                select.content = "w" # 被りがないなら実質上書き
+            
+            if select.content == "w":
+                memos[label] = memo
+            elif select.content == "a":
+                memos[label] = memos[label] + "\n" + memo
+            elif select.content == "c":
+                await self.bot.say("おけおけ、また改めて！")
+                return 0
+            else: # label変更
+                memos[select.content] = memo
+            with open(f_name, 'wb') as f:
+                pickle.dump(memos, f)  # 古いリストに付け足す形で
+            await self.bot.say("覚えました！！")
+
+    @notes.command(description='serverのみんなでmemoを共有できます。', pass_context=True,input="w")
+    async def notes_w(self, ctx: commands.Context, label: str, *, memo: str):
+        "重複があっても上書きしかする気がない人のための「?note」"
         f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
         if not os.path.isfile(f_name):  # 存在しないときの処理
             memos = {}
@@ -31,7 +61,36 @@ class Note():
                 memos = pickle.load(f)
         memos[label] = memo
         with open(f_name, 'wb') as f:
-            pickle.dump(memos, f)  # 古いリストに付け足す形で
+            pickle.dump(memos, f)  # 古いdictに付け足す形で
+        await self.bot.say("覚えました！！")
+
+
+    @notes.command(description='serverのみんなでmemoを共有できます。', pass_context=True, input="a")
+    async def notes_a(self, ctx: commands.Context, label: str, *, memo: str):
+        "重複があったら付け足ししかする気がない人のための「?note」"
+        f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
+        if not os.path.isfile(f_name):  # 存在しないときの処理
+            memos = {}
+        else:
+            with open(f_name, 'rb') as f:
+                memos = pickle.load(f)
+        memos[label] = memos[label] +"\n" + memo
+        with open(f_name, 'wb') as f:
+            pickle.dump(memos, f)  # 古いdictに付け足す形で
+        await self.bot.say("覚えました！！")
+
+    @notes.command(description='serverのみんなでmemoを共有できます。', pass_context=True, input="f")
+    async def notes_f(self, ctx: commands.Context, label: str, *, memo: str):
+        "重複があったら**前に**付け足ししかする気がない人のための「?note」"
+        f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
+        if not os.path.isfile(f_name):  # 存在しないときの処理
+            memos = {}
+        else:
+            with open(f_name, 'rb') as f:
+                memos = pickle.load(f)
+        memos[label] =  memo +"\n" +memos[label] 
+        with open(f_name, 'wb') as f:
+            pickle.dump(memos, f)  # 古いdictに付け足す形で
         await self.bot.say("覚えました！！")
 
     @commands.command(description='「?notes」で保存されたmemoを読み出すことができます。', pass_context=True)
@@ -44,6 +103,7 @@ class Note():
         with open(f_name, 'rb') as f:
             memos = pickle.load(f)
         await self.bot.say(memos.get(label, label + "なんてlabelのメモないよ！"))
+        ctx.message.content = memos.get(label)
 
     @commands.command(description=' ', pass_context=True,)
     async def labels(self, ctx: commands.Context):

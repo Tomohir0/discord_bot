@@ -24,7 +24,9 @@ class Sinoalice():
         with open(f_name, 'wb') as f:
             pickle.dump([shinma1, shinma2, date_register], f)
         # 登録完了のメッセージ
-        await self.bot.send_message(ctx.message.channel, "登録完了 on " + str(date_register))
+        ctx.message.content = "?notes 神魔 第一神魔は{}\n第二神魔は{}".format(shinma1, shinma2) +" w"
+        await self.bot.process_commands(ctx.message)
+        await self.bot.send_message(ctx.message.channel, "登録完了 on " + str(date_register) + "\n「?calls 神魔」でも確認できるよ！")
         
 
     @commands.command(description='「?vc」で「コロシアムVC」の参加メンバーの(ニックネームではない)名前一覧が得られます。')

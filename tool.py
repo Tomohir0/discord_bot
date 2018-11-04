@@ -4,7 +4,7 @@ import pprint
 import random
 import os
 import qrcode
-#import pickle
+import pickle
 
 #import boto3
 #bucket_name = "tomo-discord"
@@ -18,20 +18,40 @@ class Tool():
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(description="",pass_context=True)
+    @commands.group(description="",pass_context=True)
     async def qr(self, ctx, text: str):
         "渡されたテキストからQRコードを生成するよ！プログラミングらしさあるけど、sourceは十行もないよ！"
-        img = qrcode.make(text)
-    #    img.save("/tmp/qr_tmp.png")
-    #    await self.bot.send_file(ctx.message.channel, "/tmp/qr_tmp.png")
-        img.save("/tmp/img_tmp.png")
-        await self.bot.say("OK OK")
-        try:
-            with open("/tmp/img_tmp.png", 'r') as f:
-                await self.bot.say("Wait wait")
-                await self.bot.send_file(ctx.message.channel, f)
-        finally:
+        if ctx.invoked_subcommand is None:
+            img = qrcode.make(text)
+            img.save("/tmp/img_tmp.png")
             await self.bot.send_file(ctx.message.channel, "/tmp/img_tmp.png")
+
+    @qr.command(pass_context=True,command="calls")
+    async def qr_calls(self, ctx, label: str):
+        "「?calls」と連携してmemoの内容からQRcodeを作成します。"
+        f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
+        if not os.path.isfile(f_name):  # 存在しないときの処理
+            await self.bot.say("まだこのserverにはメモがないよ……。?notesを使ってほしいな……")
+            return 0
+        with open(f_name, 'rb') as f:
+            memos = pickle.load(f) 
+        text = memos.get(label, label + "なんてlabelのメモないよ！")
+        img = qrcode.make(text)
+        img.save("/tmp/img_tmp.png")
+        await self.bot.send_file(ctx.message.channel, "/tmp/img_tmp.png")
+
+    @qr.command(pass_context=True, command="sel_calls")
+    async def qr_sel_calls(self, ctx):
+        "「?sel_calls」と連携してmemoの内容からQRcodeを作成します。"
+        ctx.message.context = "?sel_calls"
+        await self.bot.process_commands(ctx.message)
+        text = ctx.message.content
+        img = qrcode.make(text)
+        img.save("/tmp/img_tmp.png")
+        await self.bot.send_file(ctx.message.channel, "/tmp/img_tmp.png")
+
+
+
 
 
 
