@@ -3,6 +3,7 @@ from discord.ext import commands
 import pprint
 import random
 import os
+import qrcode
 #import pickle
 
 #import boto3
@@ -16,6 +17,14 @@ class Tool():
 
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.command(description="",pass_context=True)
+    async def qr(self, ctx, text: str):
+        img = qrcode.make(text)
+        img.save("/tmp/qr_tmp.png")
+        await self.bot.send_file(ctx.message.channel, "/tmp/qr_tmp.png")
+
+        
 
     @commands.command(description='「?roll 2d6」で「3, 5」などが得られます。')
     async def roll(self,dice: str):
