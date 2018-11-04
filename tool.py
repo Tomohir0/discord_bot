@@ -3,7 +3,7 @@ from discord.ext import commands
 import pprint
 import random
 import os
-import qrcode
+#import qrcode
 #import pickle
 
 #import boto3
