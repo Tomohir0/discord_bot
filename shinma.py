@@ -87,7 +87,6 @@ async def on_ready():
     print('------')
     func_tmp_dl()  # まずdl
 
-
 @bot.event
 async def on_message(message):  # 関数名はon_messageのみ
     date_today = datetime.date.today()
@@ -132,10 +131,12 @@ async def on_message(message):  # 関数名はon_messageのみ
             await bot.send_message(message.channel, explanation)
         # 神魔登録関数
         elif mc.startswith("神魔登録"):  # 「神魔登録」で始まるか調べる
+            def check(msg):
+                msg.author = ctx.message.author
             await bot.send_message(message.channel, "神魔登録を始めよう！\nまずは第1神魔を入力してね！")
-            shinma1 = await bot.wait_for_message() # 神魔入力
+            shinma1 = await bot.wait_for_message(check=check) # 神魔入力
             await bot.send_message(message.channel, "次は第2神魔！")
-            shinma2 = await bot.wait_for_message()
+            shinma2 = await bot.wait_for_message(check=check)
             date_register = datetime.date.today()  # 神魔登録の日付
             
             f_name = "/tmp/shinma_" + message.author.serevr.id + ".pkl"

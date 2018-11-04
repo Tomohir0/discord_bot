@@ -31,9 +31,11 @@ class Note():
                 with open(f_name, 'rb') as f:
                     memos = pickle.load(f)
             if label in memos.keys():
+                def check_auth(msg):
+                    return msg.author = ctx.message.author
                 await self.bot.say("すでに" + label + "というmemoは存在します。"
-                "\n上書きするなら「w」、後ろに付け足すなら「a」、labelを変更するならそのlabel名を、キャンセルするなら「c」を入力してください。")
-                select = await self.bot.wait_for_message()
+                "\n上書きするなら「w」、後ろに付け足すなら「a」、labelを変更するなら「<そのlabel名>」を、キャンセルするなら「c」を入力してください。")
+                select = await self.bot.wait_for_message(check=check_auth)
             else:
                 select.content = "w" # 被りがないなら実質上書き
             
@@ -80,7 +82,7 @@ class Note():
 
     @commands.command(description='serverのみんなでmemoを共有できます。forward', pass_context=True)
     async def notef(self, ctx: commands.Context, label: str, *, memo: str):
-        "重複があったら**前に**付け足ししかする気がない人のための「?note」"
+        "重複があったら「前に」付け足ししかする気がない人のための「?note」"
         f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
         if not os.path.isfile(f_name):  # 存在しないときの処理
             memos = {}
@@ -185,7 +187,7 @@ class Note():
             await self.bot.say(label+" : " + memos.get(label)[:5])
         await self.bot.say("さあ、どれを見る？label名を入力してね！")
         def check(msg):
-            return msg.content in memos.keys() # check関数
+            return msg.content in memos.keys() and msg.author = ctx.message.author # check関数
         label_input = await self.bot.wait_for_message(check = check) # label入力
         ctx.message.content = "?calls " + label_input.content
         await self.bot.process_commands(ctx.message)  # calls起動
@@ -206,7 +208,7 @@ class Note():
             await self.bot.say("さあ、どれを消す？label名を入力してね！")
 
             def check(msg):
-                return msg.content in memos.keys()  # check関数
+                return msg.content in memos.keys() and msg.author = ctx.message.author # check関数
             label_input = await self.bot.wait_for_message(check=check)  # label入力
             ctx.message.content = "?dels " + label_input.content
             await self.bot.process_commands(ctx.message)  # dels起動
@@ -226,7 +228,7 @@ class Note():
         await self.bot.say("さあ、どれを消す？label名を入力してね！")
 
         def check(msg):
-            return msg.content in memos.keys()  # check関数
+            return msg.content in memos.keys() and msg.author = ctx.message.author  # check関数
         label_input = await self.bot.wait_for_message(check=check)  # label入力
         ctx.message.content = "?dels " + label_input.content + " sudo"
         await self.bot.process_commands(ctx.message)  # sudo_dels起動
