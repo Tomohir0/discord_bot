@@ -20,11 +20,11 @@ class Sinoalice():
     @commands.command(pass_context=True)
     async def reg(self, ctx, shinma1: str, shinma2: str):
         date_register = datetime.date.today()  # 神魔登録の日付
-        f_name = "/tmp/shinma_" + ctx.message.author.serevr.id + ".pkl"
+        f_name = "/tmp/shinma_" + ctx.message.serevr.id + ".pkl"
         with open(f_name, 'wb') as f:
             pickle.dump([shinma1, shinma2, date_register], f)
         # 登録完了のメッセージ
-        ctx.message.content = "?notes 神魔 第一神魔は{}\n第二神魔は{}".format(shinma1, shinma2) +" w"
+        ctx.message.content = "?notew 神魔 {}_第一神魔は{}第二神魔は{}".format(date_register,shinma1, shinma2)
         await self.bot.process_commands(ctx.message)
         await self.bot.send_message(ctx.message.channel, "登録完了 on " + str(date_register) + "\n「?calls 神魔」でも確認できるよ！")
         

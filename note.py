@@ -20,7 +20,7 @@ class Note():
     def __init__(self, bot):
         self.bot = bot
         
-    @commands.group(description='serverのみんなでmemoを共有できます。', pass_context=True)
+    @commands.command(description='serverのみんなでmemoを共有できます。standard', pass_context=True)
     async def notes(self, ctx: commands.Context, label: str, *, memo: str):
         "「?notes secret ギルマスは実は高校生」とすれば、secretラベルで「ギルマスは実は高校生」を記録できます。label名に重複があれば確認が出ます。"
         if ctx.invoked_subcommand is None:
@@ -50,8 +50,8 @@ class Note():
                 pickle.dump(memos, f)  # 古いリストに付け足す形で
             await self.bot.say("覚えました！！")
 
-    @notes.command(description='serverのみんなでmemoを共有できます。', pass_context=True,input="w")
-    async def notes_w(self, ctx: commands.Context, label: str, *, memo: str):
+    @commands.command(description='serverのみんなでmemoを共有できます。overwite', pass_context=True)
+    async def notew(self, ctx: commands.Context, label: str, *, memo: str):
         "重複があっても上書きしかする気がない人のための「?note」"
         f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
         if not os.path.isfile(f_name):  # 存在しないときの処理
@@ -64,9 +64,8 @@ class Note():
             pickle.dump(memos, f)  # 古いdictに付け足す形で
         await self.bot.say("覚えました！！")
 
-
-    @notes.command(description='serverのみんなでmemoを共有できます。', pass_context=True, input="a")
-    async def notes_a(self, ctx: commands.Context, label: str, *, memo: str):
+    @commands.command(description='serverのみんなでmemoを共有できます。add', pass_context=True)
+    async def notea(self, ctx: commands.Context, label: str, *, memo: str):
         "重複があったら付け足ししかする気がない人のための「?note」"
         f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
         if not os.path.isfile(f_name):  # 存在しないときの処理
@@ -79,8 +78,8 @@ class Note():
             pickle.dump(memos, f)  # 古いdictに付け足す形で
         await self.bot.say("覚えました！！")
 
-    @notes.command(description='serverのみんなでmemoを共有できます。', pass_context=True, input="f")
-    async def notes_f(self, ctx: commands.Context, label: str, *, memo: str):
+    @commands.command(description='serverのみんなでmemoを共有できます。forward', pass_context=True)
+    async def notef(self, ctx: commands.Context, label: str, *, memo: str):
         "重複があったら**前に**付け足ししかする気がない人のための「?note」"
         f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
         if not os.path.isfile(f_name):  # 存在しないときの処理
