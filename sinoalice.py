@@ -23,11 +23,19 @@ class Sinoalice():
         f_name = "/tmp/shinma_" + ctx.message.serevr.id + ".pkl"
         with open(f_name, 'wb') as f:
             pickle.dump([shinma1, shinma2, date_register], f)
-        # 登録完了のメッセージ
-        ctx.message.content = "?notew 神魔 " + str(date_register) + "_第一神魔は" + shinma1 + "第二神魔は" + shinma2
-        try:
-            await self.bot.process_commands(ctx.message)
-        finally:
+        
+        label = "神魔"
+        memo = str(date_register) + "_第一神魔は" + shinma1 + "第二神魔は" + shinma2
+        f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
+        if not os.path.isfile(f_name):  # 存在しないときの処理
+            memos = {}
+        else:
+            with open(f_name, 'rb') as f:
+                memos = pickle.load(f)
+        memos[label] = memo
+        with open(f_name, 'wb') as f:
+            pickle.dump(memos, f)  # 古いdictに付け足す形で
+        finally:  # 登録完了のメッセージ
             await self.bot.send_message(ctx.message.channel, "登録完了 on " + str(date_register) + "\n「?calls 神魔」でも確認できるよ！")
         
 
