@@ -39,3 +39,11 @@
 ## Oct 27,2018
 - 作成。神魔登録機能や簡単な挨拶機能を備える。
 - 呼応反応を充実。
+
+# memo
+　discordでの豆知識。`_a_`のように囲むことで文字を修飾できる。また、GitHubの```によるcode block表記も可能。
+- _,*:italic
+- **:bold
+- ***:bold and italic
+- __:underline
+- ___:italic and underline

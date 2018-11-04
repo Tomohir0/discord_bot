@@ -22,8 +22,12 @@ class Tool():
     async def qr(self, ctx, text: str):
         "渡されたテキストからQRコードを生成するよ！プログラミングらしさあるけど、sourceは十行もないよ！"
         img = qrcode.make(text)
-        img.save("/tmp/qr_tmp.png")
-        await self.bot.send_file(ctx.message.channel, "/tmp/qr_tmp.png")
+    #    img.save("/tmp/qr_tmp.png")
+    #    await self.bot.send_file(ctx.message.channel, "/tmp/qr_tmp.png")
+        img.save("/tmp/img_tmp.png")
+        with open("/tmp/img_tmp.png",'r') as f:
+            await self.bot.send_file(ctx.message.channel, f)
+
 
         
 
