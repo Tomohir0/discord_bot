@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 import datetime
 import pprint
-import random
+#import random
 #import asyncio
 
 import numpy

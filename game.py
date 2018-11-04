@@ -122,7 +122,7 @@ class Game():
         answer = random.randint(1, 100)
         var = random.randint(0, 3)
 
-        for i in range(6+var):
+        for i in range(4+var):
             await self.bot.say(str(i+1)+"回目、いくつだと思う～？") # dictでバリエーション増やしたい
             try_num = await self.bot.wait_for_message(check=check_num)
             await self.bot.say("さてさて……")
@@ -134,11 +134,11 @@ class Game():
                           -10 : "うんうん、まだ小さい",
                           -5 : "ま、まあまあいいと思うよ？もう少し増やせるんじゃない？？",
                           -2 : "げ",
-                          1 : "うげら",
-                          4 : "げ",
-                        9 : "えーっと……まだ減らせる、かな……",
-                        19 : "うんうん、減らしてこ",
-                        29 : "まだ大きいよー！",
+                          2 : "うげら",
+                          5 : "げ",
+                        10 : "えーっと……まだ減らせる、かな……",
+                        20 : "うんうん、減らしてこ",
+                        30 : "まだ大きいよー！",
                              100: "大きすぎるんじゃない？"}
         
             if err == 0:
