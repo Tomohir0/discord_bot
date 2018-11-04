@@ -18,15 +18,14 @@ class Tool():
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.group(description="",pass_context=True)
-    async def qr(self, ctx, text: str):
+    @commands.command(description="",pass_context=True)
+    async def qr(self, ctx, *,text: str):
         "渡されたテキストからQRコードを生成するよ！プログラミングらしさあるけど、sourceは十行もないよ！"
-        if ctx.invoked_subcommand is None:
-            img = qrcode.make(text)
-            img.save("/tmp/img_tmp.png")
-            await self.bot.send_file(ctx.message.channel, "/tmp/img_tmp.png")
+        img = qrcode.make(text)
+        img.save("/tmp/img_tmp.png")
+        await self.bot.send_file(ctx.message.channel, "/tmp/img_tmp.png")
 
-    @qr.command(pass_context=True,command="calls")
+    @commands.command(pass_context=True)
     async def qr_calls(self, ctx, label: str):
         "「?calls」と連携してmemoの内容からQRcodeを作成します。"
         f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
@@ -40,7 +39,7 @@ class Tool():
         img.save("/tmp/img_tmp.png")
         await self.bot.send_file(ctx.message.channel, "/tmp/img_tmp.png")
 
-    @qr.command(pass_context=True, command="sel_calls")
+    @commands.command(pass_context=True)
     async def qr_sel_calls(self, ctx):
         "「?sel_calls」と連携してmemoの内容からQRcodeを作成します。"
         ctx.message.context = "?sel_calls"
@@ -49,13 +48,6 @@ class Tool():
         img = qrcode.make(text)
         img.save("/tmp/img_tmp.png")
         await self.bot.send_file(ctx.message.channel, "/tmp/img_tmp.png")
-
-
-
-
-
-
-        
 
     @commands.command(description='「?roll 2d6」で「3, 5」などが得られます。')
     async def roll(self,dice: str):
