@@ -18,7 +18,7 @@ class Tool():
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(description="",pass_context=True)
+'''    @commands.command(description="",pass_context=True)
     async def qr(self, ctx, text: str):
         "渡されたテキストからQRコードを生成するよ！プログラミングらしさあるけど、sourceは十行もないよ！"
         img = qrcode.make(text)
@@ -29,7 +29,7 @@ class Tool():
         with open("/tmp/img_tmp.png", 'r') as f:
             await self.bot.say("Wait wait")
             await self.bot.send_file(ctx.message.channel, f)
-
+'''
 
         
 
