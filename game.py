@@ -117,7 +117,7 @@ class Game():
         "数当てゲーム！範囲は1~100だよ！"
         await self.bot.say("数当てゲームのお時間です。1~100の中にある正解を当てよう！チャンスは全部で約7回！")
         def check_num(msg):
-           return int(msg.content) > 0 and msg.author = ctx.message.author
+           return int(msg.content) > 0 and msg.author == ctx.message.author
         
         answer = random.randint(1, 100)
         var = random.randint(0, 3)

@@ -132,17 +132,17 @@ async def on_message(message):  # 関数名はon_messageのみ
         # 神魔登録関数
         elif mc.startswith("神魔登録"):  # 「神魔登録」で始まるか調べる
             def check(msg):
-                msg.author = ctx.message.author
+                return msg.author == message.author
             await bot.send_message(message.channel, "神魔登録を始めよう！\nまずは第1神魔を入力してね！")
             shinma1 = await bot.wait_for_message(check=check) # 神魔入力
             await bot.send_message(message.channel, "次は第2神魔！")
             shinma2 = await bot.wait_for_message(check=check)
             date_register = datetime.date.today()  # 神魔登録の日付
             
-            f_name = "/tmp/shinma_" + message.author.serevr.id + ".pkl"
+            f_name = "/tmp/shinma_" + message.serevr.id + ".pkl"
             with open(f_name, 'wb') as f:
                 pickle.dump([shinma1.content, shinma2.content, date_register], f)
-            f_name2 = "/tmp/memos_" + message.author.serevr.id + ".pkl"
+            f_name2 = "/tmp/memos_" + message.serevr.id + ".pkl"
             
             if os.path.isfile(f_name2) is None: # memosにも登録
                 memos = {}
@@ -159,7 +159,7 @@ async def on_message(message):  # 関数名はon_messageのみ
             if not os.path.isfile(f_name):  # 存在しないときの処理
                 await bot.say("まだこのserverでは神魔登録されてないよ……。? 神魔登録ほしいな……")
                 return 0
-            f_name = "/tmp/shinma_" + message.author.server.id + ".pkl"
+            f_name = "/tmp/shinma_" + message.server.id + ".pkl"
             with open(f_name, 'rb') as f:
                 shinma = pickle.load(f)
             if date_today != shinma[2]:  # 直近の神魔登録日が今日ではない場合

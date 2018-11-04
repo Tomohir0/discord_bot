@@ -24,7 +24,7 @@ class Sinoalice():
         with open(f_name, 'wb') as f:
             pickle.dump([shinma1, shinma2, date_register], f)
         # 登録完了のメッセージ
-        ctx.message.content = "?notew 神魔 {}_第一神魔は{}第二神魔は{}".format(str(date_register),shinma1, shinma2)
+        ctx.message.content = "?notew 神魔 " + str(date_register) + "_第一神魔は" + shinma1 + "第二神魔は" + shinma2
         try:
             await self.bot.process_commands(ctx.message)
         finally:
