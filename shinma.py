@@ -137,33 +137,19 @@ async def on_message(message):  # 関数名はon_messageのみ
             shinma1 = await bot.wait_for_message(check=check) # 神魔入力
             await bot.send_message(message.channel, "次は第2神魔！")
             shinma2 = await bot.wait_for_message(check=check)
-            date_register = datetime.date.today()  # 神魔登録の日付
-            
-            f_name = "/tmp/shinma_" + message.serevr.id + ".pkl"
-            with open(f_name, 'wb') as f:
-                pickle.dump([shinma1.content, shinma2.content, date_register], f)
-            try:
-                f_name2 = "/tmp/memos_" + message.serevr.id + ".pkl"
-                if not os.path.isfile(f_name2): # memosにも登録
-                    memos = {}
-                else:
-                    with open(f_name2, 'rb') as f:
-                        memos = pickle.load(f)
-                memos["shinma"] = "{}_第一神魔は{}第二神魔は{}".format(date_register,shinma1.content, shinma2.content)
-                with open(f_name2, 'wb') as f:
-                    pickle.dump(memos, f)
-            finally:
-                # 登録完了のメッセージ
-                await bot.send_message(message.channel, "登録完了 on " + str(date_register) + "\n「?calls shinma」でも確認できるよ！")
+            message.content="?reg "+shinma1.content +" "+shinma2.content
+            await bot.process_commands(message) # reg起動
         # 神魔呼び出し関数
         elif mc.startswith("神魔") and len(mc) == 2:
-            f_name = "/tmp/shinma_" + message.server.id + ".pkl"
+            f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
             if not os.path.isfile(f_name):  # 存在しないときの処理
-                await bot.say("まだこのserverでは神魔登録されてないよ……。? 神魔登録ほしいな……")
+                await bot.send_message(message.channel, str(date_today) + "の神魔は登録されてないよ……登録してほしいな……")
                 return 0
             with open(f_name, 'rb') as f:
-                shinma = pickle.load(f)
-            if date_today != shinma[2]:  # 直近の神魔登録日が今日ではない場合
+                memos = pickle.load(f)
+            # 直近の神魔登録日が今日ではない場合
+            content = memos.get(label) # shinma labelがない場合も日付エラーに含む
+            if content[:len("2018-11-05")] != str(date_today):
                 await bot.send_message(message.channel, str(date_today) + "の神魔は登録されてないよ……登録してほしいな……")
             else:  # 今日神魔が登録されていた場合
                 await bot.send_message(message.channel, "第一神魔は{}\n第二神魔は{}".format(shinma[0], shinma[1]))
