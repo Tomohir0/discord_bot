@@ -68,8 +68,8 @@ async def new(ctx:commands.Context):
         await bot.say(m_new)
         await bot.say("\n\n過去の更新情報については https://github.com/Tomohir0/discord_bot/blob/master/README.md ")
 
-@new.command(pass_context=True, sub="emerg")
-async def new_emerg(ctx: commands.Context):
+@bot.command(pass_context=True)
+async def exp_emerg(ctx: commands.Context):
     "emergency(緊急事態)にそなえての説明。"
     m = ("先日の暴走を受けて。自害プログラムとして「?bot_kick」「?bot_logout」を実装しました。"
     "このbotが乗っ取られたと判断された場合には即座に「?bot_kick」を入力してください。全serverでこのbotのmessageを削除し、直ちにkick、logoutを行います。"
