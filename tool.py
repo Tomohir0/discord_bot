@@ -69,5 +69,36 @@ class Tool():
         else:
             await self.bot.say("ﾀﾞﾗﾗﾗﾗﾗﾗﾗﾗﾗ～\nダン！！\n見事選ばれたのは" + random.choice(choices) + "でした！！")
 
+    @commands.command(description="「?cite qr」で直前の内容をQRcodeに！", pass_context=True)
+    async def cite(self,ctx,command: str):
+        "直前のmessageを引数としてcommandを実行できちゃう！"
+        m = ""
+        async for msg in self.bot.logs_from(ctx.message.channel, limit=1):
+            m += msg.content + "\n"
+        ctx.message.content = "?" + command +" "+ m
+        await self.bot.process_commands(ctx.message)
+
+    @commands.command(description="", pass_context=True)
+    async def cites(self, ctx, command: str, number_of_messages: int):
+        "直前の複数のmessageを引数としてcommandを実行できちゃう！"
+        m = ""
+        async for msg in self.bot.logs_from(ctx.message.channel, limit=number_of_messages):
+            m += msg.content + "\n"
+        ctx.message.content = "?" + command +" "+ m
+        await self.bot.process_commands(ctx.message)
+
+    @commands.command(description="指定した件数分のbotのmessageを消去します。削除できる件数が少なくなることもあるかもしれません。", pass_context=True)
+    async def clean_m(self, ctx, number_of_messages: int):
+        "ついついたまりがちなbotのmessageを適度にオソウジ！くるくる！"
+        delete_count = 0
+        async for msg in self.bot.logs_from(ctx.message.channel, limit=1000):
+            if msg.author == self.bot.user:
+                if delete_count >= number_of_messages:
+                    break
+                await self.bot.delete_message(msg)
+                delete_count += 1
+        await self.bot.say("完了！")                
+
+
 def setup(bot):
     bot.add_cog(Tool(bot))

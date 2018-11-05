@@ -19,6 +19,7 @@ class Sinoalice():
 
     @commands.command(pass_context=True)
     async def reg(self, ctx, shinma1: str, shinma2: str):
+        "神魔登録のcommand ver.！"
         date_register = datetime.date.today()  # 神魔登録の日付
         label = "shinma"
         memo = str(date_register) + "_第一神魔は" + shinma1 + "、第二神魔は" + shinma2

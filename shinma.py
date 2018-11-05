@@ -78,7 +78,7 @@ async def exp_emerg(ctx: commands.Context):
 
 @new.command(pass_context=True, sub="func")
 async def new_func(ctx):
-    new_funcs = ["callr", "dels", "sudo_dels", "king", "sel_c"]
+    new_funcs = ["callr", "dels", "sudo_dels", "sel_c","notes"]
     for func in new_funcs:
         ctx.message.content = "?help " + func
         await bot.process_commands(ctx.message)
@@ -125,11 +125,11 @@ async def on_message(message):  # 関数名はon_messageのみ
         if mc.startswith(key):
             await bot.send_message(message.channel, stwith_dict.get(key))
     
-    if mc.startswith("おかえりなさい、しんまくん") and message.author.id == "349102495114592258":
+    '''if mc.startswith("おかえりなさい、しんまくん") and message.author.id == "349102495114592258":
         m = ("みなさん、先日はお騒がせしました。あの件を受けともひろもようやくずさんだった管理体制を整え、もしものための自害プログラムも実装しました。"
             "\nまた、実はみなさんから姿を隠している間も数々のcommandが実装されており、今では?helpがログ流しに役立ってしまうほどです。追々説明していければと思います。ともひろにそれ用のcommand作らせます。"
             "\nそれではみなさん、また改めてよろしくお願いします！")
-        await bot.send_message(message.channel,m)
+        await bot.send_message(message.channel,m)'''
 
 
     # 神魔関連
