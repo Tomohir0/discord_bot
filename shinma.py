@@ -74,7 +74,7 @@ async def new_more(ctx: commands.Context):
 
 @new.command(pass_context=True, sub="func")
 async def new_func(ctx):
-    new_funcs = ["callrand", "dels", "sudo_dels", "king", ]
+    new_funcs = ["callr", "dels", "sudo_dels", "king", "sel_c"]
     for func in new_funcs:
         ctx.message.content = "?help " + func
         await bot.process_commands(ctx.message)
@@ -141,18 +141,18 @@ async def on_message(message):  # 関数名はon_messageのみ
             await bot.process_commands(message) # reg起動
         # 神魔呼び出し関数
         elif mc.startswith("神魔") and len(mc) == 2:
-            f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
+            f_name = "/tmp/memos_" + message.author.server.id + ".pkl"
             if not os.path.isfile(f_name):  # 存在しないときの処理
                 await bot.send_message(message.channel, str(date_today) + "の神魔は登録されてないよ……登録してほしいな……")
                 return 0
             with open(f_name, 'rb') as f:
                 memos = pickle.load(f)
             # 直近の神魔登録日が今日ではない場合
-            content = memos.get(label) # shinma labelがない場合も日付エラーに含む
+            content = memos.get("shinma") # shinma labelがない場合も日付エラーに含む
             if content[:len("2018-11-05")] != str(date_today):
                 await bot.send_message(message.channel, str(date_today) + "の神魔は登録されてないよ……登録してほしいな……")
             else:  # 今日神魔が登録されていた場合
-                await bot.send_message(message.channel, "第一神魔は{}\n第二神魔は{}".format(shinma[0], shinma[1]))
+                await bot.send_message(message.channel, content)
     await bot.process_commands(message)  # bot.commandも使えるために必要
 
 
