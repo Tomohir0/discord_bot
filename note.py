@@ -21,36 +21,36 @@ class Note():
         self.bot = bot
         
     @commands.command(description='serverのみんなでmemoを共有できます。standard', pass_context=True)
-    async def notes(self, ctx: commands.Context, label: str, *, memo: str):
+    async def notes(self, ctx: commands.Context, label: str, *memo: str):
         "「?notes secret ギルマスは実は高校生」とすれば、secretラベルで「ギルマスは実は高校生」を記録できます。label名に重複があれば確認が出ます。"
-        if ctx.invoked_subcommand is None:
-            f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
-            if not os.path.isfile(f_name):  # 存在しないときの処理
-                memos = {}
-            else:
-                with open(f_name, 'rb') as f:
-                    memos = pickle.load(f)
-            if label in memos.keys():
-                def check_auth(msg):
-                    return msg.author == ctx.message.author
-                await self.bot.say("すでに" + label + "というmemoは存在します。"
-                "\n上書きするなら「w」、後ろに付け足すなら「a」、labelを変更するなら「<そのlabel名>」を、キャンセルするなら「c」を入力してください。")
-                select = await self.bot.wait_for_message(check=check_auth)
-            else:
-                select.content = "w" # 被りがないなら実質上書き
-            
-            if select.content == "w":
-                memos[label] = memo
-            elif select.content == "a":
-                memos[label] = memos[label] + "\n" + memo
-            elif select.content == "c":
-                await self.bot.say("おけおけ、また改めて！")
-                return 0
-            else: # label変更
-                memos[select.content] = memo
-            with open(f_name, 'wb') as f:
-                pickle.dump(memos, f)  # 古いリストに付け足す形で
-            await self.bot.say("覚えました！！")
+        memo = " ".join(memo)  #list => str
+        f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
+        if not os.path.isfile(f_name):  # 存在しないときの処理
+            memos = {}
+        else:
+            with open(f_name, 'rb') as f:
+                memos = pickle.load(f)
+        if label in memos.keys():
+            def check_auth(msg):
+                return msg.author == ctx.message.author
+            await self.bot.say("すでに" + label + "というmemoは存在します。"
+            "\n上書きするなら「w」、後ろに付け足すなら「a」、labelを変更するなら「<そのlabel名>」を、キャンセルするなら「c」を入力してください。")
+            select = await self.bot.wait_for_message(check=check_auth)
+        else:
+            select.content = "w" # 被りがないなら実質上書き
+        
+        if select.content == "w":
+            memos[label] = memo
+        elif select.content == "a":
+            memos[label] = memos[label] + "\n" + memo
+        elif select.content == "c":
+            await self.bot.say("おけおけ、また改めて！")
+            return 0
+        else: # label変更
+            memos[select.content] = memo
+        with open(f_name, 'wb') as f:
+            pickle.dump(memos, f)  # 古いリストに付け足す形で
+        await self.bot.say("覚えました！！")
 
     @commands.command(description='serverのみんなでmemoを共有できます。overwite', pass_context=True)
     async def notew(self, ctx: commands.Context, label: str, *, memo: str):
