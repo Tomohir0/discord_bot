@@ -20,23 +20,28 @@ class Sinoalice():
     @commands.command(pass_context=True)
     async def reg(self, ctx, shinma1: str, shinma2: str):
         date_register = datetime.date.today()  # 神魔登録の日付
-        f_name = "/tmp/shinma_" + ctx.message.serevr.id + ".pkl"
-        with open(f_name, 'wb') as f:
-            pickle.dump([shinma1, shinma2, date_register], f)
-        
-        label = "shinma"
-        memo = str(date_register) + "_第一神魔は" + shinma1 + "、第二神魔は" + shinma2
-        f_name2 = "/tmp/memos_" + ctx.message.server.id + ".pkl"
-        if not os.path.isfile(f_name2):  # 存在しないときの処理
-            memos = {}
-        else:
-            with open(f_name2, 'rb') as f:
-                memos = pickle.load(f)
-        memos[label] = memo
-        with open(f_name2, 'wb') as f:
-            pickle.dump(memos, f)  # 古いdictに付け足す形で
-        # 登録完了のメッセージ
-        await self.bot.send_message(ctx.message.channel, "登録完了 on " + str(date_register) + "\n「?calls shinma」でも確認できるよ！")
+        await self.bot.say(shinma1 + " "+ shinma2)
+        try:
+            f_name = "/tmp/shinma_" + ctx.message.serevr.id + ".pkl"
+            with open(f_name, 'wb') as f:
+                await self.bot.say(shinma1 + " " + shinma2)
+                pickle.dump([shinma1, shinma2, date_register], f)
+                await self.bot.say(shinma1 + " " + shinma2)
+            await self.bot.say(shinma1 + " " + shinma2)
+        finally:
+            label = "shinma"
+            memo = str(date_register) + "_第一神魔は" + shinma1 + "、第二神魔は" + shinma2
+            f_name2 = "/tmp/memos_" + ctx.message.server.id + ".pkl"
+            if not os.path.isfile(f_name2):  # 存在しないときの処理
+                memos = {}
+            else:
+                with open(f_name2, 'rb') as f:
+                    memos = pickle.load(f)
+            memos[label] = memo
+            with open(f_name2, 'wb') as f:
+                pickle.dump(memos, f)  # 古いdictに付け足す形で
+            # 登録完了のメッセージ
+            await self.bot.say("登録完了 on " + str(date_register) + "\n「?calls shinma」でも確認できるよ！")
         
 
     @commands.command(description='「?vc」で「コロシアムVC」の参加メンバーの(ニックネームではない)名前一覧が得られます。')

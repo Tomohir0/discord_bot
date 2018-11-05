@@ -21,9 +21,9 @@ class Note():
         self.bot = bot
         
     @commands.command(description='serverのみんなでmemoを共有できます。standard', pass_context=True)
-    async def notes(self, ctx: commands.Context, label: str, *memo: str):
+    async def notes(self, ctx: commands.Context, label: str, *,memo: str):
         "「?notes secret ギルマスは実は高校生」とすれば、secretラベルで「ギルマスは実は高校生」を記録できます。label名に重複があれば確認が出ます。"
-        memo = " ".join(memo)  #list => str
+        # memo = " ".join(memo)  #list => str
         f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
         if not os.path.isfile(f_name):  # 存在しないときの処理
             memos = {}
@@ -120,8 +120,8 @@ class Note():
             await self.bot.say(label)
         await self.bot.say("だよ！")
 
-    @commands.command(description='「?notes」で保存されたmemoからランダムに一つを晒します。', pass_context=True)
-    async def callrand(self, ctx: commands.Context):
+    @commands.command(description='callrand。「?notes」で保存されたmemoからランダムに一つを晒します。', pass_context=True)
+    async def callr(self, ctx: commands.Context):
         "「?callrand」でメモを1つ晒します。"
         f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
         if not os.path.isfile(f_name):  # 存在しないときの処理
@@ -173,8 +173,8 @@ class Note():
             return 0
         await self.bot.say(label+" : "+memos.pop(label)[:5]+"\nは消えちゃった……")
 
-    @commands.command(description=' ', pass_context=True)
-    async def sel_calls(self, ctx: commands.Context):
+    @commands.command(description='select_calls', pass_context=True)
+    async def sel_c(self, ctx: commands.Context):
         "「?notes」のlabelの一覧を見ながらlabelを選択して内容を表示します。"
         f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
         if not os.path.isfile(f_name):  # 存在しないときの処理
@@ -192,8 +192,8 @@ class Note():
         ctx.message.content = "?calls " + label_input.content
         await self.bot.process_commands(ctx.message)  # calls起動
         
-    @commands.group(description=' ', pass_context=True)
-    async def sel_dels(self, ctx: commands.Context):
+    @commands.group(description='select_dels', pass_context=True)
+    async def sel_d(self, ctx: commands.Context):
         "labelの一覧を見ながらメモを選択して消去できるかもしれません。"
         if ctx.invoked_subcommand is None:
             f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
@@ -213,8 +213,8 @@ class Note():
             ctx.message.content = "?dels " + label_input.content
             await self.bot.process_commands(ctx.message)  # dels起動
 
-    @sel_dels.command(description=' ', pass_context=True,sudo="sudo")
-    async def sudo_sel_dels(self, ctx: commands.Context):
+    @sel_d.command(description='sudo_select_dels', pass_context=True,sudo="sudo")
+    async def sudo_sel_d(self, ctx: commands.Context):
         "labelの一覧を見ながらメモを選択して確実に消去できます。sudo関数です。使用できる人は限られています。"
         f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
         if not os.path.isfile(f_name):  # 存在しないときの処理
