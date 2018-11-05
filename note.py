@@ -30,6 +30,7 @@ class Note():
         else:
             with open(f_name, 'rb') as f:
                 memos = pickle.load(f)
+        
         if label in memos.keys():
             def check_auth(msg):
                 return msg.author == ctx.message.author
