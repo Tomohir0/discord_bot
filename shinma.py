@@ -149,11 +149,11 @@ async def on_message(message):  # 関数名はon_messageのみ
             else:
                 with open(f_name2, 'rb') as f:
                     memos = pickle.load(f)
-            memos["神魔"] = "第一神魔は{}第二神魔は{}".format(shinma1.content, shinma2.content)
+            memos["shinma"] = "{}_第一神魔は{}第二神魔は{}".format(date_register,shinma1.content, shinma2.content)
             with open(f_name2, 'wb') as f:
                 pickle.dump(memos,f)
             # 登録完了のメッセージ
-            await bot.send_message(message.channel, "登録完了 on " + str(date_register) + "\n「?calls 神魔」でも確認できるよ！")
+            await bot.send_message(message.channel, "登録完了 on " + str(date_register) + "\n「?calls shinma」でも確認できるよ！")
         # 神魔呼び出し関数
         elif mc.startswith("神魔") and len(mc) == 2:
             if not os.path.isfile(f_name):  # 存在しないときの処理

@@ -24,8 +24,8 @@ class Sinoalice():
         with open(f_name, 'wb') as f:
             pickle.dump([shinma1, shinma2, date_register], f)
         
-        label = "神魔"
-        memo = str(date_register) + "_第一神魔は" + shinma1 + "第二神魔は" + shinma2
+        label = "shinma"
+        memo = str(date_register) + "_第一神魔は" + shinma1 + "、第二神魔は" + shinma2
         f_name2 = "/tmp/memos_" + ctx.message.server.id + ".pkl"
         if not os.path.isfile(f_name2):  # 存在しないときの処理
             memos = {}
@@ -36,7 +36,7 @@ class Sinoalice():
         with open(f_name2, 'wb') as f:
             pickle.dump(memos, f)  # 古いdictに付け足す形で
         # 登録完了のメッセージ
-        await self.bot.send_message(ctx.message.channel, "登録完了 on " + str(date_register) + "\n「?calls 神魔」でも確認できるよ！")
+        await self.bot.send_message(ctx.message.channel, "登録完了 on " + str(date_register) + "\n「?calls shinma」でも確認できるよ！")
         
 
     @commands.command(description='「?vc」で「コロシアムVC」の参加メンバーの(ニックネームではない)名前一覧が得られます。')
