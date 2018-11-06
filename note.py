@@ -24,7 +24,7 @@ class Note():
     async def notes(self, ctx: commands.Context, label: str, *,memo: str):
         "「?notes secret ギルマスは実は高校生」とすれば、secretラベルで「ギルマスは実は高校生」を記録できます。label名に重複があれば確認が出ます。"
         # memo = " ".join(memo)  #list => str
-        f_name = "/tmp/memoss_" + ctx.message.author.server.id + ".pkl"
+        f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
         if not os.path.isfile(f_name):  # 存在しないときの処理
             memos = {}
         else:
@@ -41,7 +41,7 @@ class Note():
             select.content = "w" # 被りがないなら実質上書き
         
         if select.content == "w":
-            memos[label] = memo
+            memos.update(label = memo)
         elif select.content == "a":
             memos[label] = memos[label] + "\n" + memo
         elif select.content == "f":
@@ -100,7 +100,7 @@ class Note():
     @commands.command(description='「?notes」で保存されたmemoを読み出すことができます。', pass_context=True)
     async def calls(self, ctx: commands.Context, label: str):
         "「?calls secret」でsecretとして保存されたメモを読み出します。"
-        f_name = "/tmp/memoss_" + ctx.message.author.server.id + ".pkl"
+        f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
         if not os.path.isfile(f_name):  # 存在しないときの処理
             await self.bot.say("まだこのserverにはメモがないよ……。?notesを使ってほしいな……")
             return 0
