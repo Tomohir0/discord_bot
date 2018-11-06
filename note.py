@@ -153,11 +153,14 @@ class Note():
                 await self.bot.say("残念！もう回数制限だね！時間をあけて再チャレンジ！")
                 return 0
             if random.randint(1, 100) > 40:
-                await self.bot.say(label+" : "+memos.pop(label)+"\nは消えちゃった……")
+                await self.bot.say(label + " : " + memos.pop(label) + "\nは消えちゃった……")
+                with open(f_name, 'wb') as f:
+                    pickle.dump(memos,f)
                 return 0
             await self.bot.say(label + " : " + memos.get(label) + "\nは消えちゃった……")
             await self.bot.say("\nと思いきや復活！！神！")
             await self.bot.say(label + " : " + memos.get(label))
+
 
     @dels.command(description='sudo関数です。使用できる人は限られています。', pass_context=True,sudo="sudo")
     async def sudo_dels(self, ctx: commands.Context, label: str):
