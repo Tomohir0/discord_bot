@@ -177,4 +177,4 @@ if __name__ == "__main__":  # cogへジャンプ
             print('Failed to load extension {}\n{}'.format(extension, exc))
 
 
-bot.run(os.environ["DISCORD_TOKEN"])
+bot.run(os.environ["DISCORD_TOKEN2"])

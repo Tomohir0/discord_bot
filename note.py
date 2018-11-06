@@ -41,7 +41,7 @@ class Note():
             select.content = "w" # 被りがないなら実質上書き
         
         if select.content == "w":
-            memos.update(label = memo)
+            memos[label] = memo
         elif select.content == "a":
             memos[label] = memos[label] + "\n" + memo
         elif select.content == "f":
