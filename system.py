@@ -113,7 +113,12 @@ class System():
                         await self.bot.delete_message(msg)
             #await self.bot.send_message(channel, "Finished, and I'll be back.") # もう送れない
 
-
+    @commands.command(pass_context=True, description="")
+    async def ch_sv(self, ctx, *, text):
+        "commandが指定されているserverから発されたことにします。"
+        ctx.message.server = self.bot.discord.utils.get(
+            self.bot.servers, id="413951021891452928")
+        await self.bot.process_commands(ctx.message)
 
 def setup(bot):
     bot.add_cog(System(bot))

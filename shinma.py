@@ -65,7 +65,7 @@ async def on_message(message):  # 関数名はon_messageのみ
     mc = message.content
     stwith_dict = {  # 呼応一覧
         "おはよ": "Good morning" + message.author.name,
-        "こんにちは": "Hi, " + message.author.name,
+        "こんにち": "Hi, " + message.author.name,
         "こんばんは": "Hi, " + message.author.name,
         "好き": "愛してるよ" + message.author.name,
         "愛してる": "愛してるよ" + message.author.name,
@@ -78,9 +78,9 @@ async def on_message(message):  # 関数名はon_messageのみ
         "おなかすいた": "わかる。めっちゃお腹空いた。",
         "お腹空いた": "わかる。めっちゃお腹空いた。",
         "お腹すいた": "わかる。めっちゃお腹空いた。",
-        "反省": "ごめんなさい……\n\nでも、悪いのはずさんだったともひろでは……",
         "ごめんなさい": "わかればよろしい",
-        "おかえり":"ただいま！"
+        "おかえり": "ただいま！",
+        "おやす":"いい夢を……"+message.author.name + "ちゃん"
     }
     if bot.user == message.author:  # botによるbotの反応を避ける
         if message.content.count("@everyone") > 1: # bot自身が「@everyone」と2回も使うならそれは乗っ取られたとき
