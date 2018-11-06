@@ -149,9 +149,9 @@ class Game():
                     break   
         await self.bot.say("残念……。正解は" + str(answer) + "でした！")
 
-    @commands.command(pass_context=True)
-    async def dobon(self, ctx):
-        "ドボンゲーム(準備中)"
+    #@commands.command(pass_context=True)
+    #async def dobon(self, ctx):
+    #    "ドボンゲーム(準備中)"
 
 
 def setup(bot):

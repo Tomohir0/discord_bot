@@ -35,7 +35,7 @@ class Note():
             def check_auth(msg):
                 return msg.author == ctx.message.author
             await self.bot.say("すでに" + label + "というmemoは存在します。"
-            "\n上書きするなら「w」、後ろに付け足すなら「a」、labelを変更するなら「<そのlabel名>」を、キャンセルするなら「c」を入力してください。")
+                               "\n上書きするなら「w」、後ろに付け足すなら「a」、前に付け足すなら「f」、labelを変更するなら「<そのlabel名>」を、キャンセルするなら「c」を入力してください。")
             select = await self.bot.wait_for_message(check=check_auth)
         else:
             select.content = "w" # 被りがないなら実質上書き
@@ -44,6 +44,8 @@ class Note():
             memos[label] = memo
         elif select.content == "a":
             memos[label] = memos[label] + "\n" + memo
+        elif select.content == "f":
+            memos[label] = memo + "\n" + memos[label] 
         elif select.content == "c":
             await self.bot.say("おけおけ、また改めて！")
             return 0
