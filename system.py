@@ -114,9 +114,10 @@ class System():
             #await self.bot.send_message(channel, "Finished, and I'll be back.") # もう送れない
 
     @commands.command(pass_context=True, description="")
-    async def chsv(self, ctx, *, text):
-        "commandが指定されているserverから発されたことにします。"
+    async def chsv(self, ctx, *text:str):
+        "change_server。commandが指定されているserverから発されたことにします。"
         ctx.message.server = self.bot.get_server("413951021891452928")
+        ctx.message.content = "?" + " ".join(text)
         await self.bot.process_commands(ctx.message)
 
 def setup(bot):
