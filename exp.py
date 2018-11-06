@@ -55,13 +55,13 @@ class Exp():
         "note関連のお知らせをまとめました。指定した番号の説明を表示します。"
         ms=[] # messageのlistを用意
         ms.append("基本的には今まで通り「?notes <label名> <内容>」でmemoを保存して「?calls <label名>」でそのmemoを読み出すことができます。"
-            "「?labels」でserverに存在するmemoのlabel一覧を見ることができます。新たに追加された機能としては削除関数「?dels」があります。"
-            "「?dels <label名>」でそのmemoを削除することが**できるかもしれません**。また、今回よりsudo版も一部関数に実装されましたが、bot_owerを除き利用はできないのでご了承ください。")
+            "\n「?labels」でserverに存在するmemoのlabel一覧を見ることができます。新たに追加された機能としては削除関数「?dels」があります。"
+            "\n「?dels <label名>」でそのmemoを削除することが**できるかもしれません**。また、今回よりsudo版も一部関数に実装されましたが、bot_owerを除き利用はできないのでご了承ください。")
         ms.append("「?notes」でmemoを保存する際、すでにそのlabel名が使用されていた場合には「上書き/付け足し/前に付け足し/label変更/キャンセル」を選択できるようになりました。"
-            "それに付随して、label名が重複した場合に尋ねることなくはじめから「上書き/付け足し/前に付け足し」のいずれをするか定められている互換関数「?notew/?notea/?notef」を用意しました。"
-            "memoを書き換え続けたいなら「?notew」を、memoを延々と長くしたいなら「?notea」または「?notef」をご利用ください。")
+            "\nそれに付随して、label名が重複した場合に尋ねることなくはじめから「上書き/付け足し/前に付け足し」のいずれをするか定められている互換関数「?notew/?notea/?notef」を用意しました。"
+            "\nmemoを書き換え続けたいなら「?notew」を、memoを延々と長くしたいなら「?notea」または「?notef」をご利用ください。")
         ms.append("label名を覚えきれていない場合の補助として、label一覧を見てからlabelを選択できるselcet ver.も用意しました。"
-            "「?sel_c」で入力したlabelによって「?calls」を、「?sel_d」なら「?dels」を起動できます。")
+            "\n「?sel_c」で入力したlabelによって「?calls」を、「?sel_d」なら「?dels」を起動できます。")
 
         await self.bot.say(ms[number])
 
