@@ -117,7 +117,13 @@ class System():
     async def chsv(self, ctx):
         "change_server。command実行上のserverを変更します。"
         ctx.message.server = self.bot.get_server("413951021891452928")
-        ctx.message.author.server = ctx.message.server # 表記一致させないと……
+        ctx.message.author.server = ctx.message.server # 表記一致させないと…=>やっぱりこのままのがいいかも
+
+    @commands.command(pass_context=True, description="")
+    async def rvsv(self, ctx):
+        "reverse_server。command実行上のserverを現在のserverに戻します。"
+        ctx.message.author.server = ctx.message.server  # 戻す
+
 
 def setup(bot):
     bot.add_cog(System(bot))
