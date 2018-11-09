@@ -138,7 +138,7 @@ class Note():
 
     @commands.group(description='「?notes」で保存されたmemoを削除することができるかもしれません。「sudo」版もあります', pass_context=True)
     async def dels(self, ctx: commands.Context, label: str):
-        "「?dels secret」でsecretとして保存されたメモを削除できる……かも。"
+        "「?dels secret」でsecretとして保存されたメモを削除できる………かも。"
         if ctx.invoked_subcommand is None:
             global del_try_count
             f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
