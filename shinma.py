@@ -139,7 +139,7 @@ async def on_message(message):  # 関数名はon_messageのみ
             if content[:len("YYYY-MM-DD")] != str(date_today):
                 await bot.send_message(message.channel, str(date_today) + "の神魔は登録されてないよ……登録してほしいな……")
             else:  # 今日神魔が登録されていた場合
-                if "tts" in mc.count:
+                if mc.count("tts") > 0:
                     await bot.send_message(message.channel, content,tts=True)
                 else:
                     await bot.send_message(message.channel, content)
