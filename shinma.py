@@ -130,13 +130,14 @@ async def on_message(message):  # 関数名はon_messageのみ
         elif mc.startswith("神魔"):
             f_name = "/tmp/memos_" + message.author.server.id + ".pkl"
             if not os.path.isfile(f_name):  # 存在しないときの処理
-                await bot.send_message(message.channel, str(date_today) + "の神魔は登録されてないよ……登録してほしいな……")
+                await bot.send_message(message.channel, "神魔は登録されてないよ……登録してほしいな……")
                 return 0
             with open(f_name, 'rb') as f:
                 memos = pickle.load(f)
             # 直近の神魔登録日が今日ではない場合
-            content = memos.get("shinma") # shinma labelがない場合も日付エラーに含む
-            if content[:len("YYYY-MM-DD")] != str(date_today):
+            content = memos.get("shinma")  # shinma labelがない場合も日付エラーに含む
+            date = content.split(" on ") # onで区切る
+            if date[1] != "{}月{}日".format(date_today.month,date_today.day):
                 await bot.send_message(message.channel, str(date_today) + "の神魔は登録されてないよ……登録してほしいな……")
             else:  # 今日神魔が登録されていた場合
                 if mc.count("tts") > 0:
