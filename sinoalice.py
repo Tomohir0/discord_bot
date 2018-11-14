@@ -22,7 +22,7 @@ class Sinoalice():
         "神魔登録のcommand ver.！"
         date_register = datetime.date.today()  # 神魔登録の日付
         label = "shinma"
-        memo = str(date_register) + "_第一神魔は" + shinma1 + "、第二神魔は" + shinma2
+        memo = "第一神魔は" + shinma1 + "、第二神魔は" + shinma2 +" on {}月{}日".format(date_register.month,date_register.day)
         f_name2 = "/tmp/memos_" + ctx.message.server.id + ".pkl"
         if not os.path.isfile(f_name2):  # 存在しないときの処理
             memos = {}
