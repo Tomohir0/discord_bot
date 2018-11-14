@@ -80,7 +80,8 @@ async def on_message(message):  # 関数名はon_messageのみ
         "お腹すいた": "わかる。めっちゃお腹空いた。",
         "ごめんなさい": "わかればよろしい",
         "おかえり": "ただいま！",
-        "おやす":"いい夢を……"+message.author.name + "ちゃん"
+        "おやす":"いい夢を……"+message.author.name + "ちゃん",
+        "すきすき": "大好きだよ" + message.author.name
     }
     if bot.user == message.author:  # botによるbotの反応を避ける
         if message.content.count("@everyone") > 1: # bot自身が「@everyone」と2回も使うならそれは乗っ取られたとき
@@ -126,7 +127,7 @@ async def on_message(message):  # 関数名はon_messageのみ
             message.content="?reg "+shinma1.content +" "+shinma2.content
             await bot.process_commands(message) # reg起動
         # 神魔呼び出し関数
-        elif mc.startswith("神魔") and len(mc) == 2:
+        elif mc.startswith("神魔"):
             f_name = "/tmp/memos_" + message.author.server.id + ".pkl"
             if not os.path.isfile(f_name):  # 存在しないときの処理
                 await bot.send_message(message.channel, str(date_today) + "の神魔は登録されてないよ……登録してほしいな……")
@@ -138,7 +139,10 @@ async def on_message(message):  # 関数名はon_messageのみ
             if content[:len("YYYY-MM-DD")] != str(date_today):
                 await bot.send_message(message.channel, str(date_today) + "の神魔は登録されてないよ……登録してほしいな……")
             else:  # 今日神魔が登録されていた場合
-                await bot.send_message(message.channel, content,tts=True)
+                if "tts" in mc.count:
+                    await bot.send_message(message.channel, content,tts=True)
+                else:
+                    await bot.send_message(message.channel, content)
     await bot.process_commands(message)  # bot.commandも使えるために必要
 
 
