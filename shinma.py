@@ -138,7 +138,7 @@ async def on_message(message):  # 関数名はon_messageのみ
             if content[:len("YYYY-MM-DD")] != str(date_today):
                 await bot.send_message(message.channel, str(date_today) + "の神魔は登録されてないよ……登録してほしいな……")
             else:  # 今日神魔が登録されていた場合
-                await bot.send_message(message.channel, content)
+                await bot.send_message(message.channel, content,tts=True)
     await bot.process_commands(message)  # bot.commandも使えるために必要
 
 
