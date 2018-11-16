@@ -217,7 +217,7 @@ class Note():
             m=""
             for label in memos.keys():
                 m+=label+" : " + memos.get(label)[:5]+"\n"
-            await self.bot.say(m+"さあ、どれを消す？label名を入力してね！")
+            await self.bot.say(m + "さあ、どれを消す？label名を入力してね！")
 
             def check(msg):
                 return msg.content in memos.keys() and msg.author == ctx.message.author # check関数
