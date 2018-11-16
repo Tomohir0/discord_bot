@@ -33,7 +33,7 @@ class Plot():
         dat = pd.read_table(title)
         
         label = []
-        label[0] = dat[0][0] # python 正規表現扱い習得
+        label[0] = dat[0][0] # python 正規表現扱い習得したい
         label[1] = dat[0][1]
 
         dat = dat[[label[0],label[1]]].dropna()

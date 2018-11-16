@@ -4,6 +4,8 @@ import pprint
 import os
 import pickle
 import random
+import asyncio
+import sys
 
 #import boto3
 #bucket_name = "tomo-discord"
@@ -120,9 +122,10 @@ class Note():
         with open(f_name, 'rb') as f:
             memos = pickle.load(f)
         await self.bot.say("ここのmemoのlabel一覧は")
+        m=""
         for label in memos.keys():
-            await self.bot.say(label)
-        await self.bot.say("だよ！")
+            m += label + "\n"
+        await self.bot.say(m+"だよ！")
 
     @commands.command(description='callrand。「?notes」で保存されたmemoからランダムに一つを晒します。', pass_context=True)
     async def callr(self, ctx: commands.Context):
@@ -190,9 +193,10 @@ class Note():
         with open(f_name, 'rb') as f:
             memos = pickle.load(f)
         await self.bot.say("ここのmemoの一覧は")
+        m=""
         for label in memos.keys():
-            await self.bot.say(label+" : " + memos.get(label)[:5])
-        await self.bot.say("さあ、どれを見る？label名を入力してね！")
+            m+= label+" : " + memos.get(label)[:5]+"\n"
+        await self.bot.say(m+"さあ、どれを見る？label名を入力してね！")
         def check(msg):
             return msg.content in memos.keys() and msg.author == ctx.message.author # check関数
         label_input = await self.bot.wait_for_message(check = check) # label入力
@@ -210,9 +214,10 @@ class Note():
             with open(f_name, 'rb') as f:
                 memos = pickle.load(f)
             await self.bot.say("ここのmemoの一覧は")
+            m=""
             for label in memos.keys():
-                await self.bot.say(label+" : " + memos.get(label)[:5])
-            await self.bot.say("さあ、どれを消す？label名を入力してね！")
+                m+=label+" : " + memos.get(label)[:5]+"\n"
+            await self.bot.say(m+"さあ、どれを消す？label名を入力してね！")
 
             def check(msg):
                 return msg.content in memos.keys() and msg.author == ctx.message.author # check関数

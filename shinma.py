@@ -16,7 +16,7 @@ bucket_name = "tomo-discord"
 s3 = boto3.resource('s3')
 # s3連携
 
-startup_extensions = ["note",  "tool", "sinoalice", "game","system","exp","plot"]  # cogの導入
+startup_extensions = ["note",  "tool", "sinoalice", "game","system","exp"]  # cogの導入
 
 description = ("神魔管理のために作られたbotです。挨拶をしたり愛をささやいたりもします。"
                "\n「神魔登録説明」で神魔登録などについての説明を表示します。\nその他のcommandについては「?help」を確認してください。"
