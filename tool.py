@@ -83,7 +83,7 @@ class Tool():
         await self.bot.process_commands(ctx.message)
 
     @commands.command(description="", pass_context=True)
-    async def cites(self, ctx,*, command: str, number_of_messages: int):
+    async def cites(self, ctx, number_of_messages: int,*, command: str):
         "直前の複数のmessageを引数としてcommandを実行できちゃう！"
         m = ""
         count = 0
