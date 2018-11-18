@@ -131,7 +131,7 @@ class Note():
 
     @commands.command(description='callrand。「?notes」で保存されたmemoからランダムに一つを晒します。', pass_context=True)
     async def callr(self, ctx: commands.Context):
-        "「?callrand」でメモを1つ晒します。"
+        "「?callr」でメモを1つ晒します。"
         f_name = "/tmp/memos_" + ctx.message.author.server.id + ".pkl"
         if not os.path.isfile(f_name):  # 存在しないときの処理
             await self.bot.say("まだこのserverにはメモがないよ……。?notesを使ってほしいな……")
@@ -167,7 +167,7 @@ class Note():
             await self.bot.say(label + " : " + memos.get(label) + "\nは消えちゃった……")
             await self.bot.say("\nと思いきや復活！！神！")
             await self.bot.say(label + " : " + memos.get(label))
-
+    
 
     @dels.command(description='sudo関数です。使用できる人は限られています。', pass_context=True,sudo="sudo")
     async def sudo_dels(self, ctx: commands.Context, label: str):

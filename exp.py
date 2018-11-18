@@ -23,8 +23,9 @@ class Exp():
     async def new(self,ctx: commands.Context):
         """最近の更新情報をお知らせします。"""
         if ctx.invoked_subcommand is None:
-            m_new = ("Nov,14:神魔報告に音声読み上げモードを追加！「神魔tts」と入力してみて！PCにしか対応していなくて、VCの有無にかかわらずPCでdiscord開いている全員に読み上げ音声が届いてしまうけども！")
-            m_old=("Nov,6:ただいま！"
+            m_new = ("Nov,18:上書き関数notewはKさんに悪用されたので削除！引用関数citeなどを修正したよ！"
+                    "\nNov,14:神魔報告に音声読み上げモードを追加！「神魔tts」と入力してみて！PCにしか対応していなくて、VCの有無にかかわらずPCでdiscord開いている全員に読み上げ音声が届いてしまうけども！")
+            m_old=("\nNov,6:ただいま！"
                     "\nNov,5:note関連で追加要素多すぎるからまた改めて！"
                     "\nNov,4:QRcode実装！botっぽい！"
                     "\nNov,3:神魔登録を含めて少しずつ更新！よりスマートに！notes関連での関数も大分増えた！game関連も少しずつ増えていくかな？"

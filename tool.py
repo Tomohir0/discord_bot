@@ -95,6 +95,19 @@ class Tool():
         ctx.message.content = "?" + command +" "+ m
         await self.bot.process_commands(ctx.message)
 
+    @commands.command(description="", pass_context=True)
+    async def cites_auth(self, ctx, number_of_messages: int, *, command: str):
+        "直前の複数のmessageをauthor名付きで引数としてcommandを実行できちゃう！"
+        m = ""
+        count = 0
+        async for msg in self.bot.logs_from(ctx.message.channel, limit=number_of_messages + 1):
+            count += 1  # command文は含まない
+            if count == 1:
+                continue
+            m = msg.author + " : " + msg.content + "\n" + m  # 順序を考慮して前につけていくべき
+        ctx.message.content = "?" + command + " " + m
+        await self.bot.process_commands(ctx.message)
+
     @commands.command(description="指定した件数分のbotのmessageを消去します。削除できる件数が少なくなることもあるかもしれません。", pass_context=True)
     async def clean_m(self, ctx, number_of_messages: int):
         "ついついたまりがちなbotのmessageを適度にオソウジ！くるくる！"
