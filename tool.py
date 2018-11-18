@@ -75,10 +75,10 @@ class Tool():
         m = ""
         count = 0
         async for msg in self.bot.logs_from(ctx.message.channel, limit=2):
-            if count == 0:
-                continue
             count += 1
-            m += msg.content + "\n"
+            if count == 1:
+                continue
+            m = msg.content + "\n"
         ctx.message.content = "?" + command +" "+ m
         await self.bot.process_commands(ctx.message)
 
@@ -87,11 +87,11 @@ class Tool():
         "直前の複数のmessageを引数としてcommandを実行できちゃう！"
         m = ""
         count = 0
-        async for msg in self.bot.logs_from(ctx.message.channel, limit=number_of_messages):
-            if count == 0:
+        async for msg in self.bot.logs_from(ctx.message.channel, limit=number_of_messages + 1):
+            count += 1  # command文は含まない
+            if count == 1:
                 continue
-            count += 1
-            m += msg.content + "\n"
+            m = msg.content + "\n" + m # 順序を考慮して前につけていくべき
         ctx.message.content = "?" + command +" "+ m
         await self.bot.process_commands(ctx.message)
 
