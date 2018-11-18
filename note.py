@@ -41,9 +41,9 @@ class Note():
             select = await self.bot.wait_for_message(check=check_auth) # w:上書き消去
         else:
             select = ctx.message # messageははじめから用意ておかないとだめ
-            select.content = "w" # 被りがないなら実質上書き
+            select.content = "new_write" # 被りがないなら実質上書き
         
-        if select.content == "w":
+        if select.content == "new_write":
             memos[label] = memo
         elif select.content == "a":
             memos[label] = memos[label] + "\n" + memo

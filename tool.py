@@ -70,7 +70,7 @@ class Tool():
             await self.bot.say("ﾀﾞﾗﾗﾗﾗﾗﾗﾗﾗﾗ～\nダン！！\n見事選ばれたのは" + random.choice(choices) + "でした！！")
 
     @commands.command(description="「?cite qr」で直前の内容をQRcodeに！", pass_context=True)
-    async def cite(self,ctx,command: str):
+    async def cite(self,ctx,*,command: str):
         "直前のmessageを引数としてcommandを実行できちゃう！"
         m = ""
         async for msg in self.bot.logs_from(ctx.message.channel, limit=1):
@@ -79,7 +79,7 @@ class Tool():
         await self.bot.process_commands(ctx.message)
 
     @commands.command(description="", pass_context=True)
-    async def cites(self, ctx, command: str, number_of_messages: int):
+    async def cites(self, ctx,*, command: str, number_of_messages: int):
         "直前の複数のmessageを引数としてcommandを実行できちゃう！"
         m = ""
         async for msg in self.bot.logs_from(ctx.message.channel, limit=number_of_messages):
