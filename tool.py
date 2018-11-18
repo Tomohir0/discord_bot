@@ -104,7 +104,7 @@ class Tool():
             count += 1  # command文は含まない
             if count == 1:
                 continue
-            m = msg.author + " : " + msg.content + "\n" + m  # 順序を考慮して前につけていくべき
+            m = msg.author.name + " : " + msg.content + "\n" + m  # 順序を考慮して前につけていくべき
         ctx.message.content = "?" + command + " " + m
         await self.bot.process_commands(ctx.message)
 
