@@ -37,8 +37,8 @@ class Note():
             def check_auth(msg):
                 return msg.author == ctx.message.author
             await self.bot.say("すでに" + label + "というmemoは存在します。"
-                               "\n上書きするなら「w」、後ろに付け足すなら「a」、前に付け足すなら「f」、labelを変更するなら「<そのlabel名>」を、キャンセルするなら「c」を入力してください。")
-            select = await self.bot.wait_for_message(check=check_auth)
+                               "\n後ろに付け足すなら「a」、前に付け足すなら「f」、labelを変更するなら「<そのlabel名>」を、キャンセルするなら「c」を入力してください。")
+            select = await self.bot.wait_for_message(check=check_auth) # w:上書き消去
         else:
             select = ctx.message # messageははじめから用意ておかないとだめ
             select.content = "w" # 被りがないなら実質上書き
@@ -58,6 +58,7 @@ class Note():
             pickle.dump(memos, f)  # 古いリストに付け足す形で
         await self.bot.say("覚えました！！")
 
+    '''
     @commands.command(description='serverのみんなでmemoを共有できます。overwite', pass_context=True)
     async def notew(self, ctx: commands.Context, label: str, *, memo: str):
         "重複があっても上書きしかする気がない人のための「?note」"
@@ -71,6 +72,7 @@ class Note():
         with open(f_name, 'wb') as f:
             pickle.dump(memos, f)  # 古いdictに付け足す形で
         await self.bot.say("覚えました！！")
+    '''
 
     @commands.command(description='serverのみんなでmemoを共有できます。add', pass_context=True)
     async def notea(self, ctx: commands.Context, label: str, *, memo: str):
@@ -139,6 +141,7 @@ class Note():
         label_selected = random.choice(list(memos.keys()))
         await self.bot.say(label_selected +" : "+ memos.get(label_selected, "ERROR"))
 
+    
     @commands.group(description='「?notes」で保存されたmemoを削除することができるかもしれません。「sudo」版もあります', pass_context=True)
     async def dels(self, ctx: commands.Context, label: str):
         "「?dels secret」でsecretとして保存されたメモを削除できる………かも。"
@@ -156,7 +159,7 @@ class Note():
             if del_try_count > 3:
                 await self.bot.say("残念！もう回数制限だね！時間をあけて再チャレンジ！")
                 return 0
-            if random.randint(1, 100) > 40:
+            if random.randint(1, 100) > 90:
                 await self.bot.say(label + " : " + memos.pop(label) + "\nは消えちゃった……")
                 with open(f_name, 'wb') as f:
                     pickle.dump(memos,f)
