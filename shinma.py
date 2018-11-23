@@ -97,7 +97,7 @@ async def on_message(message):  # 関数名はon_messageのみ
 
     for key in stwith_dict.keys():
         if mc.startswith(key):
-            await bot.send_message(message.channel, stwith_dict.get(key) + "\nそれと投票お忘れなく！")
+            await bot.send_message(message.channel, stwith_dict.get(key))
     
     '''if mc.startswith("おかえりなさい、しんまくん") and message.author.id == "349102495114592258":
         m = ("みなさん、先日はお騒がせしました。あの件を受けともひろもようやくずさんだった管理体制を整え、もしものための自害プログラムも実装しました。"
