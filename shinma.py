@@ -64,7 +64,7 @@ async def on_message(message):  # 関数名はon_messageのみ
     date_today = datetime.date.today()
     mc = message.content
     stwith_dict = {  # 呼応一覧
-        "おはよ": "Good morning" + message.author.name,
+        "おはよ": "Good morning, " + message.author.name,
         "こんにち": "Hi, " + message.author.name,
         "こんばんは": "Hi, " + message.author.name,
         "好き": "愛してるよ" + message.author.name,
@@ -97,7 +97,7 @@ async def on_message(message):  # 関数名はon_messageのみ
 
     for key in stwith_dict.keys():
         if mc.startswith(key):
-            await bot.send_message(message.channel, stwith_dict.get(key))
+            await bot.send_message(message.channel, stwith_dict.get(key) + "\nそれと投票お忘れなく！")
     
     '''if mc.startswith("おかえりなさい、しんまくん") and message.author.id == "349102495114592258":
         m = ("みなさん、先日はお騒がせしました。あの件を受けともひろもようやくずさんだった管理体制を整え、もしものための自害プログラムも実装しました。"
