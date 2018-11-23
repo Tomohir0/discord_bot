@@ -41,11 +41,9 @@ class Note():
             select = await self.bot.wait_for_message(check=check_auth) # w:上書き消去
         else:
             select = ctx.message # messageははじめから用意ておかないとだめ
-            select.content = "new_write" # 被りがないなら実質上書き
-        
-        if select.content == "new_write":
             memos[label] = memo
-        elif select.content == "a":
+
+        if select.content == "a":
             memos[label] = memos[label] + "\n" + memo
         elif select.content == "f":
             memos[label] = memo + "\n" + memos[label] 
@@ -53,6 +51,9 @@ class Note():
             await self.bot.say("おけおけ、また改めて！")
             return 0
         else: # label変更
+            if select.content in memos.keys():
+                await self.bot.say("label名被ってるよ！")
+                return 0
             memos[select.content] = memo
         with open(f_name, 'wb') as f:
             pickle.dump(memos, f)  # 古いリストに付け足す形で
@@ -83,7 +84,10 @@ class Note():
         else:
             with open(f_name, 'rb') as f:
                 memos = pickle.load(f)
-        memos[label] = memos[label] +"\n" + memo
+        m = ""
+        if label in memos.keys():
+            m = memos[label] + "\n"
+        memos[label] = m + memo
         with open(f_name, 'wb') as f:
             pickle.dump(memos, f)  # 古いdictに付け足す形で
         await self.bot.say("覚えました！！")
@@ -97,7 +101,10 @@ class Note():
         else:
             with open(f_name, 'rb') as f:
                 memos = pickle.load(f)
-        memos[label] =  memo +"\n" +memos[label] 
+        m = ""
+        if label in memos.keys():
+            m = "\n" + memos[label]
+        memos[label] = memo + m
         with open(f_name, 'wb') as f:
             pickle.dump(memos, f)  # 古いdictに付け足す形で
         await self.bot.say("覚えました！！")
