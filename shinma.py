@@ -89,7 +89,7 @@ async def on_message(message):  # 関数名はon_messageのみ
             await bot.process_commands(message)
         return 0
 
-    forbidden_channels = []
+    forbidden_channels = ["507977713030529076"]
     if message.channel.id in forbidden_channels:  # 指定されたchannelではbotはお静かに
         return 0
 

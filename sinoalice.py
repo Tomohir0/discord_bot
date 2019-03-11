@@ -9,7 +9,8 @@ import datetime
 #import boto3
 #bucket_name = "tomo-discord"
 #s3 = boto3.resource('s3')
-## s3連携
+# s3連携
+
 
 class Sinoalice():
     "sinoaliceで役に立ちそうな関数を集めたよ！神魔報告関連は別にあるよ！ただし、役職に関してはアイコンの丸を灰色以外にしないと機能しません。"
@@ -22,7 +23,8 @@ class Sinoalice():
         "神魔登録のcommand ver.！"
         date_register = datetime.date.today()  # 神魔登録の日付
         label = "shinma"
-        memo = "第一神魔は" + shinma1 + "、第二神魔は" + shinma2 +" on {}月{}日".format(date_register.month,date_register.day)
+        memo = "第一神魔は" + shinma1 + "、第二神魔は" + shinma2 + \
+            " on {}月{}日".format(date_register.month, date_register.day)
         f_name2 = "/tmp/memos_" + ctx.message.server.id + ".pkl"
         if not os.path.isfile(f_name2):  # 存在しないときの処理
             memos = {}
@@ -34,8 +36,10 @@ class Sinoalice():
             pickle.dump(memos, f)  # 古いdictに付け足す形で
         # 登録完了のメッセージ
         await self.bot.say("登録完了 on " + str(date_register) + "\n「?calls shinma」でも確認できるよ！")
-    
 
+
+# vcのchannelはid指定
+'''
     @commands.command(description='「?vc」で「コロシアムVC」の参加メンバーの(ニックネームではない)名前一覧が得られます。')
     async def vc(self):
         "「コロシアムVC」の参加メンバーの名前一覧を表示します。"
@@ -57,9 +61,9 @@ class Sinoalice():
             await self.bot.say("変だよ！\n今のVCには{}人しかいないのに、人数指定が{}人は変だよ！".format(len(member_list), num))
         else:
             await self.bot.say(random.sample(member_list, num) + "！\n君に決めた！")
-
-    @commands.command(description='「コロシアムやばそう」というときのために。', pass_context=True)
-    async def absent(self, ctx: commands.Context):
+'''
+  @commands.command(description='「コロシアムやばそう」というときのために。', pass_context=True)
+   async def absent(self, ctx: commands.Context):
         "役職を「欠席遅刻予定」に変更します。みんなが把握して調整しやすく。"
         user = ctx.message.author
         role = discord.utils.get(user.server.roles, name="欠席遅刻予定")
@@ -91,7 +95,8 @@ class Sinoalice():
         for member in user.server.members:
             if role in member.roles:
                 await self.bot.remove_roles(member, role)
-                #await self.bot.say(user.name + "を" + role.name + "から解除しました")
+                # await self.bot.say(user.name + "を" + role.name + "から解除しました")
+
 
 def setup(bot):
     bot.add_cog(Sinoalice(bot))
