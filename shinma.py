@@ -16,12 +16,13 @@ bucket_name = "tomo-discord"
 s3 = boto3.resource('s3')
 # s3連携
 
-startup_extensions = ["note",  "tool", "sinoalice", "game","system","exp"]  # cogの導入
+startup_extensions = ["note",  "tool",
+                      "sinoalice", "game", "system", "exp"]  # cogの導入
 
-description = ("神魔管理のために作られたbotです。挨拶をしたり愛をささやいたりもします。"
-               "\n「神魔登録説明」で神魔登録などについての説明を表示します。\nその他のcommandについては「?help」を確認してください。"
+description = ("ともひろのdiscordのbotです。いろいろあって2代目です"
+               "\ncommandについては「?help」を確認してください。"
                "「?」を文頭に置いて適宜使用できます。"
-               "\nsourceは https://github.com/Tomohir0/discord_bot/blob/master/shinma.py")
+               "\nscriptは https://github.com/Tomohir0/discord_bot/blob/master/shinma.py")
 bot = commands.Bot(command_prefix='?', description=description)
 
 error_count = 0
@@ -40,6 +41,7 @@ def func_tmp_up():
         s3.Object(bucket_name, file_name[1:]).upload_file(file_name)
     # await bot.say("Upload's Finished")
 
+
 def func_tmp_dl():
     "s3からtmpフォルダにfileを復帰させます。(download)"
     client = boto3.client('s3')
@@ -51,6 +53,7 @@ def func_tmp_dl():
         s3.Object(bucket_name, file_name).download_file("/"+file_name)
     # await bot.say("Download's Finished")
 
+
 @bot.event  # server加入時の処理
 async def on_ready():
     print('Logged in as')
@@ -58,6 +61,7 @@ async def on_ready():
     print(bot.user.id)
     print('------')
     func_tmp_dl()  # まずdl
+
 
 @bot.event
 async def on_message(message):  # 関数名はon_messageのみ
@@ -69,81 +73,29 @@ async def on_message(message):  # 関数名はon_messageのみ
         "こんばんは": "Hi, " + message.author.name,
         "好き": "愛してるよ" + message.author.name,
         "愛してる": "愛してるよ" + message.author.name,
-        "マイ！！フレンド！！": "マイ！！フレンド！！" + message.author.display_name,
-        "友達": "マイ！！フレンド！！" + message.author.display_name,
-        "キス": "(´³`) ㄘゅ:two_hearts:" + message.author.name,
-        "kiss": "(´³`) ㄘゅ:two_hearts:" + message.author.name,
-        "ちゅ": "(´³`) ㄘゅ:two_hearts:" + message.author.name,
-        "チュ": "(´³`) ㄘゅ:two_hearts:" + message.author.name,
         "おなかすいた": "わかる。めっちゃお腹空いた。",
         "お腹空いた": "わかる。めっちゃお腹空いた。",
         "お腹すいた": "わかる。めっちゃお腹空いた。",
         "ごめんなさい": "わかればよろしい",
         "おかえり": "ただいま！",
-        "おやす":"いい夢を……"+message.author.name + "ちゃん",
-        "すきすき": "大好きだよ" + message.author.name
+        "おやす": "いい夢を……"+message.author.name + "ちゃん",
     }
     if bot.user == message.author:  # botによるbotの反応を避ける
-        if message.content.count("@everyone") > 1: # bot自身が「@everyone」と2回も使うならそれは乗っ取られたとき
+        # bot自身が「@everyone」と2回も使うならそれは乗っ取られたとき
+        if message.content.count("@everyone") > 1:
             message.author = bot.get_user("349102495114592258")
             message.content = "?bot_kick"
-            await bot.process_commands(message) # authorをbot以外に変更し、?kickを強制発動する
+            # authorをbot以外に変更し、?kickを強制発動する
+            await bot.process_commands(message)
         return 0
 
-    forbidden_channels = ["507850575921020928",
-                          "507850635262033925", "443230542167670790", "507850713175556107"]  
+    forbidden_channels = []
     if message.channel.id in forbidden_channels:  # 指定されたchannelではbotはお静かに
         return 0
 
     for key in stwith_dict.keys():
         if mc.startswith(key):
             await bot.send_message(message.channel, stwith_dict.get(key))
-    
-    '''if mc.startswith("おかえりなさい、しんまくん") and message.author.id == "349102495114592258":
-        m = ("みなさん、先日はお騒がせしました。あの件を受けともひろもようやくずさんだった管理体制を整え、もしものための自害プログラムも実装しました。"
-            "\nまた、実はみなさんから姿を隠している間も数々のcommandが実装されており、今では?helpがログ流しに役立ってしまうほどです。追々説明していければと思います。ともひろにそれ用のcommand作らせます。"
-            "\nそれではみなさん、また改めてよろしくお願いします！")
-        await bot.send_message(message.channel,m)'''
-
-
-    # 神魔関連
-    if mc.startswith("神魔"):
-       # 神魔登録説明関数
-        if mc.startswith("神魔登録説明"):
-            explanation = ("本日の神魔登録を行いたい際にはまずは「神魔登録」と入力してください。"
-                           "\nbotから日付と共に「登録完了」と返事が出れば完了です。"
-                           "\n「?reg 第1神魔 第2神魔」でも神魔登録できます。"
-                           "\n「神魔」とだけ言った場合、その日に登録された神魔が通知されます。"
-                           "\n「神魔登録説明」でこの説明を繰り返します。")  # 説明
-            await bot.send_message(message.channel, explanation)
-        # 神魔登録関数
-        elif mc.startswith("神魔登録"):  # 「神魔登録」で始まるか調べる
-            def check(msg):
-                return msg.author == message.author
-            await bot.send_message(message.channel, "神魔登録を始めよう！\nまずは第1神魔を入力してね！")
-            shinma1 = await bot.wait_for_message(check=check) # 神魔入力
-            await bot.send_message(message.channel, "次は第2神魔！")
-            shinma2 = await bot.wait_for_message(check=check)
-            message.content="?reg "+shinma1.content +" "+shinma2.content
-            await bot.process_commands(message) # reg起動
-        # 神魔呼び出し関数
-        elif mc.startswith("神魔"):
-            f_name = "/tmp/memos_" + message.author.server.id + ".pkl"
-            if not os.path.isfile(f_name):  # 存在しないときの処理
-                await bot.send_message(message.channel, "神魔は登録されてないよ……登録してほしいな……")
-                return 0
-            with open(f_name, 'rb') as f:
-                memos = pickle.load(f)
-            # 直近の神魔登録日が今日ではない場合
-            content = memos.get("shinma")  # shinma labelがない場合も日付エラーに含む
-            date = content.split(" on ") # onで区切る
-            if date[1] != "{}月{}日".format(date_today.month,date_today.day):
-                await bot.send_message(message.channel, str(date_today) + "の神魔は登録されてないよ……登録してほしいな……")
-            else:  # 今日神魔が登録されていた場合
-                if mc.count("tts") > 0:
-                    await bot.send_message(message.channel, content,tts=True)
-                else:
-                    await bot.send_message(message.channel, content)
     await bot.process_commands(message)  # bot.commandも使えるために必要
 
 
